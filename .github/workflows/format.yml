@@ -39,5 +39,5 @@ jobs:
           token: ${{ secrets.FORMAT_PAT }}
           author_name: "github-actions[bot]"
           author_email: "github-actions[bot]@users.noreply.github.com"
-          message: "style: apply clang-format [skip ci]"
+          message: "style: apply clang-format"
           add: "."
