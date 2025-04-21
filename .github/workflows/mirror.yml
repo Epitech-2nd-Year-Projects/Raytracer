@@ -1,27 +1,38 @@
-name: Mirror to Epitech Git
+name: "Format Check"
 
 on:
+  pull_request:
   push:
     branches:
       - main
 
 jobs:
-  mirror:
-    name: Push to mirror
+  clang-format-format:
+    name: "Run clang-format"
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-
     steps:
-      - name: Checkout full history
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Start SSH agent
-        uses: webfactory/ssh-agent@v0.9.1
-        with:
-          ssh-private-key: ${{ secrets.GIT_SSH_PRIVATE_KEY }}
+      - name: Install clang-format
+        run: sudo apt-get update && sudo apt-get install -y clang-format
 
-      - name: Push repository mirror
-        run: git push --mirror ${{ secrets.MIRROR_URL }}
+      - name: Find source files
+        id: files
+        run: |
+          SRC=$(find . -type f \
+            \( -name '*.cpp' -o -name '*.hpp' -o -name '*.cc' -o -name '*.h' \))
+          echo "::set-output name=list::$SRC"
+
+      - name: Apply clang-format
+        run: |
+          echo "Formatting files..."
+          clang-format -i ${{ steps.files.outputs.list }}
+
+      - name: Commit formatted code
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: "style: apply clang-format"
+          add: "."
