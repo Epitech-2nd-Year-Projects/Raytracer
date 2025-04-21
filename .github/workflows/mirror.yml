@@ -1,0 +1,27 @@
+name: Mirror to Epitech Git
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  mirror:
+    name: Push to mirror
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Start SSH agent
+        uses: webfactory/ssh-agent@v0.8.1
+        with:
+          ssh-private-key: ${{ secrets.GIT_SSH_PRIVATE_KEY }}
+
+      - name: Push repository mirror
+        run: git push --mirror ${{ secrets.MIRROR_URL }}
