@@ -10,6 +10,7 @@ jobs:
   clang-format-format:
     name: "Run clang-format"
     runs-on: ubuntu-latest
+    if: ${{ github.actor != 'github-actions[bot]' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -36,5 +37,7 @@ jobs:
         uses: EndBug/add-and-commit@v9
         with:
           token: ${{ secrets.FORMAT_PAT }}
-          message: "style: apply clang-format"
+          author_name: "github-actions[bot]"
+          author_email: "github-actions[bot]@users.noreply.github.com"
+          message: "style: apply clang-format [skip ci]"
           add: "."
