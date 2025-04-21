@@ -1,0 +1,33 @@
+name: "Format Check"
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  clang-format-check:
+    name: "Check with clang-format"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install clang-format
+        run: sudo apt-get update && sudo apt-get install -y clang-format
+
+      - name: Find source files
+        id: files
+        run: |
+          # adjust extensions to your project
+          SRC=$(find . -type f \
+            \( -name '*.cpp' -o -name '*.hpp'\))
+          echo "::set-output name=list::$SRC"
+
+      - name: Run clang-format in dry‑run mode
+        run: |
+          echo "Checking formatting..."
+          clang-format --dry-run --Werror ${{ steps.files.outputs.list }}
