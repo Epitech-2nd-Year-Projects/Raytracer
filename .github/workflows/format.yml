@@ -7,14 +7,15 @@ on:
       - main
 
 jobs:
-  clang-format-check:
-    name: "Check with clang-format"
+  clang-format-format:
+    name: "Run clang-format"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: tru
 
       - name: Install clang-format
         run: sudo apt-get update && sudo apt-get install -y clang-format
@@ -26,7 +27,14 @@ jobs:
             \( -name '*.cpp' -o -name '*.hpp' -o -name '*.cc' -o -name '*.h' \))
           echo "::set-output name=list::$SRC"
 
-      - name: Run clang-format in dry‑run mode
+      - name: Apply clang-format
         run: |
-          echo "Checking formatting..."
-          clang-format --dry-run --Werror ${{ steps.files.outputs.list }}
+          echo "Formatting files..."
+          clang-format -i ${{ steps.files.outputs.list }}
+
+      - name: Commit formatted code
+        uses: EndBug/add-and-commit@v9
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          message: "style: apply clang-format"
+          add: "."
