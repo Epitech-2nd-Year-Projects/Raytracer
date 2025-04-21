@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v
         with:
           fetch-depth: 0
 
@@ -22,9 +22,8 @@ jobs:
       - name: Find source files
         id: files
         run: |
-          # adjust extensions to your project
           SRC=$(find . -type f \
-            \( -name '*.cpp' -o -name '*.hpp'\))
+            \( -name '*.cpp' -o -name '*.hpp' -o -name '*.cc' -o -name '*.h' \))
           echo "::set-output name=list::$SRC"
 
       - name: Run clang-format in dry‑run mode
