@@ -236,7 +236,7 @@ private:
    * @brief Base case for setting components.
    * @param index The index of the component to set.
    */
-  void setComponents(std::size_t index) {}
+  void setComponents([[maybe_unused]] std::size_t index) {}
 
   /**
    * @brief Helper function to set the components of the vector.
