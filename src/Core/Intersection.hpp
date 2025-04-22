@@ -10,10 +10,9 @@ namespace Raytracer::Core {
 class Intersection final {
 public:
   constexpr Intersection() noexcept = default;
-  Intersection(const Math::Point<3> &point,
-                         const Math::Vector<3> &normal, std::shared_ptr<IMaterial> material,
-                         double distance, bool isInside,
-                         const Math::Point<2> &uv) noexcept;
+  Intersection(const Math::Point<3> &point, const Math::Vector<3> &normal,
+               std::shared_ptr<IMaterial> material, double distance,
+               bool isInside, const Math::Point<2> &uv) noexcept;
 
   [[nodiscard]] constexpr const Math::Point<3> &getPoint() const noexcept;
   [[nodiscard]] constexpr const Math::Vector<3> &getNormal() const noexcept;
