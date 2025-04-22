@@ -53,3 +53,37 @@ target_compile_options(raytracer
   PRIVATE
     -Wall -Wextra -Werror
 )
+
+enable_testing()
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(CRITERION REQUIRED criterion)
+
+set(TEST_SOURCES
+  tests/test_Vector.cpp
+)
+
+add_executable(raytracer_tests
+  ${TEST_SOURCES}
+)
+
+target_include_directories(raytracer_tests
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+    ${CRITERION_INCLUDE_DIRS}
+)
+
+target_link_libraries(raytracer_tests
+  PRIVATE
+    ${CRITERION_LIBRARIES}
+)
+
+target_compile_options(raytracer_tests
+  PRIVATE
+    -Wall -Wextra -Werror
+)
+
+add_test(
+  NAME VectorTests
+  COMMAND raytracer_tests
+)
