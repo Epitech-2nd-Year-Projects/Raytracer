@@ -7,6 +7,7 @@
 #pragma once
 
 #include <array>
+#include <cmath>
 #include <cstddef>
 namespace Raytracer::Math {
 
@@ -20,6 +21,134 @@ public:
     static_assert(sizeof...(args) == N,
                   "Number of arguments must match vector size");
     setComponents(0, args...);
+  }
+
+  double length() const {
+    double result = 0.0;
+
+    for (std::size_t i = 0; i < N; ++i) {
+      result += m_components[i] * m_components[i];
+    }
+
+    return std::sqrt(result);
+  }
+
+  Vector<N> operator+(const Vector<N> &other) const {
+    Vector<N> result;
+
+    for (std::size_t i = 0; i < N; ++i) {
+      result.m_components[i] = m_components[i] + other.m_components[i];
+    }
+
+    return result;
+  }
+
+  Vector<N> &operator+=(const Vector<N> &other) {
+    for (std::size_t i = 0; i < N; ++i) {
+      m_components[i] += other.m_components[i];
+    }
+
+    return *this;
+  }
+
+  Vector<N> operator-(const Vector<N> &other) const {
+    Vector<N> result;
+
+    for (std::size_t i = 0; i < N; ++i) {
+      result.m_components[i] = m_components[i] - other.m_components[i];
+    }
+
+    return result;
+  }
+
+  Vector<N> &operator-=(const Vector<N> &other) {
+    for (std::size_t i = 0; i < N; ++i) {
+      m_components[i] -= other.m_components[i];
+    }
+
+    return *this;
+  }
+
+  Vector<N> operator*(const Vector<N> &other) const {
+    Vector<N> result;
+
+    for (std::size_t i = 0; i < N; ++i) {
+      result.m_components[i] = m_components[i] * other.m_components[i];
+    }
+
+    return result;
+  }
+
+  Vector<N> &operator*=(const Vector<N> &other) {
+    for (std::size_t i = 0; i < N; ++i) {
+      m_components[i] *= other.m_components[i];
+    }
+
+    return *this;
+  }
+
+  Vector<N> operator/(const Vector<N> &other) const {
+    Vector<N> result;
+
+    for (std::size_t i = 0; i < N; ++i) {
+      result.m_components[i] = m_components[i] / other.m_components[i];
+    }
+
+    return result;
+  }
+
+  Vector<N> &operator/=(const Vector<N> &other) {
+    for (std::size_t i = 0; i < N; ++i) {
+      m_components[i] /= other.m_components[i];
+    }
+
+    return *this;
+  }
+
+  Vector<N> operator*(double scalar) const {
+    Vector<N> result;
+
+    for (std::size_t i = 0; i < N; ++i) {
+      result.m_components[i] = m_components[i] * scalar;
+    }
+
+    return result;
+  }
+
+  Vector<N> &operator*=(double scalar) {
+    for (std::size_t i = 0; i < N; ++i) {
+      m_components[i] *= scalar;
+    }
+
+    return *this;
+  }
+
+  Vector<N> operator/(double scalar) const {
+    Vector<N> result;
+
+    for (std::size_t i = 0; i < N; ++i) {
+      result.m_components[i] = m_components[i] / scalar;
+    }
+
+    return result;
+  }
+
+  Vector<N> &operator/=(double scalar) {
+    for (std::size_t i = 0; i < N; ++i) {
+      m_components[i] /= scalar;
+    }
+
+    return *this;
+  }
+
+  double dot(const Vector<N> &other) const {
+    double result = 0.0;
+
+    for (std::size_t i = 0; i < N; ++i) {
+      result += m_components[i] * other.m_components[i];
+    }
+
+    return result;
   }
 
 private:
