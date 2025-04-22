@@ -31,6 +31,7 @@
 *.out
 *.app
 raytracer
+raytracer_tests
 
 # CMake
 CMakeCache.txt
