@@ -42,5 +42,8 @@ Testing/
 CMakeFiles/
 build/
 
+# Doxygen
+/docs/doxygen/html
+
 # Extras
 compile_commands.json
