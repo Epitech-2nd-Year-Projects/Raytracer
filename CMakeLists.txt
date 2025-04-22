@@ -61,6 +61,7 @@ pkg_check_modules(CRITERION REQUIRED criterion)
 
 set(TEST_SOURCES
   tests/test_Vector.cpp
+  tests/test_Point.cpp
 )
 
 add_executable(raytracer_tests
@@ -84,6 +85,6 @@ target_compile_options(raytracer_tests
 )
 
 add_test(
-  NAME VectorTests
+  NAME raytracer_tests
   COMMAND raytracer_tests
 )

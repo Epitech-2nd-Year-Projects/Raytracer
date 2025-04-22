@@ -13,7 +13,9 @@ namespace Raytracer::Math {
 
 /**
  * @class Vector
- * @brief A class template representing a mathematical vector of size N.
+ * @brief A class template representing a mathematical vector in N dimensional
+ * space.
+ * @tparam N The dimension of the vector.
  */
 template <std::size_t N> class Vector {
 public:
@@ -30,7 +32,7 @@ public:
    */
   template <typename... Args> Vector(Args... args) : m_components{args...} {
     static_assert(sizeof...(args) == N,
-                  "Number of arguments must match vector size");
+                  "Number of arguments must match vector dimension");
     setComponents(0, args...);
   }
 
