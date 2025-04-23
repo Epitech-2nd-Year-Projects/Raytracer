@@ -39,11 +39,5 @@ public:
   getScale() const noexcept = 0;
   virtual [[nodiscard]] const std::shared_ptr<IMaterial> &
   getMaterial() const noexcept = 0;
-
-private:
-  Math::Point<3> m_position{};
-  Math::Vector<3> m_rotation{};
-  Math::Vector<3> m_scale{1.0, 1.0, 1.0};
-  std::shared_ptr<IMaterial> m_material{nullptr};
 };
 } // namespace Raytracer::Core
