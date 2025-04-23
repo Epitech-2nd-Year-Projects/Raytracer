@@ -62,6 +62,7 @@ pkg_check_modules(CRITERION REQUIRED criterion)
 set(TEST_SOURCES
   tests/test_Vector.cpp
   tests/test_Point.cpp
+  tests/test_SceneParser.cpp
 )
 
 add_executable(raytracer_tests
@@ -77,6 +78,8 @@ target_include_directories(raytracer_tests
 target_link_libraries(raytracer_tests
   PRIVATE
     ${CRITERION_LIBRARIES}
+    ${LIBCONFIGPP_LIBRARY}
+    ${_SFML_LIBS}
 )
 
 target_compile_options(raytracer_tests
