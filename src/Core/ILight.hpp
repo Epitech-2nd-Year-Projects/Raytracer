@@ -125,8 +125,7 @@ public:
    * @brief Get the light position.
    * @return Current position.
    */
-  [[nodiscard]] virtual const Math::Point<3> &
-  getPosition() const noexcept = 0;
+  [[nodiscard]] virtual const Math::Point<3> &getPosition() const noexcept = 0;
 
   /**
    * @brief Compute distance from light to a point.

@@ -32,10 +32,9 @@ public:
    * @param lights Lights affecting the intersection.
    * @return Computed shading color.
    */
-  [[nodiscard]] virtual Color computeColor(
-      const Intersection &intersection,
-      const Ray &ray,
-      const std::vector<std::shared_ptr<ILight>> &lights) const = 0;
+  [[nodiscard]] virtual Color
+  computeColor(const Intersection &intersection, const Ray &ray,
+               const std::vector<std::shared_ptr<ILight>> &lights) const = 0;
 
   /**
    * @brief Get the diffuse reflectance color.

@@ -1,6 +1,7 @@
 /**
  * @file Clamped.hpp
- * @brief Defines the Clamped template for constraining arithmetic values within a range.
+ * @brief Defines the Clamped template for constraining arithmetic values within
+ * a range.
  */
 
 #pragma once

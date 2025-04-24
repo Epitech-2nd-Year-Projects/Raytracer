@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include <memory>
 #include "Math/Point.hpp"
 #include "Math/Vector.hpp"
+#include <memory>
 
 namespace Raytracer::Core {
 class IMaterial;
@@ -32,54 +32,45 @@ public:
    * @param isInside True if the ray origin was inside the primitive.
    * @param uv Texture coordinates at the intersection.
    */
-  Intersection(const Math::Point<3> &point,
-               const Math::Vector<3> &normal,
-               std::unique_ptr<IMaterial> material,
-               double distance,
-               bool isInside,
-               const Math::Point<2> &uv) noexcept;
+  Intersection(const Math::Point<3> &point, const Math::Vector<3> &normal,
+               std::unique_ptr<IMaterial> material, double distance,
+               bool isInside, const Math::Point<2> &uv) noexcept;
 
   /**
    * @brief Get the intersection point.
    * @return Point of intersection.
    */
-  [[nodiscard]] constexpr const Math::Point<3> &
-  getPoint() const noexcept;
+  [[nodiscard]] constexpr const Math::Point<3> &getPoint() const noexcept;
 
   /**
    * @brief Get the surface normal at the intersection.
    * @return Normal vector.
    */
-  [[nodiscard]] constexpr const Math::Vector<3> &
-  getNormal() const noexcept;
+  [[nodiscard]] constexpr const Math::Vector<3> &getNormal() const noexcept;
 
   /**
    * @brief Get the material at the intersection.
    * @return Unique pointer to the material.
    */
-  [[nodiscard]] std::unique_ptr<IMaterial>
-  getMaterial() const noexcept;
+  [[nodiscard]] std::unique_ptr<IMaterial> getMaterial() const noexcept;
 
   /**
    * @brief Get distance from ray origin.
    * @return Distance value.
    */
-  [[nodiscard]] constexpr double
-  getDistance() const noexcept;
+  [[nodiscard]] constexpr double getDistance() const noexcept;
 
   /**
    * @brief Determine if intersection was from inside the primitive.
    * @return True if inside.
    */
-  [[nodiscard]] constexpr bool
-  getIsInside() const noexcept;
+  [[nodiscard]] constexpr bool getIsInside() const noexcept;
 
   /**
    * @brief Get texture coordinates at intersection.
    * @return UV coordinates.
    */
-  [[nodiscard]] constexpr const Math::Point<2> &
-  getUv() const noexcept;
+  [[nodiscard]] constexpr const Math::Point<2> &getUv() const noexcept;
 
 private:
   Math::Point<3> m_point{};

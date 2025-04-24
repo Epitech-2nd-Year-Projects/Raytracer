@@ -36,8 +36,7 @@ public:
    * @param minDistance Minimum valid distance along the ray.
    * @param maxDistance Maximum valid distance along the ray.
    */
-  constexpr Ray(const Math::Point<3> &origin,
-                const Math::Vector<3> &direction,
+  constexpr Ray(const Math::Point<3> &origin, const Math::Vector<3> &direction,
                 double minDistance, double maxDistance) noexcept;
 
   /**

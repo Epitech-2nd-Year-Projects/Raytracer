@@ -1,6 +1,7 @@
 /**
  * @file AMaterial.hpp
- * @brief Defines the abstract base material class with diffuse and ambient properties.
+ * @brief Defines the abstract base material class with diffuse and ambient
+ * properties.
  */
 
 #pragma once
@@ -35,10 +36,8 @@ public:
    */
   AMaterial(const Color &diffuseColor, const Color &ambientColor,
             double ambientCoef, double diffuseCoef) noexcept
-      : m_diffuseColor(diffuseColor)
-      , m_ambientColor(ambientColor)
-      , m_ambientCoefficient(ambientCoef)
-      , m_diffuseCoefficient(diffuseCoef) {}
+      : m_diffuseColor(diffuseColor), m_ambientColor(ambientColor),
+        m_ambientCoefficient(ambientCoef), m_diffuseCoefficient(diffuseCoef) {}
 
   /**
    * @brief Destructor.
@@ -57,10 +56,9 @@ public:
    * @param lights Lights affecting the intersection.
    * @return Computed color.
    */
-  [[nodiscard]] Color
-  computeColor(const Intersection &intersection,
-               const Ray &ray,
-               const std::vector<std::shared_ptr<ILight>> &lights) const override = 0;
+  [[nodiscard]] Color computeColor(
+      const Intersection &intersection, const Ray &ray,
+      const std::vector<std::shared_ptr<ILight>> &lights) const override = 0;
 
   /**
    * @brief Get the diffuse color.
@@ -127,8 +125,8 @@ public:
   }
 
 private:
-  Color  m_diffuseColor{};
-  Color  m_ambientColor{};
+  Color m_diffuseColor{};
+  Color m_ambientColor{};
   double m_ambientCoefficient{0.0};
   double m_diffuseCoefficient{0.0};
 };

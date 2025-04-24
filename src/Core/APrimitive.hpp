@@ -50,9 +50,7 @@ public:
    * @brief Set primitive scale.
    * @param s New scale.
    */
-  void setScale(const Math::Vector<3> &s) noexcept override {
-    m_scale = s;
-  }
+  void setScale(const Math::Vector<3> &s) noexcept override { m_scale = s; }
 
   /**
    * @brief Set primitive material.
@@ -104,8 +102,7 @@ public:
    * @param r Rotation to set.
    * @param s Scale to set.
    */
-  void transform(const Math::Point<3> &p,
-                 const Math::Vector<3> &r,
+  void transform(const Math::Point<3> &p, const Math::Vector<3> &r,
                  const Math::Vector<3> &s) noexcept override {
     setPosition(p);
     setRotation(r);

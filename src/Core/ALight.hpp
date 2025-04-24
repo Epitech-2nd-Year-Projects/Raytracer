@@ -3,7 +3,6 @@
  * @brief Defines abstract base and concrete light classes.
  */
 
-
 #pragma once
 
 #include "Core/Color.hpp"
@@ -82,7 +81,6 @@ private:
   Color m_color;
 };
 
-
 /**
  * @class ADirectionalLight
  * @brief Directional light source with parallel rays.
@@ -107,17 +105,15 @@ public:
    * @param direction New direction vector.
    */
   void setDirection(const Math::Vector<3> &direction) noexcept override {
-    m_direction = direction.length() > 0
-                    ? direction / direction.length()
-                    : Math::Vector<3>{0, -1, 0};
+    m_direction = direction.length() > 0 ? direction / direction.length()
+                                         : Math::Vector<3>{0, -1, 0};
   }
 
   /**
    * @brief Get the light direction.
    * @return Normalized direction vector.
    */
-  [[nodiscard]] const Math::Vector<3> &
-  getDirection() const noexcept override {
+  [[nodiscard]] const Math::Vector<3> &getDirection() const noexcept override {
     return m_direction;
   }
 
@@ -126,8 +122,8 @@ public:
    * @param point Ignored.
    * @return Normalized direction vector.
    */
-  [[nodiscard]] Math::Vector<3>
-  getDirectionFrom([[maybe_unused]] const Math::Point<3> &point) const noexcept override {
+  [[nodiscard]] Math::Vector<3> getDirectionFrom(
+      [[maybe_unused]] const Math::Point<3> &point) const noexcept override {
     return m_direction;
   }
 
@@ -145,9 +141,8 @@ public:
   }
 
 private:
-  Math::Vector<3> m_direction{};  /**< Normalized direction. */
+  Math::Vector<3> m_direction{}; /**< Normalized direction. */
 };
-
 
 /**
  * @class APositionalLight
