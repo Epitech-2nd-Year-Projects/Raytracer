@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Color.hpp"
-#include "ILight.hpp"
+#include "Core/Color.hpp"
+#include "Core/ILight.hpp"
 #include "Math/Point.hpp"
 #include "Math/Vector.hpp"
 #include "Utility/Clamped.hpp"
@@ -30,7 +30,7 @@ public:
     return m_color;
   }
 
-  [[nodiscard]] bool castsShadow() const noexcept override { return true; }
+  [[nodiscard]] bool castsShadow() const noexcept override = 0;
 
 private:
   Utility::Clamped<double, 0.0, 1.0> m_intensity{1.0};
