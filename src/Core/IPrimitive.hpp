@@ -6,9 +6,9 @@
 #include "Core/BoundingBox.hpp"
 #include "Core/IMaterial.hpp"
 #include "Core/Intersection.hpp"
+#include "Core/Ray.hpp"
 #include "Math/Point.hpp"
 #include "Math/Vector.hpp"
-#include "Core/Ray.hpp"
 
 namespace Raytracer::Core {
 
@@ -31,12 +31,9 @@ public:
   virtual void setScale(const Math::Vector<3> &scale) noexcept = 0;
   virtual void setMaterial(std::unique_ptr<IMaterial> material) noexcept = 0;
 
-  [[nodiscard]] virtual const Math::Point<3> &
-  getPosition() const noexcept = 0;
-  [[nodiscard]] virtual const Math::Vector<3> &
-  getRotation() const noexcept = 0;
-  [[nodiscard]] virtual const Math::Vector<3> &
-  getScale() const noexcept = 0;
+  [[nodiscard]] virtual const Math::Point<3> &getPosition() const noexcept = 0;
+  [[nodiscard]] virtual const Math::Vector<3> &getRotation() const noexcept = 0;
+  [[nodiscard]] virtual const Math::Vector<3> &getScale() const noexcept = 0;
   [[nodiscard]] virtual const std::unique_ptr<IMaterial> &
   getMaterial() const noexcept = 0;
 };

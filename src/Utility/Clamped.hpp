@@ -8,7 +8,7 @@ template <typename T>
 concept Arithmetic = std::is_arithmetic_v<T>;
 
 template <Arithmetic T, T Min, T Max>
-  requires (Min <= Max)
+  requires(Min <= Max)
 class Clamped {
 public:
   constexpr Clamped() noexcept = default;

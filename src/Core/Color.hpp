@@ -25,4 +25,4 @@ private:
   Utility::Clamped<double, 0.0, 255.0> m_g{0.0};
   Utility::Clamped<double, 0.0, 255.0> m_b{0.0};
 };
-}
+} // namespace Raytracer::Core

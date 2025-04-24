@@ -8,10 +8,13 @@ namespace Raytracer::Core {
 class ILightBase {
 protected:
   ILightBase() noexcept = default;
+
 public:
   virtual ~ILightBase() noexcept = default;
 
-  [[nodiscard]] virtual double computeIllumination(const Math::Point<3> &intersectionPoint, const Math::Vector<3> &normal) const noexcept = 0;
+  [[nodiscard]] virtual double
+  computeIllumination(const Math::Point<3> &intersectionPoint,
+                      const Math::Vector<3> &normal) const noexcept = 0;
 
   [[nodiscard]] virtual bool castsShadow() const noexcept = 0;
 
@@ -24,21 +27,26 @@ public:
 
 class IDirectionalLight : public virtual ILightBase {
 protected:
-    IDirectionalLight() noexcept = default;
+  IDirectionalLight() noexcept = default;
+
 public:
   virtual void setDirection(const Math::Vector<3> &direction) noexcept = 0;
-  [[nodiscard]] virtual const Math::Vector<3> &getDirection() const noexcept = 0;
-  [[nodiscard]] virtual Math::Vector<3> getDirectionFrom(const Math::Point<3> &point) const noexcept = 0;
+  [[nodiscard]] virtual const Math::Vector<3> &
+  getDirection() const noexcept = 0;
+  [[nodiscard]] virtual Math::Vector<3>
+  getDirectionFrom(const Math::Point<3> &point) const noexcept = 0;
 };
 
 class IPositionalLight : public virtual ILightBase {
 protected:
-    IPositionalLight() noexcept = default;
+  IPositionalLight() noexcept = default;
+
 public:
   virtual void setPosition(const Math::Point<3> &position) noexcept = 0;
   [[nodiscard]] virtual const Math::Point<3> &getPosition() const noexcept = 0;
-  [[nodiscard]] virtual double getDistance(const Math::Point<3> &point) const noexcept = 0;
-  [[nodiscard]] virtual Math::Vector<3> getDirectionFrom(const Math::Point<3> &point) const noexcept = 0;
-
+  [[nodiscard]] virtual double
+  getDistance(const Math::Point<3> &point) const noexcept = 0;
+  [[nodiscard]] virtual Math::Vector<3>
+  getDirectionFrom(const Math::Point<3> &point) const noexcept = 0;
 };
 } // namespace Raytracer::Core
