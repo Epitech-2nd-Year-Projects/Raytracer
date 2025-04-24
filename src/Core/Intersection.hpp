@@ -2,10 +2,11 @@
 
 #include <memory>
 
-#include "IMaterial.hpp"
 #include "Math/Point.hpp"
+#include "Math/Vector.hpp"
 
 namespace Raytracer::Core {
+class IMaterial;
 
 class Intersection final {
 public:
