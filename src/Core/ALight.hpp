@@ -8,17 +8,17 @@
 
 namespace Raytracer::Core {
 
-class ALightBase : public virtual ILightBase {
+class ALight : public virtual ILight {
 public:
-  ALightBase() noexcept = default;
-  ALightBase(double intensity, const Color &color) noexcept
+  ALight() noexcept = default;
+  ALight(double intensity, const Color &color) noexcept
       : m_intensity(intensity), m_color(color) {}
-  ~ALightBase() noexcept override = default;
+  ~ALight() noexcept override = default;
 
-  ALightBase(const ALightBase &) = delete;
-  ALightBase(ALightBase &&) = delete;
-  ALightBase &operator=(const ALightBase &) = delete;
-  ALightBase &operator=(ALightBase &&) = delete;
+  ALight(const ALight &) = delete;
+  ALight(ALight &&) = delete;
+  ALight &operator=(const ALight &) = delete;
+  ALight &operator=(ALight &&) = delete;
 
   void setIntensity(double i) noexcept override { m_intensity = i; }
   void setColor(const Color &c) noexcept override { m_color = c; }
@@ -37,7 +37,7 @@ private:
   Color m_color;
 };
 
-class ADirectionalLight : public IDirectionalLight, public ALightBase {
+class ADirectionalLight : public IDirectionalLight, public ALight {
 public:
   ADirectionalLight() noexcept = default;
   explicit ADirectionalLight(const Math::Vector<3> &direction) noexcept {
@@ -69,7 +69,7 @@ private:
   Math::Vector<3> m_direction{};
 };
 
-class APositionalLight : public IPositionalLight, public ALightBase {
+class APositionalLight : public IPositionalLight, public ALight {
 public:
   APositionalLight() noexcept = default;
   explicit APositionalLight(const Math::Point<3> &position) noexcept

@@ -26,7 +26,7 @@ public:
 
   [[nodiscard]] Color
   computeColor(const Intersection &intersection, const Ray &ray,
-               const std::vector<std::shared_ptr<ILightBase>> &lights)
+               const std::vector<std::shared_ptr<ILight>> &lights)
       const override = 0;
 
   [[nodiscard]] const Color &getDiffuseColor() const noexcept override {

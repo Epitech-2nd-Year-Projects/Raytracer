@@ -5,12 +5,12 @@
 #include "Math/Vector.hpp"
 
 namespace Raytracer::Core {
-class ILightBase {
+class ILight {
 protected:
-  ILightBase() noexcept = default;
+  ILight() noexcept = default;
 
 public:
-  virtual ~ILightBase() noexcept = default;
+  virtual ~ILight() noexcept = default;
 
   [[nodiscard]] virtual double
   computeIllumination(const Math::Point<3> &intersectionPoint,
@@ -25,7 +25,7 @@ public:
   [[nodiscard]] virtual const Color &getColor() const noexcept = 0;
 };
 
-class IDirectionalLight : public virtual ILightBase {
+class IDirectionalLight : public virtual ILight {
 protected:
   IDirectionalLight() noexcept = default;
 
@@ -37,7 +37,7 @@ public:
   getDirectionFrom(const Math::Point<3> &point) const noexcept = 0;
 };
 
-class IPositionalLight : public virtual ILightBase {
+class IPositionalLight : public virtual ILight {
 protected:
   IPositionalLight() noexcept = default;
 

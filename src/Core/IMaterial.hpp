@@ -14,7 +14,7 @@ public:
 
   [[nodiscard]] virtual Color computeColor(
       const Intersection &intersection, const Ray &ray,
-      const std::vector<std::shared_ptr<ILightBase>> &lights) const = 0;
+      const std::vector<std::shared_ptr<ILight>> &lights) const = 0;
 
   [[nodiscard]] virtual const Color &getDiffuseColor() const noexcept = 0;
   [[nodiscard]] virtual const Color &getAmbientColor() const noexcept = 0;
