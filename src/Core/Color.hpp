@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Utility/Clamped.hpp"
 
 namespace Raytracer::Core {
@@ -13,8 +14,8 @@ public:
   [[nodiscard]] constexpr double getB() const noexcept { return m_b.get(); }
 
   void setR(const double red) noexcept { m_r = red; }
-  void setG(const double red) noexcept { m_r = red; }
-  void setB(const double red) noexcept { m_r = red; }
+  void setG(const double green) noexcept { m_g = green; }
+  void setB(const double blue) noexcept { m_b = blue; }
 
   [[nodiscard]] Color multiply(const Color &other) const noexcept;
   [[nodiscard]] Color add(const Color &other) const noexcept;
