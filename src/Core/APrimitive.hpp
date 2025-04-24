@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IPrimitive.hpp"
+#include "Core/IPrimitive.hpp"
 
 namespace Raytracer::Core {
 
