@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Math/Point.hpp"
-#include "../Math/Vector.hpp"
+#include "Math/Point.hpp"
+#include "Math/Vector.hpp"
 
 namespace Raytracer::Core {
 
