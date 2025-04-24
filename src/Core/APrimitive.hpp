@@ -21,7 +21,7 @@ public:
     m_rotation = r;
   }
   void setScale(const Math::Vector<3> &s) noexcept override { m_scale = s; }
-  void setMaterial(std::unique_ptr<IMaterial> m) noexcept {
+  void setMaterial(std::unique_ptr<IMaterial> m) noexcept override {
     m_material = std::move(m);
   }
 
