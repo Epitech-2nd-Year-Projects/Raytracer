@@ -32,6 +32,7 @@ set(SOURCES
   src/main.cpp
   src/Core/Ray.cpp
   src/Core/Intersection.cpp
+  src/Core/Color.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
@@ -68,8 +69,12 @@ set(TEST_SOURCES
   tests/test_Ray.cpp
 )
 
+set(IMPLEMENTATION_SOURCES ${SOURCES})
+list(REMOVE_ITEM IMPLEMENTATION_SOURCES src/main.cpp)
+
 add_executable(raytracer_tests
   ${TEST_SOURCES}
+  ${IMPLEMENTATION_SOURCES}
 )
 
 target_include_directories(raytracer_tests
