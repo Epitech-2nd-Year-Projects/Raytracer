@@ -26,8 +26,7 @@ public:
    * @param origin Ray origin.
    * @param direction Ray direction.
    */
-  Ray(const Math::Point<3> &origin,
-                const Math::Vector<3> &direction) noexcept;
+  Ray(const Math::Point<3> &origin, const Math::Vector<3> &direction) noexcept;
 
   /**
    * @brief Construct ray with origin, direction, and distance range.
@@ -37,7 +36,7 @@ public:
    * @param maxDistance Maximum valid distance along the ray.
    */
   Ray(const Math::Point<3> &origin, const Math::Vector<3> &direction,
-                double minDistance, double maxDistance) noexcept;
+      double minDistance, double maxDistance) noexcept;
 
   /**
    * @brief Get ray origin.
