@@ -26,7 +26,7 @@ public:
    * @param green Green component [0, 255].
    * @param blue Blue component [0, 255].
    */
-  constexpr Color(double red, double green, double blue) noexcept;
+  Color(double red, double green, double blue) noexcept;
 
   /**
    * @brief Get red component.
