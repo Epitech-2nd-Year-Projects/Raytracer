@@ -36,7 +36,6 @@ public:
    */
   ~ALight() noexcept override = default;
 
-  // non-copyable, non-movable
   ALight(const ALight &) = delete;
   ALight(ALight &&) = delete;
   ALight &operator=(const ALight &) = delete;
