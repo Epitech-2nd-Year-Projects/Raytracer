@@ -72,9 +72,9 @@ public:
 
   /**
    * @brief Assign a material to the primitive.
-   * @param material Unique pointer to the material.
+   * @param material Shared pointer to the material.
    */
-  virtual void setMaterial(std::unique_ptr<IMaterial> material) noexcept = 0;
+  virtual void setMaterial(std::shared_ptr<IMaterial> material) noexcept = 0;
 
   /**
    * @brief Get the primitive's position.
@@ -98,7 +98,7 @@ public:
    * @brief Get the assigned material.
    * @return Constant reference to the material pointer.
    */
-  [[nodiscard]] virtual const std::unique_ptr<IMaterial> &
+  [[nodiscard]] virtual const std::shared_ptr<IMaterial> &
   getMaterial() const noexcept = 0;
 };
 
