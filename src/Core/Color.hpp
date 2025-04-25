@@ -32,37 +32,37 @@ public:
    * @brief Get red component.
    * @return Red value.
    */
-  [[nodiscard]] constexpr double getR() const noexcept { return m_r.get(); }
+  [[nodiscard]] constexpr double getR() const noexcept;
 
   /**
    * @brief Get green component.
    * @return Green value.
    */
-  [[nodiscard]] constexpr double getG() const noexcept { return m_g.get(); }
+  [[nodiscard]] constexpr double getG() const noexcept;
 
   /**
    * @brief Get blue component.
    * @return Blue value.
    */
-  [[nodiscard]] constexpr double getB() const noexcept { return m_b.get(); }
+  [[nodiscard]] constexpr double getB() const noexcept;
 
   /**
    * @brief Set red component.
    * @param red New red value.
    */
-  void setR(double red) noexcept { m_r = red; }
+  void setR(double red) noexcept;
 
   /**
    * @brief Set green component.
    * @param green New green value.
    */
-  void setG(double green) noexcept { m_g = green; }
+  void setG(double green) noexcept;
 
   /**
    * @brief Set blue component.
    * @param blue New blue value.
    */
-  void setB(double blue) noexcept { m_b = blue; }
+  void setB(double blue) noexcept;
 
   /**
    * @brief Component-wise multiplication.
