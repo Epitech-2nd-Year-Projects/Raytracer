@@ -30,9 +30,6 @@ find_library(LIBCONFIGPP_LIBRARY
 
 set(SOURCES
   src/main.cpp
-  src/Core/Ray.cpp
-  src/Core/Intersection.cpp
-  src/Core/Color.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
