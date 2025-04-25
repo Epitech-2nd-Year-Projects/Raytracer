@@ -56,7 +56,7 @@ public:
    * @brief Set primitive material.
    * @param m Material to apply.
    */
-  void setMaterial(std::unique_ptr<IMaterial> m) noexcept override {
+  void setMaterial(std::shared_ptr<IMaterial> m) noexcept override {
     m_material = std::move(m);
   }
 
@@ -91,7 +91,7 @@ public:
    * @brief Get primitive material.
    * @return Material pointer.
    */
-  [[nodiscard]] const std::unique_ptr<IMaterial> &
+  [[nodiscard]] const std::shared_ptr<IMaterial> &
   getMaterial() const noexcept override {
     return m_material;
   }
@@ -127,7 +127,7 @@ private:
   Math::Point<3> m_position{};
   Math::Vector<3> m_rotation{};
   Math::Vector<3> m_scale{1, 1, 1};
-  std::unique_ptr<IMaterial> m_material{nullptr};
+  std::shared_ptr<IMaterial> m_material{nullptr};
 };
 
 } // namespace Raytracer::Core
