@@ -26,7 +26,8 @@ public:
    * @param green Green component [0, 255].
    * @param blue Blue component [0, 255].
    */
-  constexpr Color(double red, double green, double blue) noexcept;
+  Color(double red, double green, double blue) noexcept
+      : m_r(red), m_g(green), m_b(blue) {}
 
   /**
    * @brief Get red component.
@@ -69,21 +70,30 @@ public:
    * @param other Other color.
    * @return Resulting color.
    */
-  [[nodiscard]] Color multiply(const Color &other) const noexcept;
+  [[nodiscard]] Color multiply(const Color &other) const noexcept {
+    return Color(getR() * other.getR() / 255.0, getG() * other.getG() / 255.0,
+                 getB() * other.getB() / 255.0);
+  }
 
   /**
    * @brief Component-wise addition.
    * @param other Other color.
    * @return Resulting color.
    */
-  [[nodiscard]] Color add(const Color &other) const noexcept;
+  [[nodiscard]] Color add(const Color &other) const noexcept {
+    return Color(getR() + other.getR(), getG() + other.getG(),
+                 getB() + other.getB());
+  }
 
   /**
    * @brief Component-wise scaling.
    * @param other Other color.
    * @return Resulting color.
    */
-  [[nodiscard]] Color scale(const Color &other) const noexcept;
+  [[nodiscard]] Color scale(const Color &other) const noexcept {
+    return Color(getR() * other.getR(), getG() * other.getG(),
+                 getB() * other.getB());
+  }
 
 private:
   Utility::Clamped<double, 0.0, 255.0> m_r{0.0};

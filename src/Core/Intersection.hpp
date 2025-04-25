@@ -34,43 +34,51 @@ public:
    */
   Intersection(const Math::Point<3> &point, const Math::Vector<3> &normal,
                std::shared_ptr<IMaterial> material, double distance,
-               bool isInside, const Math::Point<2> &uv) noexcept;
+               bool isInside, const Math::Point<2> &uv) noexcept
+      : m_point(point), m_normal(normal), m_material(std::move(material)),
+        m_distance(distance), m_isInside(isInside), m_uv(uv) {}
 
   /**
    * @brief Get the intersection point.
    * @return Point of intersection.
    */
-  [[nodiscard]] constexpr const Math::Point<3> &getPoint() const noexcept;
+  [[nodiscard]] const Math::Point<3> &getPoint() const noexcept {
+    return m_point;
+  }
 
   /**
    * @brief Get the surface normal at the intersection.
    * @return Normal vector.
    */
-  [[nodiscard]] constexpr const Math::Vector<3> &getNormal() const noexcept;
+  [[nodiscard]] const Math::Vector<3> &getNormal() const noexcept {
+    return m_normal;
+  }
 
   /**
    * @brief Get the material at the intersection.
    * @return Shared pointer to the material.
    */
-  [[nodiscard]] std::shared_ptr<IMaterial> getMaterial() const noexcept;
+  [[nodiscard]] std::shared_ptr<IMaterial> getMaterial() const noexcept {
+    return m_material;
+  }
 
   /**
    * @brief Get distance from ray origin.
    * @return Distance value.
    */
-  [[nodiscard]] constexpr double getDistance() const noexcept;
+  [[nodiscard]] double getDistance() const noexcept { return m_distance; }
 
   /**
    * @brief Determine if intersection was from inside the primitive.
    * @return True if inside.
    */
-  [[nodiscard]] constexpr bool getIsInside() const noexcept;
+  [[nodiscard]] bool getIsInside() const noexcept { return m_isInside; }
 
   /**
    * @brief Get texture coordinates at intersection.
    * @return UV coordinates.
    */
-  [[nodiscard]] constexpr const Math::Point<2> &getUv() const noexcept;
+  [[nodiscard]] const Math::Point<2> &getUv() const noexcept { return m_uv; }
 
 private:
   Math::Point<3> m_point{};
