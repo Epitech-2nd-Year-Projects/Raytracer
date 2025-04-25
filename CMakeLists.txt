@@ -30,6 +30,8 @@ find_library(LIBCONFIGPP_LIBRARY
 
 set(SOURCES
   src/main.cpp
+  src/Core/Ray.cpp
+  src/Core/Intersection.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
@@ -62,6 +64,8 @@ pkg_check_modules(CRITERION REQUIRED criterion)
 set(TEST_SOURCES
   tests/test_Vector.cpp
   tests/test_Point.cpp
+  tests/test_Intersection.cpp
+  tests/test_Ray.cpp
 )
 
 add_executable(raytracer_tests
