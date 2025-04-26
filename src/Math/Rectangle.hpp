@@ -1,7 +1,7 @@
 /**
- * @file Point.hpp
- * @brief Defines the Point class template for representing mathematical
- * points.
+ * @file Rectangle.hpp
+ * @brief Defines the Rectangle class template for representing rectangles in
+ * N-dimensional space.
  */
 
 #pragma once
