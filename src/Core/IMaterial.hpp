@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Core/Color.hpp"
+#include "Core/Scene.hpp"
 #include <memory>
 #include <vector>
 
@@ -29,11 +30,12 @@ public:
    * @param intersection Intersection information.
    * @param ray Incoming ray.
    * @param lights Lights affecting the intersection.
+   * @param scene Scene containing all objects.
    * @return Computed color.
    */
-  [[nodiscard]] virtual Color
-  computeColor(const Intersection &intersection, const Ray &ray,
-               const std::vector<std::shared_ptr<ILight>> &lights) const = 0;
+  virtual Color computeColor(const Intersection &intersection, const Ray &ray,
+                             const std::vector<std::shared_ptr<ILight>> &lights,
+                             const Core::Scene &scene) const = 0;
 
   /**
    * @brief Get the diffuse color.
