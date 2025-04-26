@@ -105,7 +105,7 @@ public:
    */
   void setDirection(const Math::Vector<3> &direction) noexcept override {
     m_direction = direction.length() > 0 ? direction / direction.length()
-                                         : Math::Vector<3>{0, -1, 0};
+                                         : Math::Vector<3>{0.0, -1.0, 0.0};
   }
 
   /**
@@ -133,7 +133,7 @@ public:
    * @return Illumination factor [0.0, intensity].
    */
   [[nodiscard]] double
-  computeIllumination(const Math::Point<3> &intersectionPoint,
+  computeIllumination([[maybe_unused]] const Math::Point<3> &intersectionPoint,
                       const Math::Vector<3> &normal) const noexcept override {
     double dot = normal.dot(m_direction * -1.0);
     return dot > 0.0 ? dot * getIntensity() : 0.0;
@@ -201,7 +201,7 @@ public:
     if (length > 0.0) {
       return direction / length;
     }
-    return Math::Vector<3>{0, 0, 1};
+    return Math::Vector<3>{0.0, 0.0, 1.0};
   }
 
   /**
