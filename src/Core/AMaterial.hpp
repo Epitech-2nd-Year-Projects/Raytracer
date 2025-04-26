@@ -58,9 +58,10 @@ public:
    * @param lights Lights affecting the intersection.
    * @return Computed color.
    */
-  [[nodiscard]] Color computeColor(
-      const Intersection &intersection, const Ray &ray,
-      const std::vector<std::shared_ptr<ILight>> &lights) const override = 0;
+  [[nodiscard]] Color
+  computeColor(const Intersection &intersection, const Ray &ray,
+               const std::vector<std::shared_ptr<ILight>> &lights,
+               const Scene &scene) const override = 0;
 
   /**
    * @brief Get the diffuse color.
