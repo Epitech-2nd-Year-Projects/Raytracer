@@ -12,7 +12,7 @@ namespace Raytracer::Lights {
  * @class AmbientLight
  * @brief Ambient light that provides constant illumination in all directions
  */
-class AmbientLight final : public Core::ALight {
+class AmbientLight final : public Core::ALight, public Core::IAmbientLight {
 public:
   /**
    * @brief Default constructor
@@ -23,7 +23,8 @@ public:
    * @brief Constructor with specified intensity
    * @param intensity The intensity value for the ambient light
    */
-  explicit AmbientLight(double intensity) noexcept { setIntensity(intensity); }
+  explicit AmbientLight(double intensity) noexcept
+      : ALight(intensity, Core::Color(255.0, 255.0, 255.0)) {}
 
   /**
    * @brief Computes the illumination at the specified intersection point
