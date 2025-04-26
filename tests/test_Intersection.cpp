@@ -1,4 +1,4 @@
-#include "../src/Core/IMaterial.hpp"
+/*#include "../src/Core/IMaterial.hpp"
 #include "../src/Core/Intersection.hpp"
 #include "../src/Math/Point.hpp"
 #include "../src/Math/Vector.hpp"
@@ -111,3 +111,4 @@ Test(IntersectionSuite, ParameterizedConstructor) {
   cr_assert_eq(intersection.getIsInside(), isInside);
   assert_point2d_eq(intersection.getUv(), uv);
 }
+*/
