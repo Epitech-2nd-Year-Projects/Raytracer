@@ -9,7 +9,10 @@
 #include <array>
 #include <cmath>
 #include <cstddef>
+
 namespace Raytracer::Math {
+
+template <std::size_t N> class Point;
 
 /**
  * @class Vector
@@ -291,4 +294,21 @@ private:
     setComponents(index + 1, args...);
   }
 };
+
+/**
+ * @brief Subtracting two points.
+ * @param lhs The left-hand side point.
+ * @param rhs The right-hand side point.
+ * @return A new vector that is the difference of the two points.
+ */
+template <std::size_t N>
+[[nodiscard]] Vector<N> operator-(const Point<N> &lhs, const Point<N> &rhs) {
+  Vector<N> result;
+
+  for (std::size_t i = 0; i < N; ++i) {
+    result.m_components[i] = lhs.m_components[i] - rhs.m_components[i];
+  }
+
+  return result;
+}
 } // namespace Raytracer::Math
