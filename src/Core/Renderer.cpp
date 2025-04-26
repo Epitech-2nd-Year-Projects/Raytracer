@@ -28,4 +28,22 @@ void Renderer::render(const Scene &scene, const std::string &filename) const {
     file << "\n";
   }
 }
+
+[[nodiscard]] Color Renderer::computePixelColor(const Scene &scene,
+                                                std::size_t x,
+                                                std::size_t y) const {
+  (void)scene;
+  (void)x;
+  (void)y;
+
+  return Color(0, 0, 0);
+}
+
+[[nodiscard]] Color Renderer::traceRay(const Scene &scene,
+                                       const Ray &ray) const {
+  (void)scene;
+  (void)ray;
+
+  return Color(0, 0, 0);
+}
 } // namespace Raytracer::Core
