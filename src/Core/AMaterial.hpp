@@ -56,6 +56,7 @@ public:
    * @param intersection Intersection information.
    * @param ray Incoming ray.
    * @param lights Lights affecting the intersection.
+   * @param scene Scene containing all objects.
    * @return Computed color.
    */
   [[nodiscard]] Color
