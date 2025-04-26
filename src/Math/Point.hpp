@@ -37,6 +37,17 @@ public:
   }
 
   /**
+   * @brief Copy constructor.
+   * @param other The point to copy.
+   */
+  Vector<N> operator-(const Point<N> &other) const {
+    Vector<N> result;
+    for (size_t i = 0; i < N; ++i) {
+      result.m_components[i] = m_components[i] - other.m_components[i];
+    }
+    return result;
+  }
+  /**
    * @brief Adding a point and a vector.
    * @param vec The vector to add.
    * @return A new point that is the sum of the point and the vector.
