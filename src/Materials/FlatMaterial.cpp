@@ -15,6 +15,7 @@ Core::Color FlatMaterial::computeColor(
   finalColor = Core::Color(finalColor.getR() * getAmbientCoefficient(),
                            finalColor.getG() * getAmbientCoefficient(),
                            finalColor.getB() * getAmbientCoefficient());
+
   for (const auto &light : lights) {
     const Math::Vector<3> &normal = intersection.getNormal();
 
