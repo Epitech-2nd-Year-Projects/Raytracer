@@ -1,0 +1,30 @@
+name: "Run Tests"
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    name: "Build and Run CTest in Epitech Docker"
+    container: epitechcontent/epitest-docker:latest
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure CMake
+        run: |
+          cmake -S . -B build -D CMAKE_BUILD_TYPE=Debug
+
+      - name: Build project (including tests)
+        run: |
+          cmake --build build
+
+      - name: Run CTest
+        working-directory: ./build
+        run: |
+          ctest --output-on-failure
