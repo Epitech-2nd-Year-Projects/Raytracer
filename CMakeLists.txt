@@ -30,6 +30,7 @@ find_library(LIBCONFIGPP_LIBRARY
 
 set(SOURCES
   src/main.cpp
+  src/Primitives/Sphere.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
@@ -64,6 +65,7 @@ set(TEST_SOURCES
   tests/test_Point.cpp
   tests/test_Intersection.cpp
   tests/test_Ray.cpp
+  tests/test_Sphere.cpp
 )
 
 set(IMPLEMENTATION_SOURCES ${SOURCES})
