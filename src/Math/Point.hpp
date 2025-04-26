@@ -37,8 +37,9 @@ public:
   }
 
   /**
-   * @brief Copy constructor.
-   * @param other The point to copy.
+   * @brief Subtracting one point from another.
+   * @param other The point to subtract from this point.
+   * @return A vector representing the difference between the two points.
    */
   Vector<N> operator-(const Point<N> &other) const {
     Vector<N> result;
