@@ -226,6 +226,16 @@ public:
     return *this;
   }
 
+  Vector<N> operator-() const {
+    Vector<N> result;
+
+    for (std::size_t i = 0; i < N; ++i) {
+      result.m_components[i] = -m_components[i];
+    }
+
+    return result;
+  }
+
   /**
    * @brief Calculate the dot product of two vectors.
    * @param other The vector to calculate the dot product with.
