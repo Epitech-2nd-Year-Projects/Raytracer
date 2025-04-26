@@ -2,16 +2,19 @@
 
 namespace Raytracer::Primitives {
 
-Sphere::Sphere(const Math::Point<3>& center, double radius) noexcept
-  : m_radius(radius), m_center(center) {}
+Sphere::Sphere(const Math::Point<3> &center, double radius) noexcept
+    : m_radius(radius), m_center(center) {}
 
 void Sphere::setRadius(double r) noexcept { m_radius = r; }
-void Sphere::setCenter(const Math::Point<3> &center) noexcept { m_center = center; }
+void Sphere::setCenter(const Math::Point<3> &center) noexcept {
+  m_center = center;
+}
 
 double Sphere::getRadius() const noexcept { return m_radius; }
 const Math::Point<3> &Sphere::getCenter() const noexcept { return m_center; }
 
-[[nodiscard]] std::optional<Core::Intersection> Sphere::intersect(const Core::Ray &ray) const noexcept {
+[[nodiscard]] std::optional<Core::Intersection>
+Sphere::intersect(const Core::Ray &ray) const noexcept {
   Math::Vector<3> oc = ray.getOrigin() - m_center;
 
   double a = ray.getDirection().dot(ray.getDirection());
@@ -40,7 +43,7 @@ const Math::Point<3> &Sphere::getCenter() const noexcept { return m_center; }
     t = t2;
   }
 
-  Math::Point<3> intersectionPoint  = ray.at(t);
+  Math::Point<3> intersectionPoint = ray.at(t);
   Math::Vector<3> dirToCenter = Math::Vector<3>(intersectionPoint - m_center);
   Math::Vector<3> normal = dirToCenter / m_radius;
 
@@ -56,18 +59,15 @@ const Math::Point<3> &Sphere::getCenter() const noexcept { return m_center; }
   double u = (phi + M_PI) / (2 * M_PI);
   double v = theta / M_PI;
 
-  return Core::Intersection(
-    intersectionPoint,
-    normal,
-    this->getMaterial(),
-    t,
-    isInside,
-    Math::Point<2> {u, v}
-    );
+  return Core::Intersection(intersectionPoint, normal, this->getMaterial(), t,
+                            isInside, Math::Point<2>{u, v});
 }
 
 [[nodiscard]] Core::BoundingBox Sphere::getBoundingBox() const noexcept {
-
+  Math::Vector<3> radiusVec(m_radius, m_radius, m_radius);
+  Math::Point<3> min = m_center - radiusVec;
+  Math::Point<3> max = m_center + radiusVec;
+  return Core::BoundingBox(min, max);
 }
 
-}
+} // namespace Raytracer::Primitives
