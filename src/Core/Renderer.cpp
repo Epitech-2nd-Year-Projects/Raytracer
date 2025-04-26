@@ -32,11 +32,10 @@ void Renderer::render(const Scene &scene, const std::string &filename) const {
 [[nodiscard]] Color Renderer::computePixelColor(const Scene &scene,
                                                 std::size_t x,
                                                 std::size_t y) const {
-  (void)scene;
-  (void)x;
-  (void)y;
+  Utility::Clamped<double, 0.0, 1.0> u(static_cast<double>(x) / (m_width - 1));
+  Utility::Clamped<double, 0.0, 1.0> v(static_cast<double>(y) / (m_height - 1));
 
-  return Color(0, 0, 0);
+  return traceRay(scene, scene.getCamera().ray(u, v));
 }
 
 [[nodiscard]] Color Renderer::traceRay(const Scene &scene,
