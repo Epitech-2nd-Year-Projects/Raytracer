@@ -1,6 +1,8 @@
 #include "Core/Renderer.hpp"
+#include "Core/IMaterial.hpp"
 #include "Exceptions/OutputException.hpp"
 #include <fstream>
+#include <memory>
 
 namespace Raytracer::Core {
 void Renderer::render(const Scene &scene, const std::string &filename) const {
@@ -40,9 +42,34 @@ void Renderer::render(const Scene &scene, const std::string &filename) const {
 
 [[nodiscard]] Color Renderer::traceRay(const Scene &scene,
                                        const Ray &ray) const {
-  (void)scene;
-  (void)ray;
+  std::optional<Intersection> nearestHit;
+  double nearestDistance = std::numeric_limits<double>::infinity();
 
-  return Color(0, 0, 0);
+  for (const auto &[id, primitive] : scene.getPrimitives()) {
+    if (std::optional<Intersection> hit = primitive->intersect(ray)) {
+      if (hit->getDistance() < nearestDistance) {
+        nearestDistance = hit->getDistance();
+        nearestHit = hit;
+      }
+    }
+  }
+
+  if (!nearestHit) {
+    return Color(0, 0, 0);
+  }
+
+  std::shared_ptr<IMaterial> material = nearestHit->getMaterial();
+
+  if (!material) {
+    return Color(0, 0, 0);
+  }
+
+  std::vector<std::shared_ptr<ILight>> lights;
+
+  for (const auto &[id, light] : scene.getLights()) {
+    lights.push_back(std::shared_ptr<ILight>(light.get(), [](ILight *) {}));
+  }
+
+  return material->computeColor(*nearestHit, ray, lights);
 }
 } // namespace Raytracer::Core
