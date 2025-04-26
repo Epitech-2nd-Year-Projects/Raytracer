@@ -37,6 +37,19 @@ public:
   }
 
   /**
+   * @brief Subtracting one point from another.
+   * @param other The point to subtract from this point.
+   * @return A vector representing the difference between the two points.
+   */
+  Vector<N> operator-(const Point<N> &other) const {
+    Vector<N> result;
+    for (size_t i = 0; i < N; ++i) {
+      result.m_components[i] = m_components[i] - other.m_components[i];
+    }
+    return result;
+  }
+  
+  /**
    * @brief Default destructor for the Point class.
    */
   ~Point() noexcept = default;

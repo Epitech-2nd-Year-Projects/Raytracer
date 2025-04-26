@@ -126,7 +126,7 @@ public:
 private:
   Math::Point<3> m_position{};
   Math::Vector<3> m_rotation{};
-  Math::Vector<3> m_scale{1, 1, 1};
+  Math::Vector<3> m_scale{1.0, 1.0, 1.0};
   std::shared_ptr<IMaterial> m_material{nullptr};
 };
 

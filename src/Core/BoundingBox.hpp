@@ -27,7 +27,8 @@ public:
    * @param max Maximum corner of the box.
    */
   constexpr BoundingBox(const Math::Point<3> &min,
-                        const Math::Point<3> &max) noexcept;
+                        const Math::Point<3> &max) noexcept
+      : m_min(min), m_max(max) {}
 
   /**
    * @brief Test intersection with a ray.
@@ -55,13 +56,17 @@ public:
    * @brief Get the minimum corner.
    * @return Reference to the minimum point.
    */
-  [[nodiscard]] constexpr Math::Point<3> &getMin() const noexcept;
+  [[nodiscard]] constexpr const Math::Point<3> &getMin() const noexcept {
+    return m_min;
+  }
 
   /**
    * @brief Get the maximum corner.
    * @return Reference to the maximum point.
    */
-  [[nodiscard]] constexpr Math::Point<3> &getMax() const noexcept;
+  [[nodiscard]] constexpr const Math::Point<3> &getMax() const noexcept {
+    return m_max;
+  }
 
 private:
   Math::Point<3> m_min{};
