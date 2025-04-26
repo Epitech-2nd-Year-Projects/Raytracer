@@ -7,6 +7,7 @@
 
 #include "Core/Color.hpp"
 #include "Core/ILight.hpp"
+#include "Core/Scene.hpp"
 #include "Math/Point.hpp"
 #include "Math/Vector.hpp"
 #include "Utility/Clamped.hpp"
@@ -220,6 +221,18 @@ public:
         1.0 / (1.0 + 0.1 * distance + 0.01 * distance * distance);
     return dot > 0.0 ? dot * getIntensity() * attenuation : 0.0;
   }
+
+  /**
+   * @brief Computes the illumination considering shadows
+   * @param intersectionPoint The point of intersection
+   * @param normal The surface normal at the intersection point
+   * @param scene The scene containing all objects
+   * @return The illumination value considering shadows
+   */
+  [[nodiscard]] virtual double
+  computeIllumination(const Math::Point<3> &intersectionPoint,
+                      const Math::Vector<3> &normal,
+                      const Core::Scene &scene) const noexcept = 0;
 
 private:
   Math::Point<3> m_position{};
