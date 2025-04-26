@@ -13,6 +13,7 @@ pkg_check_modules(Criterion REQUIRED IMPORTED_TARGET criterion)
 set(SOURCES
   src/main.cpp
   src/Primitives/Sphere.cpp
+  src/Core/Renderer.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
