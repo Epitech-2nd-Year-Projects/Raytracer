@@ -17,15 +17,21 @@ Core::Color FlatMaterial::computeColor(
     const Core::Intersection &intersection,
     [[maybe_unused]] const Core::Ray &ray,
     const std::vector<std::shared_ptr<Core::ILight>> &lights) const {
-  Core::Color finalColor = getAmbientColor();
-  finalColor = Core::Color(finalColor.getR() * getAmbientCoefficient(),
-                           finalColor.getG() * getAmbientCoefficient(),
-                           finalColor.getB() * getAmbientCoefficient());
+  Core::Color finalColor = Core::Black;
 
   for (const auto &light : lights) {
     const Math::Vector<3> &normal = intersection.getNormal();
 
-    if (auto directionalLight =
+    if (auto ambientLight = std::dynamic_pointer_cast<Core::IAmbientLight>(light)) {
+      double ambientIntensity = ambientLight->getIntensity();
+      const Core::Color &lightColor = ambientLight->getColor();
+      Core::Color ambientColor = getAmbientColor();
+      Core::Color ambComp{
+        ambientColor.getR() * getAmbientCoefficient() * ambientIntensity * lightColor.getR() / 255.0,
+        ambientColor.getG() * getAmbientCoefficient() * ambientIntensity * lightColor.getG() / 255.0,
+        ambientColor.getB() * getAmbientCoefficient() * ambientIntensity * lightColor.getB() / 255.0};
+      finalColor = finalColor.add(ambComp);
+    } else if (auto directionalLight =
             std::dynamic_pointer_cast<Core::IDirectionalLight>(light)) {
       Math::Vector<3> lightDir = directionalLight->getDirection() * -1.0;
       double dotResult = normal.dot(lightDir);
