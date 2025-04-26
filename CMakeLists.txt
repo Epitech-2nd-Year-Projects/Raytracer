@@ -49,6 +49,7 @@ set(TEST_SOURCES
   tests/test_Rectangle.cpp
   tests/test_Camera.cpp
   tests/test_Scene.cpp
+  tests/test_Renderer.cpp
 )
 
 set(IMPLEMENTATION_SOURCES ${SOURCES})
