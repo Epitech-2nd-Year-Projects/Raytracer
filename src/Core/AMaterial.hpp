@@ -1,3 +1,4 @@
+
 /**
  * @file AMaterial.hpp
  * @brief Defines the abstract base material class with diffuse and ambient
@@ -11,6 +12,7 @@
 #include "Core/IMaterial.hpp"
 #include "Core/Intersection.hpp"
 #include "Core/Ray.hpp"
+#include "Utility/Clamped.hpp"
 
 #include <vector>
 
@@ -81,7 +83,7 @@ public:
    * @return Ambient coefficient.
    */
   [[nodiscard]] double getAmbientCoefficient() const noexcept override {
-    return m_ambientCoefficient;
+    return m_ambientCoefficient.get();
   }
 
   /**
@@ -89,7 +91,7 @@ public:
    * @return Diffuse coefficient.
    */
   [[nodiscard]] double getDiffuseCoefficient() const noexcept override {
-    return m_diffuseCoefficient;
+    return m_diffuseCoefficient.get();
   }
 
   /**
@@ -127,8 +129,8 @@ public:
 private:
   Color m_diffuseColor{};
   Color m_ambientColor{};
-  double m_ambientCoefficient{0.0};
-  double m_diffuseCoefficient{0.0};
+  Utility::Clamped<double, 0.0, 1.0> m_ambientCoefficient{0.0};
+  Utility::Clamped<double, 0.0, 1.0> m_diffuseCoefficient{0.0};
 };
 
 } // namespace Raytracer::Core
