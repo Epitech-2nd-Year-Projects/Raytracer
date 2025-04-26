@@ -168,6 +168,42 @@ public:
     clearLights();
   }
 
+  /**
+   * @brief Check if a ray intersects with any primitive in the scene
+   * @param ray The ray to test for intersection
+   * @return true if any intersection is found, false otherwise
+   */
+  [[nodiscard]] bool hasIntersection(const Ray &ray) const {
+    for (const auto &[id, primitive] : m_primitives) {
+      if (primitive->intersect(ray).has_value()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * @brief Find the nearest intersection point for a ray in the scene
+   * @param ray The ray to test for intersection
+   * @return Optional containing the nearest intersection if found
+   */
+  [[nodiscard]] std::optional<Intersection>
+  findNearestIntersection(const Ray &ray) const {
+    std::optional<Intersection> nearestHit;
+    double nearestDistance = std::numeric_limits<double>::infinity();
+
+    for (const auto &[id, primitive] : m_primitives) {
+      if (auto hit = primitive->intersect(ray)) {
+        if (hit->getDistance() < nearestDistance) {
+          nearestDistance = hit->getDistance();
+          nearestHit = hit;
+        }
+      }
+    }
+
+    return nearestHit;
+  }
+
 private:
   Camera m_camera;
   std::unordered_map<std::string, std::unique_ptr<IPrimitive>> m_primitives;
