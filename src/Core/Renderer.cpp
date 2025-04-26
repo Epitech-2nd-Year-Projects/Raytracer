@@ -35,7 +35,8 @@ void Renderer::render(const Scene &scene, const std::string &filename) const {
                                                 std::size_t x,
                                                 std::size_t y) const {
   Utility::Clamped<double, 0.0, 1.0> u(static_cast<double>(x) / (m_width - 1));
-  Utility::Clamped<double, 0.0, 1.0> v(static_cast<double>(y) / (m_height - 1));
+  Utility::Clamped<double, 0.0, 1.0> v(1.0 -
+                                       static_cast<double>(y) / (m_height - 1));
 
   return traceRay(scene, scene.getCamera().ray(u, v));
 }
