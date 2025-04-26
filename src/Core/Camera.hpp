@@ -47,7 +47,8 @@ public:
    * @param other The camera to copy from.
    */
   Camera(const Camera &other)
-      : m_origin(other.m_origin), m_screen(other.m_screen) {}
+      : m_origin(other.m_origin), m_screen(other.m_screen), m_fov(other.m_fov) {
+  }
 
   /**
    * @brief Move constructor.
@@ -55,7 +56,7 @@ public:
    */
   Camera(Camera &&other) noexcept
       : m_origin(std::move(other.m_origin)),
-        m_screen(std::move(other.m_screen)) {}
+        m_screen(std::move(other.m_screen)), m_fov(other.m_fov) {}
 
   /**
    * @brief Copy assignment operator.
@@ -66,6 +67,7 @@ public:
     if (this != &other) {
       m_origin = other.m_origin;
       m_screen = other.m_screen;
+      m_fov = other.m_fov;
     }
     return *this;
   }
@@ -79,6 +81,7 @@ public:
     if (this != &other) {
       m_origin = std::move(other.m_origin);
       m_screen = std::move(other.m_screen);
+      m_fov = other.m_fov;
     }
     return *this;
   }
@@ -140,14 +143,7 @@ public:
    * @return A ray from the camera to the specified point on the screen.
    */
   [[nodiscard]] Core::Ray ray(Utility::Clamped<double, 0.0, 1.0> u,
-                              Utility::Clamped<double, 0.0, 1.0> v) const {
-    Math::Point<3> screenPoint = m_screen.pointAt(u, v);
-    Math::Vector<3> direction = screenPoint - m_origin;
-
-    direction.normalize();
-
-    return Core::Ray(m_origin, direction);
-  }
+                              Utility::Clamped<double, 0.0, 1.0> v) const;
 
 private:
   Math::Point<3> m_origin;
