@@ -16,7 +16,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-        - name: Install Dependencies
+      - name: Install Dependencies
         run: |
           export DEBIAN_FRONTEND=noninteractive
           apt-get update -y
