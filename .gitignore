@@ -47,4 +47,5 @@ build/
 /docs/doxygen/html
 
 # Extras
+.clangd
 compile_commands.json
