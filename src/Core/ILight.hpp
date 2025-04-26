@@ -6,7 +6,6 @@
 #pragma once
 
 #include "Core/Color.hpp"
-#include "Math/Point.hpp"
 #include "Math/Vector.hpp"
 
 namespace Raytracer::Core {
@@ -142,6 +141,14 @@ public:
    */
   [[nodiscard]] virtual Math::Vector<3>
   getDirectionFrom(const Math::Point<3> &point) const noexcept = 0;
+};
+
+class IAmbientLight : public virtual ILight {
+protected:
+  /**
+   * @brief Protected default constructor.
+   */
+  IAmbientLight() noexcept = default;
 };
 
 } // namespace Raytracer::Core
