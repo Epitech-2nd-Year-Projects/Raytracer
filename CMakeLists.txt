@@ -43,6 +43,8 @@ set(TEST_SOURCES
   tests/test_Point.cpp
   tests/test_Intersection.cpp
   tests/test_Ray.cpp
+  tests/test_Rectangle.cpp
+  tests/test_Camera.cpp
 )
 
 set(IMPLEMENTATION_SOURCES ${SOURCES})

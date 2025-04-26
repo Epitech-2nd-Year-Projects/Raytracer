@@ -37,6 +37,11 @@ public:
   }
 
   /**
+   * @brief Default destructor for the Point class.
+   */
+  ~Point() noexcept = default;
+
+  /**
    * @brief Adding a point and a vector.
    * @param vec The vector to add.
    * @return A new point that is the sum of the point and the vector.
