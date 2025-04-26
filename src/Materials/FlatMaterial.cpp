@@ -1,3 +1,8 @@
+/**
+ * @file FlatMaterial.cpp
+ * @brief Implementation of the FlatMaterial class, providing diffuse and ambient lighting calculations.
+ */
+
 #include "Materials/FlatMaterial.hpp"
 
 namespace Raytracer::Materials {
