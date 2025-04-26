@@ -130,10 +130,15 @@ public:
     double newHeight = 2.0 * std::tan(m_fov / 2.0);
     double newWidth = aspectRatio * newHeight;
 
-    m_screen =
-        Math::Rectangle3D(Math::Point<3>(-newWidth / 2, -newHeight / 2, 1.0),
-                          Math::Vector<3>(newWidth, 0.0, 0.0),
-                          Math::Vector<3>(0.0, newHeight, 0.0));
+    Math::Point<3> originScreen{
+        m_origin.m_components[0] - newWidth / 2.0,
+        m_origin.m_components[1] + 1.0,
+        m_origin.m_components[2] - newHeight / 2.0
+    };
+
+    Math::Vector<3> horizontal(newWidth, 0.0, 0.0);
+    Math::Vector<3> vertical(0.0, 0.0, newHeight);
+    m_screen = Math::Rectangle3D(originScreen, horizontal, vertical);
   }
 
   /**

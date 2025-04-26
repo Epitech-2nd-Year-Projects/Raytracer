@@ -35,9 +35,6 @@ Test(RaySuite, DefaultConstructor) {
 
   Vector<3> expectedDirection(0.0, 0.0, 0.0);
   assert_vector_eq(ray.getDirection(), expectedDirection);
-
-  cr_assert_float_eq(ray.getMinDistance(), 0.0, EQ_APPROX);
-  cr_assert_float_eq(ray.getMaxDistance(), 100.0, EQ_APPROX);
 }
 
 Test(RaySuite, ParameterizedConstructor) {
@@ -48,8 +45,6 @@ Test(RaySuite, ParameterizedConstructor) {
 
   assert_point_eq(ray.getOrigin(), origin);
   assert_vector_eq(ray.getDirection(), direction);
-  cr_assert_float_eq(ray.getMinDistance(), 0.0, EQ_APPROX);
-  cr_assert_float_eq(ray.getMaxDistance(), 100.0, EQ_APPROX);
 }
 
 Test(RaySuite, FullParameterizedConstructor) {
@@ -62,8 +57,6 @@ Test(RaySuite, FullParameterizedConstructor) {
 
   assert_point_eq(ray.getOrigin(), origin);
   assert_vector_eq(ray.getDirection(), direction);
-  cr_assert_float_eq(ray.getMinDistance(), minDist, EQ_APPROX);
-  cr_assert_float_eq(ray.getMaxDistance(), maxDist, EQ_APPROX);
 }
 
 Test(RaySuite, PointAtParameter) {

@@ -90,7 +90,7 @@ private:
   Math::Point<3> m_origin{};
   Math::Vector<3> m_direction{};
   double m_minDistance{0.0};
-  double m_maxDistance{100.0};
+  double m_maxDistance{std::numeric_limits<double>::infinity()};
 };
 
 } // namespace Raytracer::Core
