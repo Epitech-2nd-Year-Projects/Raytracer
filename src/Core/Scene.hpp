@@ -50,13 +50,17 @@ public:
 
   /**
    * @brief Add a primitive to the scene with a unique identifier.
+   * @tparam T Type of primitive deriving from IPrimitive.
    * @param id Unique identifier for the primitive.
    * @param primitive Unique pointer to the primitive.
    * @return true if added successfully, false if ID already exists.
    */
-  bool addPrimitive(const std::string &id,
-                    std::unique_ptr<IPrimitive> primitive) {
-    return m_primitives.try_emplace(id, std::move(primitive)).second;
+  template <typename T,
+            typename = std::enable_if_t<std::is_base_of_v<IPrimitive, T>>>
+  bool addPrimitive(const std::string &id, std::unique_ptr<T> primitive) {
+    return m_primitives
+        .try_emplace(id, std::unique_ptr<IPrimitive>(primitive.release()))
+        .second;
   }
 
   /**
@@ -80,12 +84,16 @@ public:
 
   /**
    * @brief Add a light to the scene with a unique identifier.
+   * @tparam T Type of light deriving from ILight.
    * @param id Unique identifier for the light.
    * @param light Unique pointer to the light.
    * @return true if added successfully, false if ID already exists.
    */
-  bool addLight(const std::string &id, std::unique_ptr<ILight> light) {
-    return m_lights.try_emplace(id, std::move(light)).second;
+  template <typename T,
+            typename = std::enable_if_t<std::is_base_of_v<ILight, T>>>
+  bool addLight(const std::string &id, std::unique_ptr<T> light) {
+    return m_lights.try_emplace(id, std::unique_ptr<ILight>(light.release()))
+        .second;
   }
 
   /**
