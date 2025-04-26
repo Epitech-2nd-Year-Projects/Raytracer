@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include "Camera.hpp"
-#include "ILight.hpp"
-#include "IPrimitive.hpp"
+#include "Core/Camera.hpp"
+#include "Core/ILight.hpp"
+#include "Core/IPrimitive.hpp"
 #include <memory>
 #include <unordered_map>
 
