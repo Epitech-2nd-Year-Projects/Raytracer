@@ -52,6 +52,7 @@ set(TEST_SOURCES
   tests/test_FlatMaterial.cpp
   tests/test_Scene.cpp
   tests/test_Renderer.cpp
+  tests/test_AmbientLight.cpp
 )
 
 set(IMPLEMENTATION_SOURCES ${SOURCES})
