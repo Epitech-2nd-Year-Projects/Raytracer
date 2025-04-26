@@ -35,10 +35,12 @@ public:
    * @param intersection Intersection information.
    * @param ray Incoming ray.
    * @param lights Lights affecting the intersection.
+   * @param scene Scene containing all objects.
    * @return Computed color.
    */
-  [[nodiscard]] Core::Color computeColor(
-      const Core::Intersection &intersection, const Core::Ray &ray,
-      const std::vector<std::shared_ptr<Core::ILight>> &lights) const override;
+  [[nodiscard]] Core::Color
+  computeColor(const Core::Intersection &intersection, const Core::Ray &ray,
+               const std::vector<std::shared_ptr<Core::ILight>> &lights,
+               const Core::Scene &scene) const override;
 };
 } // namespace Raytracer::Materials
