@@ -15,6 +15,7 @@ set(SOURCES
   src/Primitives/Sphere.cpp
   src/Core/Renderer.cpp
   src/Materials/FlatMaterial.cpp
+  src/Primitives/Plane.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
