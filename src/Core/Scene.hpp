@@ -29,13 +29,33 @@ public:
   ~Scene() = default;
 
   /**
+   * @brief Deleted copy constructor.
+   */
+  Scene(const Scene &) = delete;
+
+  /**
+   * @brief Deleted copy assignment operator.
+   */
+  Scene &operator=(const Scene &) = delete;
+
+  /**
+   * @brief Default move constructor.
+   */
+  Scene(Scene &&) noexcept = default;
+
+  /**
+   * @brief Default move assignment operator.
+   */
+  Scene &operator=(Scene &&) noexcept = default;
+
+  /**
    * @brief Add a primitive to the scene with a unique identifier.
    * @param id Unique identifier for the primitive.
-   * @param primitive Shared pointer to the primitive.
+   * @param primitive Unique pointer to the primitive.
    * @return true if added successfully, false if ID already exists.
    */
   bool addPrimitive(const std::string &id,
-                    std::shared_ptr<IPrimitive> primitive) {
+                    std::unique_ptr<IPrimitive> primitive) {
     return m_primitives.try_emplace(id, std::move(primitive)).second;
   }
 
@@ -49,23 +69,22 @@ public:
   }
 
   /**
-   * @brief Get a primitive by its ID.
+   * @brief Get a reference to a primitive by its ID.
    * @param id The identifier of the primitive.
-   * @return Shared pointer to the primitive if found, nullptr otherwise.
+   * @return Pointer to the primitive if found, nullptr otherwise.
    */
-  [[nodiscard]] std::shared_ptr<IPrimitive>
-  getPrimitive(const std::string &id) const {
+  [[nodiscard]] IPrimitive *getPrimitive(const std::string &id) const {
     auto it = m_primitives.find(id);
-    return (it != m_primitives.end()) ? it->second : nullptr;
+    return (it != m_primitives.end()) ? it->second.get() : nullptr;
   }
 
   /**
    * @brief Add a light to the scene with a unique identifier.
    * @param id Unique identifier for the light.
-   * @param light Shared pointer to the light.
+   * @param light Unique pointer to the light.
    * @return true if added successfully, false if ID already exists.
    */
-  bool addLight(const std::string &id, std::shared_ptr<ILight> light) {
+  bool addLight(const std::string &id, std::unique_ptr<ILight> light) {
     return m_lights.try_emplace(id, std::move(light)).second;
   }
 
@@ -77,13 +96,13 @@ public:
   bool removeLight(const std::string &id) { return m_lights.erase(id) > 0; }
 
   /**
-   * @brief Get a light by its ID.
+   * @brief Get a reference to a light by its ID.
    * @param id The identifier of the light.
-   * @return Shared pointer to the light if found, nullptr otherwise.
+   * @return Pointer to the light if found, nullptr otherwise.
    */
-  [[nodiscard]] std::shared_ptr<ILight> getLight(const std::string &id) const {
+  [[nodiscard]] ILight *getLight(const std::string &id) const {
     auto it = m_lights.find(id);
-    return (it != m_lights.end()) ? it->second : nullptr;
+    return (it != m_lights.end()) ? it->second.get() : nullptr;
   }
 
   /**
@@ -109,7 +128,7 @@ public:
    * @return Const reference to the primitives container.
    */
   [[nodiscard]] const std::unordered_map<std::string,
-                                         std::shared_ptr<IPrimitive>> &
+                                         std::unique_ptr<IPrimitive>> &
   getPrimitives() const {
     return m_primitives;
   }
@@ -118,7 +137,7 @@ public:
    * @brief Get all lights in the scene.
    * @return Const reference to the lights container.
    */
-  [[nodiscard]] const std::unordered_map<std::string, std::shared_ptr<ILight>> &
+  [[nodiscard]] const std::unordered_map<std::string, std::unique_ptr<ILight>> &
   getLights() const {
     return m_lights;
   }
@@ -143,7 +162,7 @@ public:
 
 private:
   Camera m_camera;
-  std::unordered_map<std::string, std::shared_ptr<IPrimitive>> m_primitives;
-  std::unordered_map<std::string, std::shared_ptr<ILight>> m_lights;
+  std::unordered_map<std::string, std::unique_ptr<IPrimitive>> m_primitives;
+  std::unordered_map<std::string, std::unique_ptr<ILight>> m_lights;
 };
 } // namespace Raytracer::Core
