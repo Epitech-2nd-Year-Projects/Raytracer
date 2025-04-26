@@ -13,6 +13,7 @@ pkg_check_modules(Criterion REQUIRED IMPORTED_TARGET criterion)
 set(SOURCES
   src/main.cpp
   src/Primitives/Sphere.cpp
+  src/Materials/FlatMaterial.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
@@ -47,6 +48,7 @@ set(TEST_SOURCES
   tests/test_Sphere.cpp
   tests/test_Rectangle.cpp
   tests/test_Camera.cpp
+  tests/test_FlatMaterial.cpp
 )
 
 set(IMPLEMENTATION_SOURCES ${SOURCES})
