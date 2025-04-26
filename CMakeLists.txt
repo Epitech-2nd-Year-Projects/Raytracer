@@ -5,6 +5,11 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+find_package(SFML 2.5.1 COMPONENTS graphics window system REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(LIBConfig++ REQUIRED IMPORTED_TARGET libconfig++)
+pkg_check_modules(Criterion REQUIRED IMPORTED_TARGET criterion)
+
 set(SOURCES
   src/main.cpp
 )
@@ -20,7 +25,7 @@ target_include_directories(raytracer
 
 target_link_libraries(raytracer
   PRIVATE
-    config++
+    PkgConfig::LIBConfig++
     sfml-graphics
     sfml-window
     sfml-system
@@ -55,7 +60,7 @@ target_include_directories(raytracer_tests
 
 target_link_libraries(raytracer_tests
   PRIVATE
-    criterion
+    PkgConfig::Criterion
 )
 
 target_compile_options(raytracer_tests
