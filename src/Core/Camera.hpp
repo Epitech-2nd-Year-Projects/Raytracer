@@ -17,22 +17,25 @@ class Camera {
 public:
   /**
    * @brief Default constructor initializes the camera at the origin with a
-   * default screen.
+   * default screen and field of view.
    */
   Camera()
       : m_origin(Math::Point<3>(0.0, 0.0, 0.0)),
         m_screen(Math::Rectangle3D(Math::Point<3>(0.0, 0.0, 1.0),
                                    Math::Vector<3>(1.0, 0.0, 0.0),
-                                   Math::Vector<3>(0.0, 1.0, 0.0))) {}
+                                   Math::Vector<3>(0.0, 1.0, 0.0))),
+        m_fov(90.0 * M_PI / 180.0) {}
 
   /**
    * @brief Constructor that initializes the camera with a given origin and
    * screen.
    * @param origin The origin of the camera.
    * @param screen The screen of the camera.
+   * @param fov The field of view of the camera (in radians).
    */
-  Camera(const Math::Point<3> &origin, const Math::Rectangle3D &screen)
-      : m_origin(origin), m_screen(screen) {}
+  Camera(const Math::Point<3> &origin, const Math::Rectangle3D &screen,
+         double fov)
+      : m_origin(origin), m_screen(screen), m_fov(fov) {}
 
   /**
    * @brief Default destructor for the Camera class.
@@ -105,6 +108,32 @@ public:
   void setScreen(const Math::Rectangle3D &screen) { m_screen = screen; }
 
   /**
+   * @brief Get the field of view of the camera.
+   * @return The field of view of the camera (in radians).
+   */
+  [[nodiscard]] double getFov() const { return m_fov; }
+
+  /**
+   * @brief Set the field of view of the camera.
+   * @param fov The new field of view of the camera (in radians).
+   */
+  void setFov(double fov) { m_fov = fov; }
+
+  /**
+   * @brief Set the perspective of the camera based on the aspect ratio.
+   * @param aspectRatio The aspect ratio of the screen.
+   */
+  void setPerspective(double aspectRatio) {
+    double newHeight = 2.0 * std::tan(m_fov / 2.0);
+    double newWidth = aspectRatio * newHeight;
+
+    m_screen =
+        Math::Rectangle3D(Math::Point<3>(-newWidth / 2, -newHeight / 2, 1.0),
+                          Math::Vector<3>(newWidth, 0.0, 0.0),
+                          Math::Vector<3>(0.0, newHeight, 0.0));
+  }
+
+  /**
    * @brief Generate a ray from the camera to a point on the screen.
    * @param u The u coordinate on the screen (0.0 to 1.0).
    * @param v The v coordinate on the screen (0.0 to 1.0).
@@ -123,6 +152,7 @@ public:
 private:
   Math::Point<3> m_origin;
   Math::Rectangle3D m_screen;
+  double m_fov;
 };
 
 } // namespace Raytracer::Core
