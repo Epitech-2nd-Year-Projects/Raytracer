@@ -22,17 +22,22 @@ Core::Color FlatMaterial::computeColor(
   for (const auto &light : lights) {
     const Math::Vector<3> &normal = intersection.getNormal();
 
-    if (auto ambientLight = std::dynamic_pointer_cast<Core::IAmbientLight>(light)) {
+    if (auto ambientLight =
+            std::dynamic_pointer_cast<Core::IAmbientLight>(light)) {
       double ambientIntensity = ambientLight->getIntensity();
       const Core::Color &lightColor = ambientLight->getColor();
       Core::Color ambientColor = getAmbientColor();
-      Core::Color ambComp{
-        ambientColor.getR() * getAmbientCoefficient() * ambientIntensity * lightColor.getR() / 255.0,
-        ambientColor.getG() * getAmbientCoefficient() * ambientIntensity * lightColor.getG() / 255.0,
-        ambientColor.getB() * getAmbientCoefficient() * ambientIntensity * lightColor.getB() / 255.0};
+
+      Core::Color ambComp{ambientColor.getR() * getAmbientCoefficient() *
+                              ambientIntensity * lightColor.getR() / 255.0,
+                          ambientColor.getG() * getAmbientCoefficient() *
+                              ambientIntensity * lightColor.getG() / 255.0,
+                          ambientColor.getB() * getAmbientCoefficient() *
+                              ambientIntensity * lightColor.getB() / 255.0};
       finalColor = finalColor.add(ambComp);
+
     } else if (auto directionalLight =
-            std::dynamic_pointer_cast<Core::IDirectionalLight>(light)) {
+                   std::dynamic_pointer_cast<Core::IDirectionalLight>(light)) {
       Math::Vector<3> lightDir = directionalLight->getDirection() * -1.0;
       double dotResult = normal.dot(lightDir);
 
