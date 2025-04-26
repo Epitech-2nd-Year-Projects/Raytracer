@@ -127,7 +127,7 @@ public:
    */
   [[nodiscard]] Point3D pointAt(Utility::Clamped<double, 0.0, 1.0> u,
                                 Utility::Clamped<double, 0.0, 1.0> v) const {
-    return m_origin + (m_bottomSide * u) + (m_bottomSide * v);
+    return m_origin + (m_bottomSide * u) + (m_leftSide * v);
   }
 
   /**
