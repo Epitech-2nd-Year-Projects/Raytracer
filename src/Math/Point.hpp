@@ -48,7 +48,7 @@ public:
     }
     return result;
   }
-  
+
   /**
    * @brief Default destructor for the Point class.
    */

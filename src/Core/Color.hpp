@@ -101,4 +101,18 @@ private:
   Utility::Clamped<double, 0.0, 255.0> m_b{0.0};
 };
 
+static inline const Color Black{0.0, 0.0, 0.0};
+static inline const Color White{255.0, 255.0, 255.0};
+static inline const Color Red{255.0, 0.0, 0.0};
+static inline const Color Green{0.0, 255.0, 0.0};
+static inline const Color Blue{0.0, 0.0, 255.0};
+static inline const Color Yellow{255.0, 255.0, 0.0};
+static inline const Color Cyan{0.0, 255.0, 255.0};
+static inline const Color Magenta{255.0, 0.0, 255.0};
+static inline const Color Gray{128.0, 128.0, 128.0};
+static inline const Color Orange{255.0, 165.0, 0.0};
+static inline const Color Purple{128.0, 0.0, 128.0};
+static inline const Color Brown{165.0, 42.0, 42.0};
+static inline const Color Pink{255.0, 192.0, 203.0};
+
 } // namespace Raytracer::Core
