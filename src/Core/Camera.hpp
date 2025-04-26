@@ -143,7 +143,13 @@ public:
    * @return A ray from the camera to the specified point on the screen.
    */
   [[nodiscard]] Core::Ray ray(Utility::Clamped<double, 0.0, 1.0> u,
-                              Utility::Clamped<double, 0.0, 1.0> v) const;
+                              Utility::Clamped<double, 0.0, 1.0> v) const {
+    Math::Point<3> pointOnScreen = m_screen.pointAt(u, v);
+    Math::Vector<3> direction = pointOnScreen - m_origin;
+
+    direction = direction.normalize();
+    return Ray(m_origin, direction);
+  }
 
 private:
   Math::Point<3> m_origin;
