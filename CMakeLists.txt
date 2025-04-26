@@ -62,10 +62,16 @@ pkg_check_modules(CRITERION REQUIRED criterion)
 set(TEST_SOURCES
   tests/test_Vector.cpp
   tests/test_Point.cpp
+  tests/test_Intersection.cpp
+  tests/test_Ray.cpp
 )
+
+set(IMPLEMENTATION_SOURCES ${SOURCES})
+list(REMOVE_ITEM IMPLEMENTATION_SOURCES src/main.cpp)
 
 add_executable(raytracer_tests
   ${TEST_SOURCES}
+  ${IMPLEMENTATION_SOURCES}
 )
 
 target_include_directories(raytracer_tests
