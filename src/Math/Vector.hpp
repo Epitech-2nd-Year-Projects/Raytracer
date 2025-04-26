@@ -37,6 +37,11 @@ public:
   }
 
   /**
+   * @brief Default destructor for the Vector class.
+   */
+  ~Vector() noexcept = default;
+
+  /**
    * @brief Get the length of the vector.
    * @return The length of the vector.
    */
@@ -231,6 +236,40 @@ public:
     }
 
     return result;
+  }
+
+  /**
+   * @brief Normalize the vector.
+   * @return A new vector that is the normalized version of the current vector.
+   */
+  Vector<N> normalize() const {
+    double len = length();
+    if (len == 0.0) {
+      return *this;
+    }
+
+    Vector<N> result;
+
+    for (std::size_t i = 0; i < N; ++i) {
+      result.m_components[i] = m_components[i] / len;
+    }
+
+    return result;
+  }
+
+  /**
+   * @brief Calculate the cross product of two 3D vectors.
+   * @param other The vector to calculate the cross product with.
+   * @return A new vector that is the cross product of the two vectors.
+   */
+  Vector<N> cross(const Vector<N> &other) const {
+    static_assert(N == 3, "Cross product is only defined for 3D vectors");
+    return Vector<N>(m_components[1] * other.m_components[2] -
+                         m_components[2] * other.m_components[1],
+                     m_components[2] * other.m_components[0] -
+                         m_components[0] * other.m_components[2],
+                     m_components[0] * other.m_components[1] -
+                         m_components[1] * other.m_components[0]);
   }
 
 private:
