@@ -1,3 +1,9 @@
+/**
+ * @file Sphere.cpp
+ * @brief Implementation of the Sphere class, providing functionality for sphere
+ * primitive operations in ray tracing
+ */
+
 #include "Primitives/Sphere.hpp"
 
 namespace Raytracer::Primitives {
