@@ -16,6 +16,8 @@ set(SOURCES
   src/Core/Renderer.cpp
   src/Materials/FlatMaterial.cpp
   src/Primitives/Plane.cpp
+  src/Builder/SceneBuilder.cpp
+  src/Parser/SceneParser.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
@@ -73,6 +75,7 @@ target_include_directories(raytracer_tests
 target_link_libraries(raytracer_tests
   PRIVATE
     PkgConfig::Criterion
+    PkgConfig::LIBConfig++
 )
 
 target_compile_options(raytracer_tests
