@@ -3,6 +3,8 @@
 #include "Factory/MaterialFactory.hpp"
 #include "Factory/PrimitiveFactory.hpp"
 #include "Math/Point.hpp"
+#include "Parser/SceneParser.hpp"
+#include <iostream>
 
 namespace Raytracer::Builder {
 
@@ -60,11 +62,19 @@ void SceneBuilder::buildSpheres(const libconfig::Setting &spheres) {
         auto spherePrimitive =
             Factory::PrimitiveFactory::createSphere(*position, radius);
 
-        const auto &color = sphere.lookup("color");
+        const libconfig::Setting &color = sphere.lookup("color");
+        auto r = Parser::SceneParser::getSetting<int>(color, "r");
+        auto g = Parser::SceneParser::getSetting<int>(color, "g");
+        auto b = Parser::SceneParser::getSetting<int>(color, "b");
+
+        if (!r || !g || !b) {
+          std::cerr << "Invalid color values for sphere with id: " << id
+                    << "\n";
+          continue;
+        }
+
         auto material = Factory::MaterialFactory::createFlatMaterial(
-            Core::Color(color.lookup("r"), color.lookup("g"),
-                        color.lookup("b")),
-            Core::Color(0, 0, 0));
+            Core::Color(*r, *g, *b), Core::Color(*r, *g, *b));
 
         spherePrimitive->setMaterial(material);
         m_scene->addPrimitive(id, std::move(spherePrimitive));
@@ -84,10 +94,18 @@ void SceneBuilder::buildPlanes(const libconfig::Setting &planes) {
       auto planePrimitive = Factory::PrimitiveFactory::createPlane(
           axis, Math::Point<3>(0.0, 0.0, position));
 
-      const auto &color = plane.lookup("color");
+      const libconfig::Setting &color = plane.lookup("color");
+      auto r = Parser::SceneParser::getSetting<int>(color, "r");
+      auto g = Parser::SceneParser::getSetting<int>(color, "g");
+      auto b = Parser::SceneParser::getSetting<int>(color, "b");
+
+      if (!r || !g || !b) {
+        std::cerr << "Invalid color values for plane with id: " << id << "\n";
+        continue;
+      }
+
       auto material = Factory::MaterialFactory::createFlatMaterial(
-          Core::Color(color.lookup("r"), color.lookup("g"), color.lookup("b")),
-          Core::Color(0, 0, 0));
+          Core::Color(*r, *g, *b), Core::Color(*r, *g, *b));
 
       planePrimitive->setMaterial(material);
       m_scene->addPrimitive(id, std::move(planePrimitive));
