@@ -5,12 +5,16 @@
 
 #pragma once
 
-#include "Builder/SceneBuilder.hpp"
 #include "Core/Scene.hpp"
 #include <libconfig.h++>
 #include <optional>
 
+namespace Raytracer::Builder {
+class SceneBuilder;
+}
+
 namespace Raytracer::Parser {
+
 /**
  * @class SceneParser
  * @brief A class for parsing scene configurations from a file.
@@ -23,21 +27,28 @@ public:
    * @return An optional unique pointer to a Core::Scene object.
    */
   [[nodiscard]] std::optional<std::unique_ptr<Core::Scene>>
-  parseFile(const std::string &filename) {
+  parseFile(const std::string &filename);
+
+  /**
+   * @brief Template helper function to parse a setting of a specific type.
+   * @tparam T The type of the setting.
+   * @param setting The libconfig setting to parse.
+   * @param name The name of the setting to look up.
+   * @return An optional value of the specified type if found, otherwise
+   */
+  template <typename T>
+  static std::optional<T> getSetting(const libconfig::Setting &setting,
+                                     const std::string &name) {
     try {
-      m_config.readFile(filename.c_str());
+      T value;
 
-      Builder::SceneBuilder builder;
-      builder.buildCamera(m_config.lookup("camera"))
-          .buildPrimitives(m_config.lookup("primitives"))
-          .buildLights(m_config.lookup("lights"));
-
-      return builder.getResult();
-    } catch (const libconfig::FileIOException &) {
-      return std::nullopt;
-    } catch (const libconfig::ParseException &) {
+      if (setting.lookupValue(name, value)) {
+        return value;
+      }
+    } catch (const libconfig::SettingTypeException &ex) {
       return std::nullopt;
     }
+    return std::nullopt;
   }
 
 private:
