@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "../Math/Point.hpp"
-#include "../Math/Vector.hpp"
+#include "Builder/SceneBuilder.hpp"
+#include "Core/Scene.hpp"
 #include <libconfig.h++>
 #include <optional>
 
@@ -18,62 +18,26 @@ namespace Raytracer::Parser {
 class SceneParser {
 public:
   /**
-   * @brief Template helper function to parse a setting of a specific type.
-   * @tparam T The type of the setting.
-   * @param setting The libconfig setting to parse.
-   * @param name The name of the setting to look up.
-   * @return An optional value of the specified type if found, otherwise
+   * @brief Parse a scene configuration file.
+   * @param filename The name of the configuration file.
+   * @return An optional unique pointer to a Core::Scene object.
    */
-  template <typename T>
-  std::optional<T> getSetting(const libconfig::Setting &setting,
-                              const std::string &name) const {
+  [[nodiscard]] std::optional<std::unique_ptr<Core::Scene>>
+  parseFile(const std::string &filename) {
     try {
-      T value;
+      m_config.readFile(filename.c_str());
 
-      if (setting.lookupValue(name, value)) {
-        return value;
-      }
-    } catch (const libconfig::SettingTypeException &ex) {
+      Builder::SceneBuilder builder;
+      builder.buildCamera(m_config.lookup("camera"))
+          .buildPrimitives(m_config.lookup("primitives"))
+          .buildLights(m_config.lookup("lights"));
+
+      return builder.getResult();
+    } catch (const libconfig::FileIOException &) {
+      return std::nullopt;
+    } catch (const libconfig::ParseException &) {
       return std::nullopt;
     }
-    return std::nullopt;
-  }
-
-  /**
-   * @brief Parse a 3D vector from a libconfig setting.
-   * @param setting The libconfig setting to parse.
-   * @return An optional Math::Vector<3> if all components are found, otherwise
-   * std::nullopt.
-   */
-  std::optional<Math::Vector<3>>
-  parseVector3(const libconfig::Setting &setting) {
-    std::optional<double> x = getSetting<double>(setting, "x");
-    std::optional<double> y = getSetting<double>(setting, "y");
-    std::optional<double> z = getSetting<double>(setting, "z");
-
-    if (!x || !y || !z) {
-      return std::nullopt;
-    }
-
-    return Math::Vector<3>(x.value(), y.value(), z.value());
-  }
-
-  /**
-   * @brief Parse a 3D point from a libconfig setting.
-   * @param setting The libconfig setting to parse.
-   * @return An optional Math::Point<3> if all components are found, otherwise
-   * std::nullopt.
-   */
-  std::optional<Math::Point<3>> parsePoint3(const libconfig::Setting &setting) {
-    std::optional<double> x = getSetting<double>(setting, "x");
-    std::optional<double> y = getSetting<double>(setting, "y");
-    std::optional<double> z = getSetting<double>(setting, "z");
-
-    if (!x || !y || !z) {
-      return std::nullopt;
-    }
-
-    return Math::Point<3>(x.value(), y.value(), z.value());
   }
 
 private:
