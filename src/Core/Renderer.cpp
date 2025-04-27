@@ -71,6 +71,6 @@ void Renderer::render(const Scene &scene, const std::string &filename) const {
     lights.push_back(std::shared_ptr<ILight>(light.get(), [](ILight *) {}));
   }
 
-  return material->computeColor(*nearestHit, ray, lights);
+  return material->computeColor(*nearestHit, ray, lights, scene);
 }
 } // namespace Raytracer::Core

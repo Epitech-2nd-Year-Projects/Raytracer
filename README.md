@@ -1,4 +1,4 @@
-# Raytracer
+### Raytracer
 
 A simple CPU‐based raytracer written in in C++, using SFML for windowing/graphics and libconfig++ for configuration.
 
@@ -24,7 +24,7 @@ ctest --output-on-failure
 
 The test binary is named `raytracer_tests`.
 
-### Documentation
+## Documentation
 
 We use Doxygen to generate API documentation. A Doxyfile is provided at the project root.
 
@@ -33,3 +33,9 @@ doxygen Doxyfile
 ```
 
 HTML docs will be available under `docs/doxygen/html/index.html`.
+
+## Scene Documentation
+
+Detailed documentation on how to create scene configuration files that can be rendered by this raytracer is available on GitBook:
+
+[Raytracer Scene Docs](https://raytracer.gitbook.io/raytracer-scene-docs/)

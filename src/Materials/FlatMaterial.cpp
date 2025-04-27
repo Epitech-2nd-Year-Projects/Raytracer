@@ -16,7 +16,8 @@ FlatMaterial::FlatMaterial(const Core::Color &diffuseColor,
 Core::Color FlatMaterial::computeColor(
     const Core::Intersection &intersection,
     [[maybe_unused]] const Core::Ray &ray,
-    const std::vector<std::shared_ptr<Core::ILight>> &lights) const {
+    const std::vector<std::shared_ptr<Core::ILight>> &lights,
+    const Core::Scene &scene) const {
   Core::Color finalColor = Core::Black;
 
   for (const auto &light : lights) {
@@ -63,22 +64,36 @@ Core::Color FlatMaterial::computeColor(
       double dotResult = normal.dot(lightDir);
 
       if (dotResult > 0.0) {
-        double lightIntensity = positionalLight->getIntensity();
-        const Core::Color &lightColor = positionalLight->getColor();
-        double diffuseFactor =
-            getDiffuseCoefficient() * dotResult * lightIntensity;
+        const double epsilon = 1e-4;
+        Math::Point<3> shadowRayOrigin =
+            intersection.getPoint() + normal * epsilon;
+        double distanceToLight =
+            (positionalLight->getPosition() - shadowRayOrigin).length();
 
-        Core::Color diffuseComponent = getDiffuseColor();
-        diffuseComponent = Core::Color(
-            diffuseComponent.getR() * diffuseFactor * lightColor.getR() / 255.0,
-            diffuseComponent.getG() * diffuseFactor * lightColor.getG() / 255.0,
-            diffuseComponent.getB() * diffuseFactor * lightColor.getB() /
-                255.0);
-        finalColor = finalColor.add(diffuseComponent);
+        Core::Ray shadowRay(shadowRayOrigin, lightDir, epsilon,
+                            distanceToLight);
+
+        bool inShadow = scene.hasIntersection(shadowRay);
+
+        if (!inShadow) {
+          double lightIntensity = positionalLight->getIntensity();
+          const Core::Color &lightColor = positionalLight->getColor();
+          double diffuseFactor =
+              getDiffuseCoefficient() * dotResult * lightIntensity;
+
+          Core::Color diffuseComponent = getDiffuseColor();
+          diffuseComponent =
+              Core::Color(diffuseComponent.getR() * diffuseFactor *
+                              lightColor.getR() / 255.0,
+                          diffuseComponent.getG() * diffuseFactor *
+                              lightColor.getG() / 255.0,
+                          diffuseComponent.getB() * diffuseFactor *
+                              lightColor.getB() / 255.0);
+          finalColor = finalColor.add(diffuseComponent);
+        }
       }
     }
   }
   return finalColor;
 }
-
 } // namespace Raytracer::Materials

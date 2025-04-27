@@ -1,6 +1,6 @@
 /**
- * @file AmbientLight.hpp
- * @brief Defines the AmbientLight class for global ambient illumination
+ * @file DiffuseLight.hpp
+ * @brief Defines the DiffuseLight class for diffuse illumination
  */
 
 #pragma once
@@ -8,30 +8,29 @@
 #include "Core/ALight.hpp"
 
 namespace Raytracer::Lights {
+
 /**
- * @class AmbientLight
- * @brief Ambient light that provides constant illumination in all directions
+ * @class DiffuseLight
+ * @brief Diffuse light that provides directional illumination
  */
-class AmbientLight final : public Core::ALight, public Core::IAmbientLight {
+class DiffuseLight final : public Core::ALight {
 public:
   /**
    * @brief Default constructor
    */
-  AmbientLight() noexcept : ALight(1.0, Core::Color(255.0, 255.0, 255.0)) {}
+  DiffuseLight() noexcept : ALight(1.0, Core::Color(255.0, 255.0, 255.0)) {}
 
   /**
    * @brief Constructor with specified intensity
-   * @param intensity The intensity value for the ambient light
+   * @param intensity The intensity value for the diffuse light
    */
-  explicit AmbientLight(double intensity) noexcept
+  explicit DiffuseLight(double intensity) noexcept
       : ALight(intensity, Core::Color(255.0, 255.0, 255.0)) {}
 
   /**
    * @brief Computes the illumination at the specified intersection point
-   * @param intersectionPoint The point of intersection (unused for ambient
-   * light)
-   * @param normal The surface normal at the intersection point (unused for
-   * ambient light)
+   * @param intersectionPoint The point of intersection
+   * @param normal The surface normal at the intersection point
    * @return The illumination value (equal to the light's intensity)
    */
   [[nodiscard]] double computeIllumination(
@@ -42,12 +41,12 @@ public:
 
   /**
    * @brief Gets the direction from a point to the light source
-   * @param point The reference point (unused for ambient light)
-   * @return A fixed directional vector (0, 0, 1)
+   * @param point The reference point (unused for diffuse light)
+   * @return A fixed directional vector (0, -1, 0)
    */
   [[nodiscard]] Math::Vector<3> getDirectionFrom(
       [[maybe_unused]] const Math::Point<3> &point) const noexcept {
-    return Math::Vector<3>(0.0, 0.0, 1.0);
+    return Math::Vector<3>(0.0, -1.0, 0.0);
   }
 
   /**
@@ -56,4 +55,5 @@ public:
    */
   [[nodiscard]] bool castsShadow() const noexcept override { return false; }
 };
+
 } // namespace Raytracer::Lights

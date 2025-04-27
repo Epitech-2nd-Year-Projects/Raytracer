@@ -9,7 +9,6 @@
 #include <optional>
 
 #include "Core/BoundingBox.hpp"
-#include "Core/IMaterial.hpp"
 #include "Core/Intersection.hpp"
 #include "Core/Ray.hpp"
 #include "Math/Point.hpp"

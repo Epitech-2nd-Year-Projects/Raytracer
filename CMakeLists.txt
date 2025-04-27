@@ -15,6 +15,9 @@ set(SOURCES
   src/Primitives/Sphere.cpp
   src/Core/Renderer.cpp
   src/Materials/FlatMaterial.cpp
+  src/Primitives/Plane.cpp
+  src/Builder/SceneBuilder.cpp
+  src/Parser/SceneParser.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
@@ -53,6 +56,7 @@ set(TEST_SOURCES
   tests/test_Scene.cpp
   tests/test_Renderer.cpp
   tests/test_AmbientLight.cpp
+  tests/test_SceneParser.cpp
 )
 
 set(IMPLEMENTATION_SOURCES ${SOURCES})
@@ -71,6 +75,7 @@ target_include_directories(raytracer_tests
 target_link_libraries(raytracer_tests
   PRIVATE
     PkgConfig::Criterion
+    PkgConfig::LIBConfig++
 )
 
 target_compile_options(raytracer_tests
