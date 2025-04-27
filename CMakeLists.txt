@@ -6,30 +6,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(SFML 2.5.1 COMPONENTS graphics window system REQUIRED)
-if (TARGET SFML::Graphics)
-  set(_SFML_LIBS SFML::Graphics SFML::Window SFML::System)
-else()
-  set(_SFML_LIBS
-    ${SFML_GRAPHICS_LIBRARY}
-    ${SFML_WINDOW_LIBRARY}
-    ${SFML_SYSTEM_LIBRARY}
-    ${SFML_DEPENDENCIES}
-  )
-  set(_SFML_INCLUDES ${SFML_INCLUDE_DIR})
-endif()
-
-find_path(LIBCONFIGPP_INCLUDE_DIR
-  NAMES libconfig.h++
-  HINTS /usr/include /usr/local/include
-)
-
-find_library(LIBCONFIGPP_LIBRARY
-  NAMES config++ libconfig++
-  HINTS /usr/lib /usr/lib/x86_64-linux-gnu /usr/local/lib
-)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(LIBConfig++ REQUIRED IMPORTED_TARGET libconfig++)
+pkg_check_modules(Criterion REQUIRED IMPORTED_TARGET criterion)
 
 set(SOURCES
   src/main.cpp
+  src/Primitives/Sphere.cpp
+  src/Core/Renderer.cpp
+  src/Materials/FlatMaterial.cpp
+  src/Primitives/Plane.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
@@ -39,14 +25,14 @@ add_executable(raytracer ${SOURCES})
 target_include_directories(raytracer
   PRIVATE
     ${CMAKE_SOURCE_DIR}/src
-    ${LIBCONFIGPP_INCLUDE_DIR}
-    ${_SFML_INCLUDES}
 )
 
 target_link_libraries(raytracer
   PRIVATE
-    ${LIBCONFIGPP_LIBRARY}
-    ${_SFML_LIBS}
+    PkgConfig::LIBConfig++
+    sfml-graphics
+    sfml-window
+    sfml-system
 )
 
 target_compile_options(raytracer
@@ -56,30 +42,37 @@ target_compile_options(raytracer
 
 enable_testing()
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(CRITERION REQUIRED criterion)
-
 set(TEST_SOURCES
   tests/test_Vector.cpp
   tests/test_Point.cpp
+  tests/test_Intersection.cpp
+  tests/test_Ray.cpp
+  tests/test_Sphere.cpp
+  tests/test_Rectangle.cpp
+  tests/test_Camera.cpp
+  tests/test_FlatMaterial.cpp
+  tests/test_Scene.cpp
+  tests/test_Renderer.cpp
+  tests/test_AmbientLight.cpp
   tests/test_SceneParser.cpp
 )
 
+set(IMPLEMENTATION_SOURCES ${SOURCES})
+list(REMOVE_ITEM IMPLEMENTATION_SOURCES src/main.cpp)
+
 add_executable(raytracer_tests
   ${TEST_SOURCES}
+  ${IMPLEMENTATION_SOURCES}
 )
 
 target_include_directories(raytracer_tests
   PRIVATE
     ${CMAKE_SOURCE_DIR}/src
-    ${CRITERION_INCLUDE_DIRS}
 )
 
 target_link_libraries(raytracer_tests
   PRIVATE
-    ${CRITERION_LIBRARIES}
-    ${LIBCONFIGPP_LIBRARY}
-    ${_SFML_LIBS}
+    PkgConfig::Criterion
 )
 
 target_compile_options(raytracer_tests
