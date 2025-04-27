@@ -78,7 +78,7 @@ public:
 
 private:
   Utility::Clamped<double, 0.0, 1.0> m_intensity{1.0};
-  Color m_color;
+  Color m_color{255, 255, 255};
 };
 
 /**
