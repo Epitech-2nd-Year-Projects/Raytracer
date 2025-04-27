@@ -1,6 +1,13 @@
+
+/**
+ * @file SceneBuilder.hpp
+ * @brief SceneBuilder class for constructing scenes from configuration files
+ */
+
 #pragma once
 
 #include "Core/Scene.hpp"
+#include "Parser/SceneParser.hpp"
 #include <libconfig.h++>
 namespace Raytracer::Builder {
 
@@ -72,9 +79,18 @@ private:
   [[nodiscard]] static std::optional<Math::Point<3>>
   parsePoint3(const libconfig::Setting &setting) {
     try {
-      return Math::Point<3>(static_cast<double>(setting["x"]),
-                            static_cast<double>(setting["y"]),
-                            static_cast<double>(setting["z"]));
+      std::optional<double> x =
+          Parser::SceneParser::getSetting<double>(setting, "x");
+      std::optional<double> y =
+          Parser::SceneParser::getSetting<double>(setting, "y");
+      std::optional<double> z =
+          Parser::SceneParser::getSetting<double>(setting, "z");
+
+      if (!x || !y || !z) {
+        return std::nullopt;
+      }
+
+      return Math::Point<3>(*x, *y, *z);
     } catch (const libconfig::SettingNotFoundException &e) {
       return std::nullopt;
     } catch (const libconfig::SettingTypeException &e) {
