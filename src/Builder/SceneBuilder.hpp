@@ -70,7 +70,17 @@ private:
    * @param setting The libconfig setting to parse.
    */
   [[nodiscard]] static std::optional<Math::Point<3>>
-  parsePoint3(const libconfig::Setting &setting);
+  parsePoint3(const libconfig::Setting &setting) {
+    try {
+      return Math::Point<3>(static_cast<double>(setting["x"]),
+                            static_cast<double>(setting["y"]),
+                            static_cast<double>(setting["z"]));
+    } catch (const libconfig::SettingNotFoundException &e) {
+      return std::nullopt;
+    } catch (const libconfig::SettingTypeException &e) {
+      return std::nullopt;
+    }
+  }
 
 private:
   std::unique_ptr<Core::Scene> m_scene;
