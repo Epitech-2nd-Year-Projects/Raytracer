@@ -51,6 +51,30 @@ SceneBuilder &SceneBuilder::buildLights(const libconfig::Setting &config) {
   return *this;
 }
 
+void SceneBuilder::applyTransformations(const libconfig::Setting &config,
+                                        Core::IPrimitive *primitive) {
+  try {
+    auto position = parsePoint3(config.lookup("position"));
+    if (position) {
+      primitive->setPosition(*position);
+    }
+  } catch (const libconfig::SettingNotFoundException &) {
+  }
+
+  try {
+    auto translation = parsePoint3(config.lookup("translate"));
+    if (translation) {
+      Math::Point<3> currentPos = primitive->getPosition();
+      Math::Point<3> newPos =
+          currentPos + Math::Vector<3>(translation->m_components[0],
+                                       translation->m_components[1],
+                                       translation->m_components[2]);
+      primitive->setPosition(newPos);
+    }
+  } catch (const libconfig::SettingNotFoundException &) {
+  }
+}
+
 void SceneBuilder::buildSpheres(const libconfig::Setting &spheres) {
   for (const auto &sphere : spheres) {
     try {
@@ -61,7 +85,7 @@ void SceneBuilder::buildSpheres(const libconfig::Setting &spheres) {
       if (position) {
         auto spherePrimitive = Factory::PrimitiveFactory::createSphere(
             Math::Point<3>(0.0, 0.0, 0.0), radius);
-        spherePrimitive->setPosition(*position);
+        applyTransformations(sphere, spherePrimitive.get());
 
         const libconfig::Setting &color = sphere.lookup("color");
         auto r = Parser::SceneParser::getSetting<int>(color, "r");
@@ -94,6 +118,7 @@ void SceneBuilder::buildPlanes(const libconfig::Setting &planes) {
 
       auto planePrimitive = Factory::PrimitiveFactory::createPlane(
           axis, Math::Point<3>(0.0, 0.0, position));
+      applyTransformations(plane, planePrimitive.get());
 
       const libconfig::Setting &color = plane.lookup("color");
       auto r = Parser::SceneParser::getSetting<int>(color, "r");
