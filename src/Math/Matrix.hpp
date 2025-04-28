@@ -172,16 +172,6 @@ public:
   }
 
   /**
-   * @brief Multiply a scalar by a matrix.
-   * @param scalar The scalar value.
-   * @param matrix The matrix to multiply.
-   * @return New matrix representing the product.
-   */
-  friend Matrix operator*(const T scalar, const Matrix &matrix) noexcept {
-    return matrix * scalar;
-  }
-
-  /**
    * @brief Multiply two matrices.
    * @tparam OtherCols The number of columns in the other matrix.
    * @param other The matrix to multiply with.
@@ -342,6 +332,18 @@ public:
 private:
   std::array<std::array<T, Cols>, Rows> m_matrix;
 };
+
+/**
+ * @brief Multiply a scalar by a matrix.
+ * @param scalar The scalar value.
+ * @param matrix The matrix to multiply.
+ * @return New matrix representing the product.
+ */
+template <std::size_t Rows, std::size_t Cols, typename T>
+Matrix<Rows, Cols, T>
+operator*(const T scalar, const Matrix<Rows, Cols, T> &matrix) noexcept {
+  return matrix * scalar;
+}
 
 using Matrix4 = Matrix<4, 4, double>;
 
