@@ -59,8 +59,9 @@ void SceneBuilder::buildSpheres(const libconfig::Setting &spheres) {
       double radius = sphere.lookup("radius");
 
       if (position) {
-        auto spherePrimitive =
-            Factory::PrimitiveFactory::createSphere(*position, radius);
+        auto spherePrimitive = Factory::PrimitiveFactory::createSphere(
+            Math::Point<3>(0.0, 0.0, 0.0), radius);
+        spherePrimitive->setPosition(*position);
 
         const libconfig::Setting &color = sphere.lookup("color");
         auto r = Parser::SceneParser::getSetting<int>(color, "r");
