@@ -57,6 +57,8 @@ set(TEST_SOURCES
   tests/test_Renderer.cpp
   tests/test_AmbientLight.cpp
   tests/test_SceneParser.cpp
+  tests/test_Matrix.cpp
+  tests/test_Transform.cpp
 )
 
 set(IMPLEMENTATION_SOURCES ${SOURCES})

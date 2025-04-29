@@ -6,6 +6,7 @@
 #pragma once
 
 #include "Core/IPrimitive.hpp"
+#include "Math/Transform.hpp"
 
 namespace Raytracer::Core {
 
@@ -36,6 +37,7 @@ public:
    */
   void setPosition(const Math::Point<3> &p) noexcept override {
     m_position = p;
+    updateTransform();
   }
 
   /**
@@ -44,13 +46,17 @@ public:
    */
   void setRotation(const Math::Vector<3> &r) noexcept override {
     m_rotation = r;
+    updateTransform();
   }
 
   /**
    * @brief Set primitive scale.
    * @param s New scale.
    */
-  void setScale(const Math::Vector<3> &s) noexcept override { m_scale = s; }
+  void setScale(const Math::Vector<3> &s) noexcept override {
+    m_scale = s;
+    updateTransform();
+  }
 
   /**
    * @brief Set primitive material.
@@ -110,6 +116,14 @@ public:
   }
 
   /**
+   * @brief Get the current transformation.
+   * @return Reference to transform.
+   */
+  [[nodiscard]] const Math::Transform &getTransform() const noexcept {
+    return m_transform;
+  }
+
+  /**
    * @brief Compute intersection with a ray.
    * @param ray Ray to test.
    * @return Intersection info if hit.
@@ -123,11 +137,22 @@ public:
    */
   [[nodiscard]] BoundingBox getBoundingBox() const noexcept override = 0;
 
+protected:
+  /**
+   * @brief Update the transformation based on position, rotation, and scale.
+   */
+  void updateTransform() noexcept {
+    m_transform = Math::Transform::translate(m_position.m_components[0],
+                                             m_position.m_components[1],
+                                             m_position.m_components[2]);
+  }
+
 private:
   Math::Point<3> m_position{};
   Math::Vector<3> m_rotation{};
   Math::Vector<3> m_scale{1.0, 1.0, 1.0};
   std::shared_ptr<IMaterial> m_material{nullptr};
+  Math::Transform m_transform{};
 };
 
 } // namespace Raytracer::Core

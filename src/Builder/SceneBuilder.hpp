@@ -35,6 +35,15 @@ public:
   SceneBuilder &buildLights(const libconfig::Setting &config);
 
   /**
+   * @brief Apply transformations from configuration to a primitive
+   * @param config The libconfig setting containing transformation parameters
+   * @param primitive Pointer to the primitive to which transformations will be
+   * applied
+   */
+  void applyTransformations(const libconfig::Setting &config,
+                            Core::IPrimitive *primitive);
+
+  /**
    * @brief Get the built scene
    */
   [[nodiscard]] std::unique_ptr<Core::Scene> getResult() {

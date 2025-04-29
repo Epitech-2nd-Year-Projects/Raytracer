@@ -50,3 +50,6 @@ build/
 .cache/
 .clangd
 compile_commands.json
+cmake-build-debug/
+.idea/
+*.ppm

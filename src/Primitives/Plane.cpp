@@ -33,38 +33,42 @@ const Math::Point<3> &Plane::getPosition() const noexcept { return m_position; }
 
 [[nodiscard]] std::optional<Core::Intersection>
 Plane::intersect(const Core::Ray &ray) const noexcept {
-  double denominateur = m_normal.dot(ray.getDirection());
-
+  Core::Ray localRay = getTransform().inverseTransformRay(ray);
+  double denominateur = m_normal.dot(localRay.getDirection());
   if (std::abs(denominateur) < 1e-8) {
     return std::nullopt;
   }
 
-  Math::Vector<3> vec = m_position - ray.getOrigin();
+  Math::Vector<3> vec = m_position - localRay.getOrigin();
   double t = vec.dot(m_normal) / denominateur;
-
-  if (t < ray.getMinDistance() || t > ray.getMaxDistance()) {
+  if (t < localRay.getMinDistance() || t > localRay.getMaxDistance()) {
     return std::nullopt;
   }
 
-  Math::Point<3> intersectionPoint = ray.at(t);
-
+  Math::Point<3> localIntersectionPoint = localRay.at(t);
   bool isInside = denominateur > 0;
-  Math::Vector<3> normal = isInside ? -m_normal : m_normal;
+  Math::Vector<3> localNormal = isInside ? -m_normal : m_normal;
 
   double u = 0.0, v = 0.0;
   if (m_normal.m_components[0] == 1.0) {
-    u = intersectionPoint.m_components[1];
-    v = intersectionPoint.m_components[2];
+    u = localIntersectionPoint.m_components[1];
+    v = localIntersectionPoint.m_components[2];
   } else if (m_normal.m_components[1] == 1.0) {
-    u = intersectionPoint.m_components[0];
-    v = intersectionPoint.m_components[2];
+    u = localIntersectionPoint.m_components[0];
+    v = localIntersectionPoint.m_components[2];
   } else {
-    u = intersectionPoint.m_components[0];
-    v = intersectionPoint.m_components[1];
+    u = localIntersectionPoint.m_components[0];
+    v = localIntersectionPoint.m_components[1];
   }
 
-  return Core::Intersection(intersectionPoint, normal, this->getMaterial(), t,
-                            isInside, Math::Point<2>{u, v});
+  Math::Point<3> worldIntersectionPoint =
+      getTransform().transformPoint(localIntersectionPoint);
+  Math::Vector<3> worldNormal = getTransform().transformNormal(localNormal);
+  double worldDistance = (worldIntersectionPoint - ray.getOrigin()).length();
+
+  return Core::Intersection(worldIntersectionPoint, worldNormal,
+                            this->getMaterial(), worldDistance, isInside,
+                            Math::Point<2>{u, v});
 }
 
 [[nodiscard]] Core::BoundingBox Plane::getBoundingBox() const noexcept {
