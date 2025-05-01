@@ -340,8 +340,8 @@ private:
  * @return New matrix representing the product.
  */
 template <std::size_t Rows, std::size_t Cols, typename T>
-Matrix<Rows, Cols, T>
-operator*(const T scalar, const Matrix<Rows, Cols, T> &matrix) noexcept {
+Matrix<Rows, Cols, T> operator*(const T scalar,
+                                const Matrix<Rows, Cols, T> &matrix) noexcept {
   return matrix * scalar;
 }
 
@@ -410,23 +410,15 @@ inline Vector<3> transformVector(const Matrix4 &matrix,
  */
 inline Vector<3> transformNormal(const Matrix4 &matrix,
                                  const Vector<3> &normal) noexcept {
-  Matrix<3, 3> upperLeft;
-  for (std::size_t i = 0; i < 3; i++) {
-    for (std::size_t j = 0; j < 3; j++) {
-      upperLeft(i, j) = matrix(i, j);
-    }
-  }
-
-  Matrix<3, 3> inverseTranspose = upperLeft.transpose();
-  double x = inverseTranspose(0, 0) * normal.m_components[0] +
-             inverseTranspose(0, 1) * normal.m_components[1] +
-             inverseTranspose(0, 2) * normal.m_components[2];
-  double y = inverseTranspose(1, 0) * normal.m_components[0] +
-             inverseTranspose(1, 1) * normal.m_components[1] +
-             inverseTranspose(1, 2) * normal.m_components[2];
-  double z = inverseTranspose(2, 0) * normal.m_components[0] +
-             inverseTranspose(2, 1) * normal.m_components[1] +
-             inverseTranspose(2, 2) * normal.m_components[2];
+  double x = matrix(0, 0) * normal.m_components[0] +
+             matrix(1, 0) * normal.m_components[1] +
+             matrix(2, 0) * normal.m_components[2];
+  double y = matrix(0, 1) * normal.m_components[0] +
+             matrix(1, 1) * normal.m_components[1] +
+             matrix(2, 1) * normal.m_components[2];
+  double z = matrix(0, 2) * normal.m_components[0] +
+             matrix(1, 2) * normal.m_components[1] +
+             matrix(2, 2) * normal.m_components[2];
   return Vector<3>(x, y, z).normalize();
 }
 
