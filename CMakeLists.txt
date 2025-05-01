@@ -18,6 +18,8 @@ set(SOURCES
   src/Primitives/Plane.cpp
   src/Builder/SceneBuilder.cpp
   src/Parser/SceneParser.cpp
+        src/Primitives/Cylinder.cpp
+        src/Primitives/Cylinder.hpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
