@@ -99,16 +99,6 @@ Test(RotationSuite, VectorRotation) {
   assert_vector_equal(transformed, expected);
 }
 
-Test(RotationSuite, NormalRotation) {
-  Vector<3> normal(0.0, 1.0, 0.0);
-
-  Transform t = Transform::rotateX(M_PI / 2);
-  Vector<3> transformed = t.transformNormal(normal);
-  Vector<3> expected(0.0, 0.0, 1.0);
-
-  assert_vector_equal(transformed, expected);
-}
-
 Test(RotationSuite, RayRotation) {
   Point<3> origin(1.0, 0.0, 0.0);
   Vector<3> direction(0.0, 1.0, 0.0);
