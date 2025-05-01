@@ -70,10 +70,10 @@ public:
   }
 
   /**
- * @brief Create a rotation transform around the X axis.
- * @param angle Rotation angle in radians.
- * @return Rotation transform.
- */
+   * @brief Create a rotation transform around the X axis.
+   * @param angle Rotation angle in radians.
+   * @return Rotation transform.
+   */
   static Transform rotateX(double angle) noexcept {
     double sin = std::sin(angle);
     double cos = std::cos(angle);
@@ -93,10 +93,10 @@ public:
   }
 
   /**
- * @brief Create a rotation transform around the Y axis.
- * @param angle Rotation angle in radians.
- * @return Rotation transform.
- */
+   * @brief Create a rotation transform around the Y axis.
+   * @param angle Rotation angle in radians.
+   * @return Rotation transform.
+   */
   static Transform rotateY(double angle) noexcept {
     double sin = std::sin(angle);
     double cos = std::cos(angle);
@@ -116,10 +116,10 @@ public:
   }
 
   /**
- * @brief Create a rotation transform around the Z axis.
- * @param angle Rotation angle in radians.
- * @return Rotation transform.
- */
+   * @brief Create a rotation transform around the Z axis.
+   * @param angle Rotation angle in radians.
+   * @return Rotation transform.
+   */
   static Transform rotateZ(double angle) noexcept {
     double sin_t = std::sin(angle);
     double cos_t = std::cos(angle);
@@ -146,7 +146,7 @@ public:
    * @return Combined rotation transform.
    */
   static Transform rotate(double rx, double ry, double rz) noexcept {
-    return rotateX(rx) * rotateY(ry) * rotateZ(rz);
+    return rotateZ(rz) * rotateY(ry) * rotateX(rx);
   }
 
   /**
