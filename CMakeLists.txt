@@ -18,8 +18,8 @@ set(SOURCES
   src/Primitives/Plane.cpp
   src/Builder/SceneBuilder.cpp
   src/Parser/SceneParser.cpp
-        src/Primitives/Cylinder.cpp
-        src/Primitives/Cylinder.hpp
+  src/Primitives/Cylinder.cpp
+  src/Primitives/Cylinder.hpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
@@ -61,6 +61,7 @@ set(TEST_SOURCES
   tests/test_SceneParser.cpp
   tests/test_Matrix.cpp
   tests/test_Transform.cpp
+  tests/test_Cylinder.cpp
 )
 
 set(IMPLEMENTATION_SOURCES ${SOURCES})
