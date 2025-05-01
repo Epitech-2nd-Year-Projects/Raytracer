@@ -68,6 +68,26 @@ primitives:
             };
         }
     );
+    cylinder = (
+        {
+            id = "cylinder";
+            axis = "Z"
+            position =
+            {
+                x = 90.0;
+                y = 5.0;
+                z = 0.0;
+            };
+            height = 10.0
+            radius = 25.0;
+            color =
+            {
+                r = 0;
+                g = 0;
+                b = 255;
+            };
+        }
+    );
 };
 
 lights:
