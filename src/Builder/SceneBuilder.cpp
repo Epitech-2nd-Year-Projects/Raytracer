@@ -73,6 +73,19 @@ void SceneBuilder::applyTransformations(const libconfig::Setting &config,
     }
   } catch (const libconfig::SettingNotFoundException &) {
   }
+
+  try {
+    auto rotation = parsePoint3(config.lookup("rotation"));
+    if (rotation) {
+      Math::Vector<3> rotationRad(
+          rotation->m_components[0] * M_PI / 180.0,
+          rotation->m_components[1] * M_PI / 180.0,
+          rotation->m_components[2] * M_PI / 180.0
+      );
+      primitive->setRotation(rotationRad);
+    }
+  } catch (const libconfig::SettingNotFoundException &) {
+  }
 }
 
 void SceneBuilder::buildSpheres(const libconfig::Setting &spheres) {
