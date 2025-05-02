@@ -19,6 +19,7 @@ set(SOURCES
   src/Builder/SceneBuilder.cpp
   src/Parser/SceneParser.cpp
   src/Core/Scene.cpp
+  src/Materials/MirrorMaterial.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
