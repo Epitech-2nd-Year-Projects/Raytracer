@@ -142,9 +142,15 @@ protected:
    * @brief Update the transformation based on position, rotation, and scale.
    */
   void updateTransform() noexcept {
-    m_transform = Math::Transform::translate(m_position.m_components[0],
-                                             m_position.m_components[1],
-                                             m_position.m_components[2]);
+    Math::Transform rotation = Math::Transform::rotate(
+        m_rotation.m_components[0], m_rotation.m_components[1],
+        m_rotation.m_components[2]);
+
+    Math::Transform translation = Math::Transform::translate(
+        m_position.m_components[0], m_position.m_components[1],
+        m_position.m_components[2]);
+
+    m_transform = translation * rotation;
   }
 
 private:
