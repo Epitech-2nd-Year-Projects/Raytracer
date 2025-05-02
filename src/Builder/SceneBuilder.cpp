@@ -51,6 +51,28 @@ SceneBuilder &SceneBuilder::buildLights(const libconfig::Setting &config) {
   return *this;
 }
 
+SceneBuilder &
+SceneBuilder::buildChildScenes(const libconfig::Setting &childScenes) {
+  try {
+    for (const auto &childScene : childScenes) {
+      std::string id = childScene.getName();
+
+      SceneBuilder childBuilder;
+      childBuilder.buildCamera(childScene.lookup("camera"))
+          .buildPrimitives(childScene.lookup("primitives"))
+          .buildLights(childScene.lookup("lights"));
+
+      if (childScene.exists("childScenes")) {
+        childBuilder.buildChildScenes(childScene.lookup("childScenes"));
+      }
+
+      m_scene->addChildScene(id, childBuilder.getResult());
+    }
+  } catch (const libconfig::SettingNotFoundException &) {
+  }
+  return *this;
+}
+
 void SceneBuilder::applyTransformations(const libconfig::Setting &config,
                                         Core::IPrimitive *primitive) {
   try {

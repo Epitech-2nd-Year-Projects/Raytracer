@@ -132,6 +132,35 @@ public:
   Camera &getCamera() { return m_camera; }
 
   /**
+   * @brief Add a child scene to this scene.
+   * @param id Unique identifier for the child scene.
+   * @param childScene Unique pointer to the child scene.
+   * @return true if added successfully, false if ID already exists.
+   */
+  bool addChildScene(const std::string &id, std::unique_ptr<Scene> childScene) {
+    return m_childScenes.try_emplace(id, std::move(childScene)).second;
+  }
+
+  /**
+   * @brief Remove a child scene by its ID.
+   * @param id The identifier of the child scene to remove.
+   * @return true if removed successfully, false if not found.
+   */
+  bool removeChildScene(const std::string &id) {
+    return m_childScenes.erase(id) > 0;
+  }
+
+  /**
+   * @brief Get a child scene by its ID.
+   * @param id The identifier of the child scene.
+   * @return Pointer to the child scene if found, nullptr otherwise.
+   */
+  [[nodiscard]] Scene *getChildScene(const std::string &id) const {
+    auto it = m_childScenes.find(id);
+    return (it != m_childScenes.end()) ? it->second.get() : nullptr;
+  }
+
+  /**
    * @brief Get all primitives in the scene.
    * @return Const reference to the primitives container.
    */
@@ -151,6 +180,15 @@ public:
   }
 
   /**
+   * @brief Get all child scenes
+   * @return Const reference to the child scenes container.
+   */
+  [[nodiscard]] const std::unordered_map<std::string, std::unique_ptr<Scene>> &
+  getChildScenes() const {
+    return m_childScenes;
+  }
+
+  /**
    * @brief Clear all primitives from the scene.
    */
   void clearPrimitives() { m_primitives.clear(); }
@@ -161,11 +199,17 @@ public:
   void clearLights() { m_lights.clear(); }
 
   /**
-   * @brief Clear the entire scene (primitives and lights).
+   * @brief Clear all child scenes.
+   */
+  void clearChildScenes() { m_childScenes.clear(); }
+
+  /**
+   * @brief Clear the entire scene (primitives, lights, and child scenes).
    */
   void clear() {
     clearPrimitives();
     clearLights();
+    clearChildScenes();
   }
 
   /**
@@ -173,14 +217,7 @@ public:
    * @param ray The ray to test for intersection
    * @return true if any intersection is found, false otherwise
    */
-  [[nodiscard]] bool hasIntersection(const Ray &ray) const {
-    for (const auto &[id, primitive] : m_primitives) {
-      if (primitive->intersect(ray).has_value()) {
-        return true;
-      }
-    }
-    return false;
-  }
+  [[nodiscard]] bool hasIntersection(const Ray &ray) const;
 
   /**
    * @brief Find the nearest intersection point for a ray in the scene
@@ -188,25 +225,12 @@ public:
    * @return Optional containing the nearest intersection if found
    */
   [[nodiscard]] std::optional<Intersection>
-  findNearestIntersection(const Ray &ray) const {
-    std::optional<Intersection> nearestHit;
-    double nearestDistance = std::numeric_limits<double>::infinity();
-
-    for (const auto &[id, primitive] : m_primitives) {
-      if (auto hit = primitive->intersect(ray)) {
-        if (hit->getDistance() < nearestDistance) {
-          nearestDistance = hit->getDistance();
-          nearestHit = hit;
-        }
-      }
-    }
-
-    return nearestHit;
-  }
+  findNearestIntersection(const Ray &ray) const;
 
 private:
   Camera m_camera;
   std::unordered_map<std::string, std::unique_ptr<IPrimitive>> m_primitives;
   std::unordered_map<std::string, std::unique_ptr<ILight>> m_lights;
+  std::unordered_map<std::string, std::unique_ptr<Scene>> m_childScenes;
 };
 } // namespace Raytracer::Core

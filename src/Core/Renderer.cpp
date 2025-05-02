@@ -43,34 +43,31 @@ void Renderer::render(const Scene &scene, const std::string &filename) const {
 
 [[nodiscard]] Color Renderer::traceRay(const Scene &scene,
                                        const Ray &ray) const {
-  std::optional<Intersection> nearestHit;
-  double nearestDistance = std::numeric_limits<double>::infinity();
-
-  for (const auto &[id, primitive] : scene.getPrimitives()) {
-    if (std::optional<Intersection> hit = primitive->intersect(ray)) {
-      if (hit->getDistance() < nearestDistance) {
-        nearestDistance = hit->getDistance();
-        nearestHit = hit;
-      }
-    }
-  }
-
+  std::optional<Intersection> nearestHit = scene.findNearestIntersection(ray);
   if (!nearestHit) {
     return Color(0, 0, 0);
   }
 
   std::shared_ptr<IMaterial> material = nearestHit->getMaterial();
-
   if (!material) {
     return Color(0, 0, 0);
   }
 
   std::vector<std::shared_ptr<ILight>> lights;
+  collectLights(scene, lights);
 
+  return material->computeColor(*nearestHit, ray, lights, scene);
+}
+
+void Renderer::collectLights(
+    const Scene &scene, std::vector<std::shared_ptr<ILight>> &lights) const {
   for (const auto &[id, light] : scene.getLights()) {
     lights.push_back(std::shared_ptr<ILight>(light.get(), [](ILight *) {}));
   }
 
-  return material->computeColor(*nearestHit, ray, lights, scene);
+  for (const auto &[id, childScene] : scene.getChildScenes()) {
+    collectLights(*childScene, lights);
+  }
 }
+
 } // namespace Raytracer::Core
