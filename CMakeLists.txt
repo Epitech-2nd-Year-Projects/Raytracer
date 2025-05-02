@@ -18,6 +18,7 @@ set(SOURCES
   src/Primitives/Plane.cpp
   src/Builder/SceneBuilder.cpp
   src/Parser/SceneParser.cpp
+  src/Primitives/Cylinder.cpp
   src/Core/Scene.cpp
 )
 
@@ -60,6 +61,7 @@ set(TEST_SOURCES
   tests/test_SceneParser.cpp
   tests/test_Matrix.cpp
   tests/test_Transform.cpp
+  tests/test_Cylinder.cpp
   tests/test_Rotation.cpp
 )
 

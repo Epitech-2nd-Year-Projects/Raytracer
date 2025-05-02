@@ -73,6 +73,12 @@ private:
   void buildPlanes(const libconfig::Setting &planes);
 
   /**
+   * @brief Build Cylinder from configuration
+   * @param cylinders Configuration for Cylinder
+   */
+  void buildCylinder(const libconfig::Setting &cylinders);
+
+  /**
    * @brief Build ambient light from configuration
    * @param ambient Configuration for ambient light
    */

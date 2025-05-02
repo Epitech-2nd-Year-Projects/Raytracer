@@ -36,6 +36,7 @@ SceneBuilder &SceneBuilder::buildPrimitives(const libconfig::Setting &config) {
   try {
     buildSpheres(config.lookup("spheres"));
     buildPlanes(config.lookup("planes"));
+    buildCylinder(config.lookup("cylinder"));
   } catch (const libconfig::SettingNotFoundException &) {
   }
   return *this;
@@ -168,6 +169,38 @@ void SceneBuilder::buildPlanes(const libconfig::Setting &planes) {
 
       planePrimitive->setMaterial(material);
       m_scene->addPrimitive(id, std::move(planePrimitive));
+    } catch (const libconfig::SettingNotFoundException &) {
+    }
+  }
+}
+void SceneBuilder::buildCylinder(const libconfig::Setting &cylinders) {
+  for (const auto &cylinder : cylinders) {
+    try {
+      std::string id = cylinder.lookup("id");
+      auto position = parsePoint3(cylinder.lookup("position"));
+      double radius = cylinder.lookup("radius");
+      double height = cylinder.lookup("height");
+      std::string axis = cylinder.lookup("axis");
+
+      if (position) {
+        auto cylinderPrimitive = Factory::PrimitiveFactory::createCylinder(
+            axis, Math::Point<3>(0.0, 0.0, 0.0), radius, height);
+        applyTransformations(cylinder, cylinderPrimitive.get());
+
+        const libconfig::Setting &color = cylinder.lookup("color");
+        auto r = Parser::SceneParser::getSetting<int>(color, "r");
+        auto g = Parser::SceneParser::getSetting<int>(color, "g");
+        auto b = Parser::SceneParser::getSetting<int>(color, "b");
+        if (!r || !g || !b) {
+          std::cerr << "Invalid color values for cylinder with id: " << id
+                    << "\n";
+          continue;
+        }
+        auto material = Factory::MaterialFactory::createFlatMaterial(
+            Core::Color(*r, *g, *b), Core::Color(*r, *g, *b));
+        cylinderPrimitive->setMaterial(material);
+        m_scene->addPrimitive(id, std::move(cylinderPrimitive));
+      }
     } catch (const libconfig::SettingNotFoundException &) {
     }
   }
