@@ -21,18 +21,27 @@ public:
 
   /**
    * @brief Build camera from configuration
+   * @param config The libconfig setting containing camera configuration
    */
   SceneBuilder &buildCamera(const libconfig::Setting &config);
 
   /**
    * @brief Build primitives from configuration
+   * @param config The libconfig setting containing primitive configuration
    */
   SceneBuilder &buildPrimitives(const libconfig::Setting &config);
 
   /**
    * @brief Build lights from configuration
+   * @param config The libconfig setting containing light configuration
    */
   SceneBuilder &buildLights(const libconfig::Setting &config);
+
+  /**
+   * @brief Build child scenes from configuration
+   * @param childScenes Configuration for child scenes
+   */
+  SceneBuilder &buildChildScenes(const libconfig::Setting &childScenes);
 
   /**
    * @brief Apply transformations from configuration to a primitive
