@@ -70,6 +70,86 @@ public:
   }
 
   /**
+   * @brief Create a rotation transform around the X axis.
+   * @param angle Rotation angle in radians.
+   * @return Rotation transform.
+   */
+  static Transform rotateX(double angle) noexcept {
+    double sin = std::sin(angle);
+    double cos = std::cos(angle);
+
+    Matrix4 matrix = Matrix4::identity();
+    matrix(1, 1) = cos;
+    matrix(1, 2) = -sin;
+    matrix(2, 1) = sin;
+    matrix(2, 2) = cos;
+
+    Matrix4 inverse = Matrix4::identity();
+    inverse(1, 1) = cos;
+    inverse(1, 2) = sin;
+    inverse(2, 1) = -sin;
+    inverse(2, 2) = cos;
+    return Transform(matrix, inverse);
+  }
+
+  /**
+   * @brief Create a rotation transform around the Y axis.
+   * @param angle Rotation angle in radians.
+   * @return Rotation transform.
+   */
+  static Transform rotateY(double angle) noexcept {
+    double sin = std::sin(angle);
+    double cos = std::cos(angle);
+
+    Matrix4 matrix = Matrix4::identity();
+    matrix(0, 0) = cos;
+    matrix(0, 2) = sin;
+    matrix(2, 0) = -sin;
+    matrix(2, 2) = cos;
+
+    Matrix4 inverse = Matrix4::identity();
+    inverse(0, 0) = cos;
+    inverse(0, 2) = -sin;
+    inverse(2, 0) = sin;
+    inverse(2, 2) = cos;
+    return Transform(matrix, inverse);
+  }
+
+  /**
+   * @brief Create a rotation transform around the Z axis.
+   * @param angle Rotation angle in radians.
+   * @return Rotation transform.
+   */
+  static Transform rotateZ(double angle) noexcept {
+    double sin_t = std::sin(angle);
+    double cos_t = std::cos(angle);
+
+    Matrix4 matrix = Matrix4::identity();
+    matrix(0, 0) = cos_t;
+    matrix(0, 1) = -sin_t;
+    matrix(1, 0) = sin_t;
+    matrix(1, 1) = cos_t;
+
+    Matrix4 inverse = Matrix4::identity();
+    inverse(0, 0) = cos_t;
+    inverse(0, 1) = sin_t;
+    inverse(1, 0) = -sin_t;
+    inverse(1, 1) = cos_t;
+    return Transform(matrix, inverse);
+  }
+
+  /**
+   * @brief Create a rotation transform around all three axes (X, Y, Z).
+   * @param rx Rotation angle around X axis in radians.
+   * @param ry Rotation angle around Y axis in radians.
+   * @param rz Rotation angle around Z axis in radians.
+   * @return Combined rotation transform.
+   */
+  static Transform rotate(double rx, double ry, double rz) noexcept {
+    return rotateZ(rz) * rotateY(ry) * rotateX(rx);
+  }
+
+  /**
    * @brief Get the transformation matrix.
    * @return The transformation matrix.
    */

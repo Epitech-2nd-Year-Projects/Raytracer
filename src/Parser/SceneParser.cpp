@@ -11,7 +11,8 @@ SceneParser::parseFile(const std::string &filename) {
     Builder::SceneBuilder builder;
     builder.buildCamera(m_config.lookup("camera"))
         .buildPrimitives(m_config.lookup("primitives"))
-        .buildLights(m_config.lookup("lights"));
+        .buildLights(m_config.lookup("lights"))
+        .buildChildScenes(m_config.lookup("childScenes"));
 
     return builder.getResult();
   } catch (const libconfig::FileIOException &) {
