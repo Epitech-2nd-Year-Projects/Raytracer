@@ -8,6 +8,7 @@
 #include "Core/Color.hpp"
 #include "Core/Scene.hpp"
 #include <cstddef>
+#include <vector>
 
 namespace Raytracer::Core {
 /**
@@ -72,6 +73,15 @@ private:
    * @return Resulting color.
    */
   [[nodiscard]] Color traceRay(const Scene &scene, const Ray &ray) const;
+
+private:
+  /**
+   * @brief Collect all lights in the scene.
+   * @param scene Scene to render.
+   * @param lights Vector to store collected lights.
+   */
+  void collectLights(const Scene &scene,
+                     std::vector<std::shared_ptr<ILight>> &lights) const;
 
 private:
   std::size_t m_width;
