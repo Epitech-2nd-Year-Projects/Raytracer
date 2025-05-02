@@ -62,6 +62,7 @@ set(TEST_SOURCES
   tests/test_Matrix.cpp
   tests/test_Transform.cpp
   tests/test_Rotation.cpp
+        tests/test_MirrorMaterial.cpp
 )
 
 set(IMPLEMENTATION_SOURCES ${SOURCES})
