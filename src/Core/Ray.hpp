@@ -86,9 +86,23 @@ public:
     }
   }
 
+  /**
+   * @brief Sets the depth of the ray.
+   * @param depth The new depth value to be assigned.
+   * @note This function does not throw exceptions.
+   */
+  void setDepth(size_t depth) noexcept { m_depth = depth; }
+
+  /**
+   * @brief Retrieves the depth of the ray.
+   * @return The current depth of the ray as a size_t.
+   */
+  [[nodiscard]] size_t getDepth() const noexcept { return m_depth; }
+
 private:
   Math::Point<3> m_origin{};
   Math::Vector<3> m_direction{};
+  size_t m_depth{0};
   double m_minDistance{0.0};
   double m_maxDistance{std::numeric_limits<double>::infinity()};
 };
