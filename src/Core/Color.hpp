@@ -76,6 +76,15 @@ public:
   }
 
   /**
+   * @brief Multiplies the color's RGB components by a scalar value.
+   * @param other Scalar value to multiply the RGB components by.
+   * @return A new Color object with the scaled RGB components.
+   */
+  [[nodiscard]] Color operator*(const double &other) const noexcept {
+    return Color(getR() * other, getG() * other, getB() * other);
+  }
+
+  /**
    * @brief Component-wise addition.
    * @param other Other color.
    * @return Resulting color.

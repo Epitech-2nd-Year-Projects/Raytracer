@@ -20,6 +20,7 @@ set(SOURCES
   src/Parser/SceneParser.cpp
   src/Primitives/Cylinder.cpp
   src/Core/Scene.cpp
+  src/Materials/MirrorMaterial.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
@@ -63,6 +64,7 @@ set(TEST_SOURCES
   tests/test_Transform.cpp
   tests/test_Cylinder.cpp
   tests/test_Rotation.cpp
+        tests/test_MirrorMaterial.cpp
 )
 
 set(IMPLEMENTATION_SOURCES ${SOURCES})

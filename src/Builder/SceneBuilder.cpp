@@ -132,10 +132,13 @@ void SceneBuilder::buildSpheres(const libconfig::Setting &spheres) {
           continue;
         }
 
-        auto material = Factory::MaterialFactory::createFlatMaterial(
-            Core::Color(*r, *g, *b), Core::Color(*r, *g, *b));
+        auto material = buildMaterial(sphere, Core::Color(*r, *g, *b));
 
-        spherePrimitive->setMaterial(material);
+        if (!material) {
+          std::cerr << "Invalid material for sphere with id: " << id << "\n";
+          continue;
+        }
+        spherePrimitive->setMaterial(material.value());
         m_scene->addPrimitive(id, std::move(spherePrimitive));
       }
     } catch (const libconfig::SettingNotFoundException &) {
@@ -164,10 +167,14 @@ void SceneBuilder::buildPlanes(const libconfig::Setting &planes) {
         continue;
       }
 
-      auto material = Factory::MaterialFactory::createFlatMaterial(
-          Core::Color(*r, *g, *b), Core::Color(*r, *g, *b));
+      auto material = buildMaterial(plane, Core::Color(*r, *g, *b));
 
-      planePrimitive->setMaterial(material);
+      if (!material) {
+        std::cerr << "Invalid material for plane with id: " << id << "\n";
+        continue;
+      }
+
+      planePrimitive->setMaterial(material.value());
       m_scene->addPrimitive(id, std::move(planePrimitive));
     } catch (const libconfig::SettingNotFoundException &) {
     }
@@ -239,5 +246,27 @@ void SceneBuilder::buildPointLights(const libconfig::Setting &points) {
     } catch (const libconfig::SettingNotFoundException &) {
     }
   }
+}
+
+std::optional<std::shared_ptr<Core::IMaterial>>
+SceneBuilder::buildMaterial(const libconfig::Setting &material,
+                            const Core::Color &color) {
+  try {
+
+    const std::string &mat = material.lookup("material");
+    const double ambiantCoefficient = material.lookup("ambientCoefficient");
+    const double diffuseCoefficient = material.lookup("diffuseCoefficient");
+
+    if (mat == "mirror") {
+      return Factory::MaterialFactory::createMirrorMaterial(
+          color, color, ambiantCoefficient, diffuseCoefficient);
+    }
+    if (mat == "flat") {
+      return Factory::MaterialFactory::createFlatMaterial(
+          color, color, ambiantCoefficient, diffuseCoefficient);
+    }
+  } catch (const libconfig::SettingNotFoundException &) {
+  }
+  return std::nullopt;
 }
 } // namespace Raytracer::Builder

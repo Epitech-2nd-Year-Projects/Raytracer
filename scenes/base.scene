@@ -31,6 +31,9 @@ primitives:
                 z = 40.0;
             };
             radius = 25.0;
+            material = "flat";
+            ambientCoefficient = 0.5;
+            diffuseCoefficient = 0.5;
             color =
             {
                 r = 255;
@@ -40,6 +43,9 @@ primitives:
         },
         {
             id = "sphere2";
+            material = "mirror";
+            ambientCoefficient = 0.5;
+            diffuseCoefficient = 0.5;
             position =
             {
                 x = -40.0;
@@ -60,6 +66,9 @@ primitives:
             id = "plane1";
             axis = "Z";
             position = -20.0;
+            material = "mirror";
+            ambientCoefficient = 0.5;
+            diffuseCoefficient = 0.5;
             color =
             {
                 r = 64;
@@ -113,3 +122,6 @@ lights:
     );
     directional = ();
 };
+childScenes:
+{
+}
