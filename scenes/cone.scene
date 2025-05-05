@@ -107,6 +107,12 @@ primitives:
                     y = 0.0;
                     z = 0.0;
                 };
+                rotation =
+                {
+                    x = 0.0;
+                    y = 0.0;
+                    z = 0.0;
+                };
                 height   = 60.0;         # distance apex->base
                 radius   = 30.0;         # rayon de la base
                 material = "mirror";
