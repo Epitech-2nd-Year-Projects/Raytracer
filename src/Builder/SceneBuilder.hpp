@@ -79,6 +79,12 @@ private:
   void buildCylinder(const libconfig::Setting &cylinders);
 
   /**
+   * @brief Build Cone form configuration
+   * @param cones Configuration for Cone
+   */
+  void buildCone(const libconfig::Setting &cones);
+
+  /**
    * @brief Build ambient light from configuration
    * @param ambient Configuration for ambient light
    */

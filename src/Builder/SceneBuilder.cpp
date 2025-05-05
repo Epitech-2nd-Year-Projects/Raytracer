@@ -37,6 +37,7 @@ SceneBuilder &SceneBuilder::buildPrimitives(const libconfig::Setting &config) {
     buildSpheres(config.lookup("spheres"));
     buildPlanes(config.lookup("planes"));
     buildCylinder(config.lookup("cylinder"));
+    buildCone(config.lookup("cone"));
   } catch (const libconfig::SettingNotFoundException &) {
   }
   return *this;
@@ -209,6 +210,47 @@ void SceneBuilder::buildCylinder(const libconfig::Setting &cylinders) {
         m_scene->addPrimitive(id, std::move(cylinderPrimitive));
       }
     } catch (const libconfig::SettingNotFoundException &) {
+    }
+  }
+}
+
+void SceneBuilder::buildCone(const libconfig::Setting &cones) {
+  for (const auto &cone : cones) {
+    try {
+      std::string id = cone.lookup("id");
+      auto apex = parsePoint3(cone.lookup("position"));
+      double radius = cone.lookup("radius");
+      double height = cone.lookup("height");
+      std::string axis = cone.lookup("axis");
+
+      if (!apex)
+        continue;
+
+      auto conePrimitive = Factory::PrimitiveFactory::createCone(
+          axis, Math::Point<3>(0.0, 0.0, 0.0), radius, height);
+
+      applyTransformations(cone, conePrimitive.get());
+
+      const libconfig::Setting &color = cone.lookup("color");
+      auto r = Parser::SceneParser::getSetting<int>(color, "r");
+      auto g = Parser::SceneParser::getSetting<int>(color, "g");
+      auto b = Parser::SceneParser::getSetting<int>(color, "b");
+      if (!r || !g || !b) {
+        std::cerr << "Invalid color values for cone with id: " << id << '\n';
+        continue;
+      }
+
+      auto material = buildMaterial(cone, Core::Color(*r, *g, *b));
+      if (!material) {
+        std::cerr << "Invalid material for cone with id: " << id << '\n';
+        continue;
+      }
+
+      conePrimitive->setMaterial(material.value());
+      m_scene->addPrimitive(id, std::move(conePrimitive));
+
+    } catch (const libconfig::SettingNotFoundException &) {
+      // ->
     }
   }
 }
