@@ -21,6 +21,8 @@ set(SOURCES
   src/Primitives/Cylinder.cpp
   src/Core/Scene.cpp
   src/Materials/MirrorMaterial.cpp
+  src/Primitives/Cone.cpp
+  src/Primitives/Cone.hpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
