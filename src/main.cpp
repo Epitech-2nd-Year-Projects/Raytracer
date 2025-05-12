@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
   }
 
   const std::string_view sceneFile = argv[1];
-  bool debug = false;
+  [[maybe_unused]] bool debug = false;
   bool useMultithreading = true;
   std::string outputFile = "output.ppm";
 
