@@ -12,7 +12,7 @@ using Raytracer::Math::Vector;
 
 static constexpr double EQ_APPROX = 1e-6;
 
-void assert_point_equal(const Point<3> &a, const Point<3> &b,
+static void assert_point_equal(const Point<3> &a, const Point<3> &b,
                         double eps = EQ_APPROX) {
   for (int i = 0; i < 3; i++) {
     cr_assert_float_eq(a.m_components[i], b.m_components[i], eps,
@@ -21,7 +21,7 @@ void assert_point_equal(const Point<3> &a, const Point<3> &b,
   }
 }
 
-void assert_vector_equal(const Vector<3> &a, const Vector<3> &b,
+static void assert_vector_equal(const Vector<3> &a, const Vector<3> &b,
                          double eps = EQ_APPROX) {
   for (int i = 0; i < 3; i++) {
     cr_assert_float_eq(a.m_components[i], b.m_components[i], eps,
