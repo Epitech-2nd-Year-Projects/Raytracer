@@ -23,6 +23,7 @@ set(SOURCES
   src/Materials/MirrorMaterial.cpp
   src/Primitives/Cone.cpp
   src/Primitives/Cone.hpp
+  src/Materials/SteelMaterial.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
