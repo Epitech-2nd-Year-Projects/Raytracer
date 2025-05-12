@@ -45,17 +45,25 @@ public:
   ~Vector() noexcept = default;
 
   /**
-   * @brief Get the length of the vector.
-   * @return The length of the vector.
+   * @brief Get the squared length of the vector.
+   * @return The squared length of the vector.
    */
-  double length() const {
+  double squaredNorm() const {
     double result = 0.0;
 
     for (std::size_t i = 0; i < N; ++i) {
       result += m_components[i] * m_components[i];
     }
 
-    return std::sqrt(result);
+    return result;
+  }
+
+  /**
+   * @brief Get the length of the vector.
+   * @return The length of the vector.
+   */
+  double length() const {
+    return std::sqrt(squaredNorm());
   }
 
   /**
