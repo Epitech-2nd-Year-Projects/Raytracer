@@ -35,7 +35,8 @@ public:
   [[nodiscard]] static std::unique_ptr<Core::IPrimitive>
   createCylinder(const std::string &axis, const Math::Point<3> &position,
                  const double radius, const double height) {
-    return std::make_unique<Primitives::Cylinder>(axis, position, radius, height);
+    return std::make_unique<Primitives::Cylinder>(axis, position, radius,
+                                                  height);
   }
 
   /**
