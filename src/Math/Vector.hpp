@@ -62,9 +62,7 @@ public:
    * @brief Get the length of the vector.
    * @return The length of the vector.
    */
-  double length() const {
-    return std::sqrt(squaredNorm());
-  }
+  double length() const { return std::sqrt(squaredNorm()); }
 
   /**
    * @brief Adding two vectors.
