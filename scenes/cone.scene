@@ -99,11 +99,11 @@ primitives:
     );
     cone = (
             {
-                id       = "cone1";
-                axis     = "Z";          # pointe vers +Z
+                id = "cone1";
+                axis = "Z";
                 position =
                 {
-                    x = 0.0;             # apex au centre
+                    x = 0.0;
                     y = 0.0;
                     z = 0.0;
                 };
@@ -113,8 +113,8 @@ primitives:
                     y = 0.0;
                     z = 0.0;
                 };
-                height   = 60.0;         # distance apex->base
-                radius   = 30.0;         # rayon de la base
+                height = 60.0;
+                radius = 30.0;
                 material = "mirror";
                 ambientCoefficient = 0.6;
                 diffuseCoefficient = 0.6;
