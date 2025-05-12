@@ -150,6 +150,36 @@ public:
   }
 
   /**
+   * @brief Create a scale transform.
+   * @param sx Scale factor on X axis.
+   * @param sy Scale factor on Y axis.
+   * @param sz Scale factor on Z axis.
+   * @return Scale transform.
+   */
+  static Transform scale(double sx, double sy, double sz) noexcept {
+    Matrix4 matrix = Matrix4::identity();
+    matrix(0, 0) = sx;
+    matrix(1, 1) = sy;
+    matrix(2, 2) = sz;
+
+    Matrix4 inverse = Matrix4::identity();
+    inverse(0, 0) = 1.0 / sx;
+    inverse(1, 1) = 1.0 / sy;
+    inverse(2, 2) = 1.0 / sz;
+    return Transform(matrix, inverse);
+  }
+
+  /**
+   * @brief Create a scale transform.
+   * @param scale Scale vector with factors for each axis.
+   * @return Scale transform.
+   */
+  static Transform scale(const Vector<3> &scale) noexcept {
+    return Transform::scale(scale.m_components[0], scale.m_components[1],
+                            scale.m_components[2]);
+  }
+
+  /**
    * @brief Get the transformation matrix.
    * @return The transformation matrix.
    */
