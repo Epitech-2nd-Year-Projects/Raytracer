@@ -29,8 +29,9 @@ public:
    * @param diffuseCoef Diffuse coefficient [0.0, 1.0].
    * @param fuzz Fuzziness factor for reflection [0.0, 1.0].
    */
-  SteelMaterial(const Core::Color &diffuseColor, const Core::Color &ambientColor,
-                double ambientCoef, double diffuseCoef, double fuzz = 0.3) noexcept;
+  SteelMaterial(const Core::Color &diffuseColor,
+                const Core::Color &ambientColor, double ambientCoef,
+                double diffuseCoef, double fuzz = 0.3) noexcept;
 
   /**
    * @brief Compute the color resulting from lighting at an intersection.

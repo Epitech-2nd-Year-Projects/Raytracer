@@ -14,14 +14,13 @@ using Raytracer::Math::Vector;
 namespace Raytracer::Primitives {
 
 Cone::Cone(const std::string &axis, Point<3> position, double radius,
-  double height) noexcept
-{
+           double height) noexcept {
   setAxisPositionRadiusHeight(axis, position, radius, height);
 }
 
 void Cone::setAxisPositionRadiusHeight(const std::string &axis,
-  const Point<3> &position, double radius, double height) noexcept
-{
+                                       const Point<3> &position, double radius,
+                                       double height) noexcept {
   m_position = position;
   m_radius = radius;
   m_height = height;
@@ -34,14 +33,15 @@ void Cone::setAxisPositionRadiusHeight(const std::string &axis,
     m_axis = Vector<3>{0.0, 0.0, 1.0};
 }
 
-std::optional<Core::Intersection>Cone::intersect(const Core::Ray &ray) const noexcept
-{
+std::optional<Core::Intersection>
+Cone::intersect(const Core::Ray &ray) const noexcept {
   Core::Ray localRay = getTransform().inverseTransformRay(ray);
   Point<3> o = localRay.getOrigin();
   Vector<3> d = localRay.getDirection();
 
-  int axisIdx = m_axis.m_components[0] == 1.0 ? 0 :
-    (m_axis.m_components[1] == 1.0 ? 1 : 2);
+  int axisIdx = m_axis.m_components[0] == 1.0
+                    ? 0
+                    : (m_axis.m_components[1] == 1.0 ? 1 : 2);
 
   const auto &oa = o.m_components[axisIdx];
   const auto &da = d.m_components[axisIdx];
@@ -66,7 +66,8 @@ std::optional<Core::Intersection>Cone::intersect(const Core::Ray &ray) const noe
     double disc = B * B - 4.0 * A * C;
     if (disc >= 0.0) {
       double sqrtDisc = std::sqrt(disc);
-      double tVals[2] = {(-B - sqrtDisc) / (2.0 * A), (-B + sqrtDisc) / (2.0 * A)};
+      double tVals[2] = {(-B - sqrtDisc) / (2.0 * A),
+                         (-B + sqrtDisc) / (2.0 * A)};
       for (double t : tVals) {
         if (t < localRay.getMinDistance() || t > localRay.getMaxDistance() ||
             t >= bestT)
@@ -124,7 +125,8 @@ std::optional<Core::Intersection>Cone::intersect(const Core::Ray &ray) const noe
         double ang = std::atan2(dy, dx) / (2 * M_PI);
         if (ang < 0.0)
           ang += 1.0;
-        bestUV = Point<2>{r * std::cos(ang * 2 * M_PI), r * std::sin(ang * 2 * M_PI)};
+        bestUV = Point<2>{r * std::cos(ang * 2 * M_PI),
+                          r * std::sin(ang * 2 * M_PI)};
         isInside = da > 0.0;
       }
     }
@@ -137,13 +139,12 @@ std::optional<Core::Intersection>Cone::intersect(const Core::Ray &ray) const noe
     double worldDist = (worldPt - ray.getOrigin()).length();
 
     return Core::Intersection(worldPt, worldN, getMaterial(), worldDist,
-      isInside, bestUV);
+                              isInside, bestUV);
   }
   return std::nullopt;
 }
 
-Core::BoundingBox Cone::getBoundingBox() const noexcept
-{
+Core::BoundingBox Cone::getBoundingBox() const noexcept {
   Point<3> baseCenter = m_position + m_axis * m_height;
 
   Point<3> min, max;
@@ -172,4 +173,4 @@ Core::BoundingBox Cone::getBoundingBox() const noexcept
   return Core::BoundingBox(min, max);
 }
 
-}
+} // namespace Raytracer::Primitives

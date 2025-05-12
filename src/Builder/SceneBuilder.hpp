@@ -102,8 +102,8 @@ private:
    */
   void buildPointLights(const libconfig::Setting &points);
 
-
-  std::optional<std::shared_ptr<Core::IMaterial>> buildMaterial(const libconfig::Setting &material, const Core::Color &color);
+  std::optional<std::shared_ptr<Core::IMaterial>>
+  buildMaterial(const libconfig::Setting &material, const Core::Color &color);
 
   /**
    * @brief Parse a 3D point from a libconfig setting.

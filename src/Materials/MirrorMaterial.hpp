@@ -1,5 +1,5 @@
 /**
-* @file MirrorMaterial.hpp
+ * @file MirrorMaterial.hpp
  * @brief Defines the MirrorMaterial class for Mirror surface shading.
  */
 
@@ -27,8 +27,9 @@ public:
    * @param ambientCoef Ambient coefficient [0.0, 1.0].
    * @param diffuseCoef Diffuse coefficient [0.0, 1.0].
    */
-  MirrorMaterial(const Core::Color &diffuseColor, const Core::Color &ambientColor,
-               double ambientCoef, double diffuseCoef) noexcept;
+  MirrorMaterial(const Core::Color &diffuseColor,
+                 const Core::Color &ambientColor, double ambientCoef,
+                 double diffuseCoef) noexcept;
 
   /**
    * @brief Compute the color resulting from lighting at an intersection.
