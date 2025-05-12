@@ -32,7 +32,7 @@ public:
    * @param height The height from apex to base of the Cone
    */
   Cone(const std::string &axis, Math::Point<3> position, double radius,
-    double height) noexcept;
+       double height) noexcept;
 
   /**
    * @brief Calculate the axis-aligned bounding box for this Cone
@@ -43,7 +43,8 @@ public:
   /**
    * @brief Calculate intersection between a ray and this Cone
    * @param ray The ray to test for intersection
-   * @return An optional Intersection object, containing intersection data if the ray hits the Cone
+   * @return An optional Intersection object, containing intersection data if
+   * the ray hits the Cone
    */
   [[nodiscard]] std::optional<Core::Intersection>
   intersect(const Core::Ray &ray) const noexcept override;
@@ -52,7 +53,9 @@ public:
    * @brief Get the axis vector of the Cone
    * @return The normalized axis vector
    */
-  [[nodiscard]] const Math::Vector<3> &getAxis() const noexcept { return m_axis; }
+  [[nodiscard]] const Math::Vector<3> &getAxis() const noexcept {
+    return m_axis;
+  }
 
 private:
   /**
@@ -63,7 +66,8 @@ private:
    * @param height The height from apex to base
    */
   void setAxisPositionRadiusHeight(const std::string &axis,
-    const Math::Point<3> &position, double radius, double height) noexcept;
+                                   const Math::Point<3> &position,
+                                   double radius, double height) noexcept;
 
   Math::Vector<3> m_axis{0.0, 1.0, 0.0};
   Math::Point<3> m_position{};
