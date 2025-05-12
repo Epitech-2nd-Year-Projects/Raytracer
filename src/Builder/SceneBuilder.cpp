@@ -108,6 +108,15 @@ void SceneBuilder::applyTransformations(const libconfig::Setting &config,
     }
   } catch (const libconfig::SettingNotFoundException &) {
   }
+
+  try {
+    auto scale = parsePoint3(config.lookup("scale"));
+    if (scale) {
+      Math::Vector<3> scaleVec(scale->m_components[0], scale->m_components[1], scale->m_components[2]);
+      primitive->setScale(scaleVec);
+    }
+  } catch (const libconfig::SettingNotFoundException &) {
+  }
 }
 
 void SceneBuilder::buildSpheres(const libconfig::Setting &spheres) {
