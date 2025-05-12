@@ -307,6 +307,11 @@ SceneBuilder::buildMaterial(const libconfig::Setting &material,
       return Factory::MaterialFactory::createFlatMaterial(
           color, color, ambiantCoefficient, diffuseCoefficient);
     }
+    if (mat == "steel") {
+      double fuzz = 0.3;
+      return Factory::MaterialFactory::createSteelMaterial(
+          color, color, ambiantCoefficient, diffuseCoefficient, fuzz);
+    }
   } catch (const libconfig::SettingNotFoundException &) {
   }
   return std::nullopt;
