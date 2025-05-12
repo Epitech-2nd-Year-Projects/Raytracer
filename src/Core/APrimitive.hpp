@@ -150,7 +150,12 @@ protected:
         m_position.m_components[0], m_position.m_components[1],
         m_position.m_components[2]);
 
-    m_transform = translation * rotation;
+    Math::Transform scaling = Math::Transform::scale(
+      m_position.m_components[0], m_position.m_components[1],
+      m_position.m_components[2]
+      );
+
+    m_transform = translation * rotation * scaling;
   }
 
 private:
