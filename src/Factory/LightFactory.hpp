@@ -1,9 +1,7 @@
 #pragma once
 
-#include "Core/IMaterial.hpp"
-#include "Lights/AmbientLight.hpp"
-#include "Lights/DiffuseLight.hpp"
-#include "Lights/PointLight.hpp"
+#include "Plugin/LightPlugin.hpp"
+#include "Plugin/PluginManager.hpp"
 namespace Raytracer::Factory {
 
 /**
@@ -13,27 +11,21 @@ namespace Raytracer::Factory {
 class LightFactory {
 public:
   /**
-   * @brief Create an ambient light
+   * @brief Create a primitive based on the type
+   * @param type Type of the primitive to create
+   * @return A unique pointer to the created primitive
    */
-  [[nodiscard]] static std::unique_ptr<Core::ILight>
-  createAmbientLight(double intensity) {
-    return std::make_unique<Lights::AmbientLight>(intensity);
-  }
+  [[nodiscard]] static std::unique_ptr<Plugin::LightPlugin>
+  createLight(const std::string &type) {
+    auto &manager = Plugin::PluginManager::getInstance();
+    auto plugins = manager.getPlugins<Plugin::LightPlugin>();
 
-  /**
-   * @brief Create a diffuse light
-   */
-  [[nodiscard]] static std::unique_ptr<Core::ILight>
-  createDiffuseLight(double intensity) {
-    return std::make_unique<Lights::DiffuseLight>(intensity);
-  }
-
-  /**
-   * @brief Create a point light
-   */
-  [[nodiscard]] static std::unique_ptr<Core::ILight>
-  createPointLight(const Math::Point<3> &position, double intensity = 1.0) {
-    return std::make_unique<Lights::PointLight>(position, intensity);
+    for (auto *plugin : plugins) {
+      if (plugin->getName() == type) {
+        return plugin->create();
+      }
+    }
+    return nullptr;
   }
 };
 ;
