@@ -222,4 +222,8 @@ Cylinder::intersect(const Core::Ray &ray) const noexcept {
   return Core::BoundingBox(min, max);
 }
 
+[[nodiscard]] Math::Point<3> Cylinder::getLocalCenter() const noexcept {
+  return m_position + m_normal * (m_height / 2.0);
+}
+
 } // namespace Raytracer::Primitives
