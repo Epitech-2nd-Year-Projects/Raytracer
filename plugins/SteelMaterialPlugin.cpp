@@ -1,23 +1,40 @@
-/**
- * @file SteelMaterial.cpp
- * @brief Implementation of the SteelMaterial class, providing brushed aluminum
- * effect.
- */
+#include "SteelMaterialPlugin.hpp"
+#include "Parser/SceneParser.hpp"
+#include "Plugin/MaterialPlugin.hpp"
+#include "SteelMaterialPlugin.hpp"
 
-#include "Materials/SteelMaterial.hpp"
-#include <random>
+namespace Raytracer::Plugins {
 
-namespace Raytracer::Materials {
+std::shared_ptr<Plugin::MaterialPlugin> SteelMaterialPlugin::create() {
+  return std::make_shared<SteelMaterialPlugin>();
+}
 
-SteelMaterial::SteelMaterial(const Core::Color &diffuseColor,
-                             const Core::Color &ambientColor,
-                             double ambientCoef, double diffuseCoef,
-                             double fuzz) noexcept
-    : AMaterial(diffuseColor, ambientColor, ambientCoef, diffuseCoef),
-      m_fuzz(fuzz > 1.0 ? 1.0 : fuzz), m_generator(std::random_device()()),
-      m_distribution(-1.0, 1.0) {}
+bool SteelMaterialPlugin::configure(const libconfig::Setting &config) {
+  try {
+    const libconfig::Setting &color = config.lookup("color");
+    auto r = Parser::SceneParser::getSetting<int>(color, "r");
+    auto g = Parser::SceneParser::getSetting<int>(color, "g");
+    auto b = Parser::SceneParser::getSetting<int>(color, "b");
 
-Math::Vector<3> SteelMaterial::randomInUnitSphere() const {
+    if (!r || !g || !b) {
+      return false;
+    }
+
+    const double ambiantCoefficient = config.lookup("ambientCoefficient");
+    const double diffuseCoefficient = config.lookup("diffuseCoefficient");
+    const double fuzz = 0.3;
+
+    this->setAmbientCoefficient(ambiantCoefficient);
+    this->setDiffuseCoefficient(diffuseCoefficient);
+    this->setAmbientColor(Core::Color(*r, *g, *b));
+    this->setDiffuseColor(Core::Color(*r, *g, *b));
+    m_fuzz = fuzz;
+  } catch (const libconfig::SettingNotFoundException &) {
+  }
+  return true;
+}
+
+Math::Vector<3> SteelMaterialPlugin::randomInUnitSphere() const {
   Math::Vector<3> brushDirection;
   brushDirection.m_components[0] = 0.8;
   brushDirection.m_components[1] = 0.1 * m_distribution(m_generator);
@@ -39,7 +56,7 @@ Math::Vector<3> SteelMaterial::randomInUnitSphere() const {
   return brushDirection + randomNoise * 0.3;
 }
 
-Core::Color SteelMaterial::computeColor(
+Core::Color SteelMaterialPlugin::computeColor(
     const Core::Intersection &intersection, const Core::Ray &ray,
     const std::vector<std::shared_ptr<Core::ILight>> &lights,
     const Core::Scene &scene) const {
@@ -84,4 +101,12 @@ Core::Color SteelMaterial::computeColor(
       .add(getAmbientColor() * getAmbientCoefficient());
 }
 
-} // namespace Raytracer::Materials
+} // namespace Raytracer::Plugins
+
+extern "C" {
+Raytracer::Plugin::IPlugin *createPlugin() {
+  return new Raytracer::Plugins::SteelMaterialPlugin();
+}
+
+void destroyPlugin(Raytracer::Plugin::IPlugin *plugin) { delete plugin; }
+}
