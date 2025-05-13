@@ -57,6 +57,8 @@ public:
     return m_axis;
   }
 
+  [[nodiscard]] Math::Point<3> getLocalCenter() const noexcept override;
+
 private:
   /**
    * @brief Set the axis, apex position, radius and height of the Cone
