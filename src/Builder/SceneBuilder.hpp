@@ -51,31 +51,6 @@ public:
   }
 
 private:
-  /**
-   * @brief Build ambient light from configuration
-   * @param ambient Configuration for ambient light
-   */
-  void buildAmbientLight(const libconfig::Setting &ambient);
-
-  /**
-   * @brief Build diffuse light from configuration
-   * @param diffuse Configuration for diffuse light
-   */
-  void buildDiffuseLight(const libconfig::Setting &diffuse);
-
-  /**
-   * @brief Build point lights from configuration
-   * @param points Configuration for point lights
-   */
-  void buildPointLights(const libconfig::Setting &points);
-
-  /**
-   * @brief Build directional lights from configuration
-   * @param directionals Configuration for directional lights
-   */
-  void buildDirectionalLights(const libconfig::Setting &directionals);
-
-private:
   std::unique_ptr<Core::Scene> m_scene;
 };
 } // namespace Raytracer::Builder

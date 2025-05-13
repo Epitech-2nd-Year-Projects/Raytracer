@@ -71,10 +71,21 @@ SceneBuilder &SceneBuilder::buildPrimitives(const libconfig::Setting &config) {
 
 SceneBuilder &SceneBuilder::buildLights(const libconfig::Setting &config) {
   try {
-    buildAmbientLight(config.lookup("ambient"));
-    buildDiffuseLight(config.lookup("diffuse"));
-    buildPointLights(config.lookup("points"));
-    buildDirectionalLights(config.lookup("directional"));
+    for (int i = 0; i < config.getLength(); i++) {
+      const libconfig::Setting &lightConfig = config[i];
+      std::string type, id;
+
+      if (!(lightConfig.lookupValue("type", type) &&
+            lightConfig.lookupValue("id", id))) {
+        continue;
+      }
+
+      auto light = Factory::LightFactory::createLight(type);
+      if (!light || !light->configure(lightConfig)) {
+        continue;
+      }
+      m_scene->addLight(id, std::move(light));
+    }
   } catch (const libconfig::SettingNotFoundException &) {
   }
   return *this;
@@ -100,58 +111,5 @@ SceneBuilder::buildChildScenes(const libconfig::Setting &childScenes) {
   } catch (const libconfig::SettingNotFoundException &) {
   }
   return *this;
-}
-
-void SceneBuilder::buildAmbientLight(const libconfig::Setting &ambientConfig) {
-  try {
-    auto ambientLight = Factory::LightFactory::createLight("AmbientLight");
-
-    if (ambientLight->configure(ambientConfig)) {
-      m_scene->addLight("ambient", std::move(ambientLight));
-    }
-  } catch (const libconfig::SettingNotFoundException &) {
-  }
-}
-
-void SceneBuilder::buildDiffuseLight(const libconfig::Setting &diffuse) {
-  try {
-    auto diffuseLight = Factory::LightFactory::createLight("DiffuseLight");
-
-    if (diffuseLight->configure(diffuse)) {
-      m_scene->addLight("diffuse", std::move(diffuseLight));
-    }
-  } catch (const libconfig::SettingNotFoundException &) {
-  }
-}
-
-void SceneBuilder::buildPointLights(const libconfig::Setting &points) {
-  for (const auto &pointConfig : points) {
-    try {
-      std::string id = pointConfig.lookup("id");
-      auto pointLight = Factory::LightFactory::createLight("PointLight");
-
-      if (pointLight->configure(pointConfig)) {
-        m_scene->addLight(id, std::move(pointLight));
-      }
-    } catch (const libconfig::SettingNotFoundException &) {
-    }
-  }
-}
-
-void SceneBuilder::buildDirectionalLights(
-    const libconfig::Setting &directionals) {
-  for (int i = 0; i < directionals.getLength(); i++) {
-    try {
-      const libconfig::Setting &directionalConfig = directionals[i];
-      std::string id = directionalConfig.lookup("id");
-      auto directionalLight =
-          Factory::LightFactory::createLight("DirectionalLight");
-
-      if (directionalLight->configure(directionalConfig)) {
-        m_scene->addLight(id, std::move(directionalLight));
-      }
-    } catch (const libconfig::SettingNotFoundException &) {
-    }
-  }
 }
 } // namespace Raytracer::Builder
