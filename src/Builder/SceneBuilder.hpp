@@ -52,30 +52,6 @@ public:
 
 private:
   /**
-   * @brief Build primitives from configuration
-   * @param spheres Configuration for spheres
-   */
-  void buildSpheres(const libconfig::Setting &spheres);
-
-  /**
-   * @brief Build planes from configuration
-   * @param planes Configuration for planes
-   */
-  void buildPlanes(const libconfig::Setting &planes);
-
-  /**
-   * @brief Build Cylinder from configuration
-   * @param cylinders Configuration for Cylinder
-   */
-  void buildCylinder(const libconfig::Setting &cylinders);
-
-  /**
-   * @brief Build Cone form configuration
-   * @param cones Configuration for Cone
-   */
-  void buildCone(const libconfig::Setting &cones);
-
-  /**
    * @brief Build ambient light from configuration
    * @param ambient Configuration for ambient light
    */
@@ -92,6 +68,12 @@ private:
    * @param points Configuration for point lights
    */
   void buildPointLights(const libconfig::Setting &points);
+
+  /**
+   * @brief Build directional lights from configuration
+   * @param directionals Configuration for directional lights
+   */
+  void buildDirectionalLights(const libconfig::Setting &directionals);
 
 private:
   std::unique_ptr<Core::Scene> m_scene;

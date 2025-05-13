@@ -16,6 +16,9 @@ SceneBuilder &SceneBuilder::buildCamera(const libconfig::Setting &config) {
     const std::optional<Math::Point<3>> position =
         Parser::SceneParser::parsePoint3(config.lookup("position"));
 
+    /*const std::optional<Math::Point<3>> rotation =
+        Parser::SceneParser::parsePoint3(config.lookup("rotation"));*/
+
     double fovDegrees = config.lookup("fov");
 
     if (position) {
@@ -33,10 +36,34 @@ SceneBuilder &SceneBuilder::buildCamera(const libconfig::Setting &config) {
 
 SceneBuilder &SceneBuilder::buildPrimitives(const libconfig::Setting &config) {
   try {
-    buildSpheres(config.lookup("spheres"));
-    buildPlanes(config.lookup("planes"));
-    buildCylinder(config.lookup("cylinders"));
-    buildCone(config.lookup("cones"));
+    for (int i = 0; i < config.getLength(); i++) {
+      const libconfig::Setting &primitiveConfig = config[i];
+      std::string type, id;
+
+      if (!(primitiveConfig.lookupValue("type", type) &&
+            primitiveConfig.lookupValue("id", id))) {
+        continue;
+      }
+
+      auto primitive = Factory::PrimitiveFactory::createPrimitive(type);
+      if (!primitive || !primitive->configure(primitiveConfig)) {
+        continue;
+      }
+
+      if (primitiveConfig.exists("material")) {
+        const libconfig::Setting &materialConfig = primitiveConfig["material"];
+        std::string materialType;
+
+        if (materialConfig.lookupValue("type", materialType)) {
+          auto material =
+              Factory::MaterialFactory::createMaterial(materialType);
+          if (material && material->configure(materialConfig)) {
+            primitive->setMaterial(material);
+          }
+        }
+      }
+      m_scene->addPrimitive(id, std::move(primitive));
+    }
   } catch (const libconfig::SettingNotFoundException &) {
   }
   return *this;
@@ -47,6 +74,7 @@ SceneBuilder &SceneBuilder::buildLights(const libconfig::Setting &config) {
     buildAmbientLight(config.lookup("ambient"));
     buildDiffuseLight(config.lookup("diffuse"));
     buildPointLights(config.lookup("points"));
+    buildDirectionalLights(config.lookup("directional"));
   } catch (const libconfig::SettingNotFoundException &) {
   }
   return *this;
@@ -72,88 +100,6 @@ SceneBuilder::buildChildScenes(const libconfig::Setting &childScenes) {
   } catch (const libconfig::SettingNotFoundException &) {
   }
   return *this;
-}
-
-void SceneBuilder::buildSpheres(const libconfig::Setting &spheres) {
-  for (const auto &sphereConfig : spheres) {
-    try {
-      std::string id = sphereConfig.lookup("id");
-      auto spherePrimitive =
-          Factory::PrimitiveFactory::createPrimitive("Sphere");
-
-      if (spherePrimitive->configure(sphereConfig)) {
-        const std::string &materialType = sphereConfig.lookup("material");
-        auto material = Factory::MaterialFactory::createMaterial(materialType);
-
-        if (material->configure(sphereConfig)) {
-          spherePrimitive->setMaterial(material);
-          m_scene->addPrimitive(id, std::move(spherePrimitive));
-        }
-      }
-    } catch (const libconfig::SettingNotFoundException &) {
-    }
-  }
-}
-
-void SceneBuilder::buildPlanes(const libconfig::Setting &planes) {
-  for (const auto &planeConfig : planes) {
-    try {
-      std::string id = planeConfig.lookup("id");
-      auto planePrimitive = Factory::PrimitiveFactory::createPrimitive("Plane");
-
-      if (planePrimitive->configure(planeConfig)) {
-        const std::string &materialType = planeConfig.lookup("material");
-        auto material = Factory::MaterialFactory::createMaterial(materialType);
-
-        if (material->configure(planeConfig)) {
-          planePrimitive->setMaterial(material);
-          m_scene->addPrimitive(id, std::move(planePrimitive));
-        }
-      }
-    } catch (const libconfig::SettingNotFoundException &) {
-    }
-  }
-}
-
-void SceneBuilder::buildCylinder(const libconfig::Setting &cylinders) {
-  for (const auto &cylinderConfig : cylinders) {
-    try {
-      std::string id = cylinderConfig.lookup("id");
-      auto cylinderPrimitive =
-          Factory::PrimitiveFactory::createPrimitive("Cylinder");
-
-      if (cylinderPrimitive->configure(cylinderConfig)) {
-        const std::string &materialType = cylinderConfig.lookup("material");
-        auto material = Factory::MaterialFactory::createMaterial(materialType);
-
-        if (material->configure(cylinderConfig)) {
-          cylinderPrimitive->setMaterial(material);
-          m_scene->addPrimitive(id, std::move(cylinderPrimitive));
-        }
-      }
-    } catch (const libconfig::SettingNotFoundException &) {
-    }
-  }
-}
-
-void SceneBuilder::buildCone(const libconfig::Setting &cones) {
-  for (const auto &coneConfig : cones) {
-    try {
-      std::string id = coneConfig.lookup("id");
-      auto conePrimitive = Factory::PrimitiveFactory::createPrimitive("Cone");
-
-      if (conePrimitive->configure(coneConfig)) {
-        const std::string &materialType = coneConfig.lookup("material");
-        auto material = Factory::MaterialFactory::createMaterial(materialType);
-
-        if (material->configure(coneConfig)) {
-          conePrimitive->setMaterial(material);
-          m_scene->addPrimitive(id, std::move(conePrimitive));
-        }
-      }
-    } catch (const libconfig::SettingNotFoundException &) {
-    }
-  }
 }
 
 void SceneBuilder::buildAmbientLight(const libconfig::Setting &ambientConfig) {
@@ -186,6 +132,23 @@ void SceneBuilder::buildPointLights(const libconfig::Setting &points) {
 
       if (pointLight->configure(pointConfig)) {
         m_scene->addLight(id, std::move(pointLight));
+      }
+    } catch (const libconfig::SettingNotFoundException &) {
+    }
+  }
+}
+
+void SceneBuilder::buildDirectionalLights(
+    const libconfig::Setting &directionals) {
+  for (int i = 0; i < directionals.getLength(); i++) {
+    try {
+      const libconfig::Setting &directionalConfig = directionals[i];
+      std::string id = directionalConfig.lookup("id");
+      auto directionalLight =
+          Factory::LightFactory::createLight("DirectionalLight");
+
+      if (directionalLight->configure(directionalConfig)) {
+        m_scene->addLight(id, std::move(directionalLight));
       }
     } catch (const libconfig::SettingNotFoundException &) {
     }
