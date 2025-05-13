@@ -10,22 +10,31 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBConfig++ REQUIRED IMPORTED_TARGET libconfig++)
 pkg_check_modules(Criterion REQUIRED IMPORTED_TARGET criterion)
 
-set(SOURCES
-  src/main.cpp
-  src/Primitives/Sphere.cpp
+set(CORE_SOURCES
   src/Core/Renderer.cpp
-  src/Materials/FlatMaterial.cpp
-  src/Primitives/Plane.cpp
   src/Builder/SceneBuilder.cpp
   src/Parser/SceneParser.cpp
-  src/Primitives/Cylinder.cpp
   src/Core/Scene.cpp
-  src/Materials/MirrorMaterial.cpp
+  src/Plugin/PluginManager.cpp
 )
+
+add_library(raytracer_core STATIC ${CORE_SOURCES})
+target_include_directories(raytracer_core PUBLIC ${CMAKE_SOURCE_DIR}/src)
+set_property(TARGET raytracer_core PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 
-add_executable(raytracer ${SOURCES})
+function(add_raytracer_plugin PLUGIN_NAME PLUGIN_SOURCES)
+    add_library(${PLUGIN_NAME} SHARED ${PLUGIN_SOURCES})
+    target_include_directories(${PLUGIN_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)
+
+    set_target_properties(${PLUGIN_NAME} PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/plugins"
+    )
+    target_link_libraries(${PLUGIN_NAME} PRIVATE raytracer_core)
+endfunction()
+
+add_executable(raytracer src/main.cpp)
 
 target_include_directories(raytracer
   PRIVATE
@@ -38,6 +47,7 @@ target_link_libraries(raytracer
     sfml-graphics
     sfml-window
     sfml-system
+    raytracer_core
 )
 
 target_compile_options(raytracer
@@ -52,19 +62,15 @@ set(TEST_SOURCES
   tests/test_Point.cpp
   tests/test_Intersection.cpp
   tests/test_Ray.cpp
-  tests/test_Sphere.cpp
   tests/test_Rectangle.cpp
   tests/test_Camera.cpp
-  tests/test_FlatMaterial.cpp
   tests/test_Scene.cpp
   tests/test_Renderer.cpp
   tests/test_AmbientLight.cpp
   tests/test_SceneParser.cpp
   tests/test_Matrix.cpp
   tests/test_Transform.cpp
-  tests/test_Cylinder.cpp
   tests/test_Rotation.cpp
-        tests/test_MirrorMaterial.cpp
 )
 
 set(IMPLEMENTATION_SOURCES ${SOURCES})
@@ -84,6 +90,7 @@ target_link_libraries(raytracer_tests
   PRIVATE
     PkgConfig::Criterion
     PkgConfig::LIBConfig++
+    raytracer_core
 )
 
 target_compile_options(raytracer_tests
@@ -95,3 +102,9 @@ add_test(
   NAME raytracer_tests
   COMMAND raytracer_tests
 )
+
+add_raytracer_plugin(sphere_plugin plugins/SpherePlugin.cpp)
+add_raytracer_plugin(plane_plugin plugins/PlanePlugin.cpp)
+add_raytracer_plugin(cylinder_plugin plugins/CylinderPlugin.cpp)
+add_raytracer_plugin(flat_material_plugin plugins/FlatMaterialPlugin.cpp)
+add_raytracer_plugin(mirror_material_plugin plugins/MirrorMaterialPlugin.cpp)
