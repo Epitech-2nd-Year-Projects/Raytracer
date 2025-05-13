@@ -135,36 +135,36 @@ void SceneBuilder::buildCylinder(const libconfig::Setting &cylinders) {
   }
 }
 
-void SceneBuilder::buildAmbientLight(const libconfig::Setting &ambient) {
+void SceneBuilder::buildAmbientLight(const libconfig::Setting &ambientConfig) {
   try {
-    double intensity = ambient.lookup("intensity");
-    auto light = Factory::LightFactory::createAmbientLight(intensity);
+    auto ambientLight = Factory::LightFactory::createLight("AmbientLight");
 
-    m_scene->addLight("ambient", std::move(light));
+    if (ambientLight->configure(ambientConfig)) {
+      m_scene->addLight("ambient", std::move(ambientLight));
+    }
   } catch (const libconfig::SettingNotFoundException &) {
   }
 }
 
 void SceneBuilder::buildDiffuseLight(const libconfig::Setting &diffuse) {
   try {
-    double intensity = diffuse.lookup("intensity");
-    auto light = Factory::LightFactory::createDiffuseLight(intensity);
+    auto diffuseLight = Factory::LightFactory::createLight("DiffuseLight");
 
-    m_scene->addLight("diffuse", std::move(light));
+    if (diffuseLight->configure(diffuse)) {
+      m_scene->addLight("diffuse", std::move(diffuseLight));
+    }
   } catch (const libconfig::SettingNotFoundException &) {
   }
 }
 
 void SceneBuilder::buildPointLights(const libconfig::Setting &points) {
-  for (const auto &point : points) {
+  for (const auto &pointConfig : points) {
     try {
-      std::string id = point.lookup("id");
-      auto position =
-          Parser::SceneParser::parsePoint3(point.lookup("position"));
+      std::string id = pointConfig.lookup("id");
+      auto pointLight = Factory::LightFactory::createLight("PointLight");
 
-      if (position) {
-        auto light = Factory::LightFactory::createPointLight(*position);
-        m_scene->addLight(id, std::move(light));
+      if (pointLight->configure(pointConfig)) {
+        m_scene->addLight(id, std::move(pointLight));
       }
     } catch (const libconfig::SettingNotFoundException &) {
     }
