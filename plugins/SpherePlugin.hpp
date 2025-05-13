@@ -1,40 +1,45 @@
-/**
- * @file Sphere.hpp
- * @brief Defines the Sphere class, representing a 3D spherical primitive object
- * for ray tracing calculations
- */
-
 #pragma once
+#include "Plugin/PrimitivePlugin.hpp"
 
-#include "Core/APrimitive.hpp"
-#include "Core/BoundingBox.hpp"
-#include "Core/Intersection.hpp"
-#include "Core/Ray.hpp"
-
-namespace Raytracer::Primitives {
+namespace Raytracer::Plugins {
 
 /**
- * @class Sphere
- * @brief Represents a sphere primitive in 3D space
+ * @class SpherePlugin
+ * @brief Plugin for creating a sphere primitive
  */
-class Sphere : public Core::APrimitive {
+class SpherePlugin : public Plugin::PrimitivePlugin {
 public:
   /**
    * @brief Default constructor
    */
-  Sphere() noexcept = default;
-
-  /**
-   * @brief Construct a sphere with specified center and radius
-   * @param center The center point of the sphere
-   * @param radius The radius of the sphere
-   */
-  Sphere(const Math::Point<3> &center, double radius) noexcept;
+  SpherePlugin() noexcept = default;
 
   /**
    * @brief Virtual destructor
    */
-  ~Sphere() noexcept override = default;
+  ~SpherePlugin() noexcept override = default;
+
+  /**
+   * @brief Get the name of this plugin
+   * @return The name of the plugin
+   */
+  [[nodiscard]]
+  std::string getName() const override {
+    return "Sphere";
+  }
+
+  /**
+   * @brief Create a new instance of the sphere primitive plugin
+   * @return A unique pointer to the new sphere primitive
+   */
+  std::unique_ptr<PrimitivePlugin> create() override;
+
+  /**
+   * @brief Configure the sphere plugin with a libconfig setting
+   * @param config The libconfig setting to configure the sphere
+   * @return True if the configuration was successful, false otherwise
+   */
+  bool configure(const libconfig::Setting &config) override;
 
   /**
    * @brief Set the radius of the sphere
@@ -79,4 +84,5 @@ private:
   double m_radius{1.0};
   Math::Point<3> m_center{};
 };
-} // namespace Raytracer::Primitives
+
+} // namespace Raytracer::Plugins

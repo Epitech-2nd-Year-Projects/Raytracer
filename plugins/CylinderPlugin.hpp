@@ -1,45 +1,45 @@
-/**
- * @file Cylinder.hpp
- * @brief Defines the Cylinder class, representing a 3D Cylinder primitive
- * object for ray tracing calculations
- */
-
 #pragma once
+#include "Plugin/PrimitivePlugin.hpp"
 
-#include "Core/APrimitive.hpp"
-#include "Core/BoundingBox.hpp"
-#include "Core/Intersection.hpp"
-#include "Core/Ray.hpp"
-#include "Math/Point.hpp"
-#include <string>
-
-namespace Raytracer::Primitives {
+namespace Raytracer::Plugins {
 
 /**
- * @class Cylinder
- * @brief Represents an infinite Cylinder primitive in 3D space
+ * @class CylinderPlugin
+ * @brief Plugin for creating a cylinder primitive
  */
-class Cylinder : public Core::APrimitive {
+class CylinderPlugin : public Plugin::PrimitivePlugin {
 public:
   /**
    * @brief Default constructor
    */
-  Cylinder() noexcept = default;
-
-  /**
-   * @brief Construct a Cylinder with specified axis and position
-   * @param axis The axis perpendicular to the Cylinder ("X", "Y", or "Z")
-   * @param position The position along the axis where the Cylinder intersects
-   * @param radius The radius of the Cylinder around the axis
-   * @param height The height of the Cylinder
-   */
-  Cylinder(const std::string &axis, Math::Point<3> position, double radius,
-           double height) noexcept;
+  CylinderPlugin() noexcept = default;
 
   /**
    * @brief Virtual destructor
    */
-  ~Cylinder() noexcept override = default;
+  ~CylinderPlugin() noexcept override = default;
+
+  /**
+   * @brief Get the name of this plugin
+   * @return The name of the plugin
+   */
+  [[nodiscard]]
+  std::string getName() const override {
+    return "Cylinder";
+  }
+
+  /**
+   * @brief Create a new instance of the sphere primitive plugin
+   * @return A unique pointer to the new sphere primitive
+   */
+  std::unique_ptr<PrimitivePlugin> create() override;
+
+  /**
+   * @brief Configure the sphere plugin with a libconfig setting
+   * @param config The libconfig setting to configure the sphere
+   * @return True if the configuration was successful, false otherwise
+   */
+  bool configure(const libconfig::Setting &config) override;
 
   /**
    * @brief Set the axis and position of the Cylinder
@@ -86,4 +86,4 @@ private:
   double m_height{1.0};
 };
 
-} // namespace Raytracer::Primitives
+} // namespace Raytracer::Plugins

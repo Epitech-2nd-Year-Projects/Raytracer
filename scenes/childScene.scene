@@ -24,7 +24,7 @@ primitives:
     spheres = (
         {
             id = "sphere1";
-            material = "mirror"
+            material = "MirrorMaterial"
             ambientCoefficient = 0.5;
             diffuseCoefficient = 0.5;
             position =
@@ -43,7 +43,7 @@ primitives:
         },
         {
             id = "sphere2";
-            material = "mirror"
+            material = "MirrorMaterial"
             ambientCoefficient = 0.5;
             diffuseCoefficient = 0.5;
             position =
@@ -64,7 +64,7 @@ primitives:
     planes = (
         {
             id = "plane1";
-            material = "mirror"
+            material = "MirrorMaterial"
             ambientCoefficient = 0.5;
             diffuseCoefficient = 0.5;
             axis = "Z";
@@ -131,7 +131,7 @@ childScenes:
             spheres = (
                 {
                     id = "subSphere1";
-                    material = "mirror"
+                    material = "MirrorMaterial"
                     ambientCoefficient = 0.5;
                     diffuseCoefficient = 0.5;
                     position =

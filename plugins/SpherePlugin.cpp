@@ -1,26 +1,41 @@
-/**
- * @file Sphere.cpp
- * @brief Implementation of the Sphere class, providing functionality for sphere
- * primitive operations in ray tracing
- */
+#include "SpherePlugin.hpp"
+#include "Parser/SceneParser.hpp"
 
-#include "Primitives/Sphere.hpp"
+namespace Raytracer::Plugins {
 
-namespace Raytracer::Primitives {
+std::unique_ptr<Plugin::PrimitivePlugin> SpherePlugin::create() {
+  return std::make_unique<SpherePlugin>();
+}
 
-Sphere::Sphere(const Math::Point<3> &center, double radius) noexcept
-    : m_radius(radius), m_center(center) {}
+bool SpherePlugin::configure(const libconfig::Setting &config) {
+  try {
+    auto position = Parser::SceneParser::parsePoint3(config.lookup("position"));
+    double radius = config.lookup("radius");
 
-void Sphere::setRadius(double r) noexcept { m_radius = r; }
-void Sphere::setCenter(const Math::Point<3> &center) noexcept {
+    if (position) {
+      this->setRadius(radius);
+
+      Parser::SceneParser::applyTransformations(config, this);
+    }
+  } catch (const libconfig::SettingNotFoundException &) {
+  }
+  return true;
+}
+
+void SpherePlugin::setRadius(double r) noexcept { m_radius = r; }
+
+void SpherePlugin::setCenter(const Math::Point<3> &center) noexcept {
   m_center = center;
 }
 
-double Sphere::getRadius() const noexcept { return m_radius; }
-const Math::Point<3> &Sphere::getCenter() const noexcept { return m_center; }
+double SpherePlugin::getRadius() const noexcept { return m_radius; }
+
+const Math::Point<3> &SpherePlugin::getCenter() const noexcept {
+  return m_center;
+}
 
 [[nodiscard]] std::optional<Core::Intersection>
-Sphere::intersect(const Core::Ray &ray) const noexcept {
+SpherePlugin::intersect(const Core::Ray &ray) const noexcept {
   Core::Ray localRay = getTransform().inverseTransformRay(ray);
   Math::Vector<3> oc = localRay.getOrigin() - m_center;
 
@@ -79,11 +94,19 @@ Sphere::intersect(const Core::Ray &ray) const noexcept {
                             Math::Point<2>{u, v});
 }
 
-[[nodiscard]] Core::BoundingBox Sphere::getBoundingBox() const noexcept {
+[[nodiscard]] Core::BoundingBox SpherePlugin::getBoundingBox() const noexcept {
   Math::Vector<3> radiusVec(m_radius, m_radius, m_radius);
   Math::Point<3> min = m_center - radiusVec;
   Math::Point<3> max = m_center + radiusVec;
   return Core::BoundingBox(min, max);
 }
 
-} // namespace Raytracer::Primitives
+} // namespace Raytracer::Plugins
+
+extern "C" {
+Raytracer::Plugin::IPlugin *createPlugin() {
+  return new Raytracer::Plugins::SpherePlugin();
+}
+
+void destroyPlugin(Raytracer::Plugin::IPlugin *plugin) { delete plugin; }
+}

@@ -1,10 +1,7 @@
 #pragma once
 
-#include "Primitives/Cone.hpp"
-#include "Primitives/Cylinder.hpp"
-#include "Primitives/Plane.hpp"
-#include "Primitives/Sphere.hpp"
-
+#include "Plugin/PluginManager.hpp"
+#include "Plugin/PrimitivePlugin.hpp"
 namespace Raytracer::Factory {
 
 /**
@@ -14,43 +11,21 @@ namespace Raytracer::Factory {
 class PrimitiveFactory {
 public:
   /**
-   * @brief Create a sphere primitive
+   * @brief Create a primitive based on the type
+   * @param type Type of the primitive to create
+   * @return A unique pointer to the created primitive
    */
-  [[nodiscard]] static std::unique_ptr<Core::IPrimitive>
-  createSphere(const Math::Point<3> &center, double radius) {
-    return std::make_unique<Primitives::Sphere>(center, radius);
-  }
+  [[nodiscard]] static std::unique_ptr<Plugin::PrimitivePlugin>
+  createPrimitive(const std::string &type) {
+    auto &manager = Plugin::PluginManager::getInstance();
+    auto plugins = manager.getPlugins<Plugin::PrimitivePlugin>();
 
-  /**
-   * @brief Create a plane primitive
-   */
-  [[nodiscard]] static std::unique_ptr<Core::IPrimitive>
-  createPlane(const std::string &axis, const Math::Point<3> &position) {
-    return std::make_unique<Primitives::Plane>(axis, position);
-  }
-
-  /**
-   * @brief Create a cylinder primitive
-   */
-  [[nodiscard]] static std::unique_ptr<Core::IPrimitive>
-  createCylinder(const std::string &axis, const Math::Point<3> &position,
-                 const double radius, const double height) {
-    return std::make_unique<Primitives::Cylinder>(axis, position, radius,
-                                                  height);
-  }
-
-  /**
-   * @brief Create a cone primitive
-   *
-   * @param axis     "X", "Y" ou "Z" (orientation de l’axe)
-   * @param position Apex du cône
-   * @param radius   Rayon de la base
-   * @param height   Hauteur (distance apex → base)
-   */
-  [[nodiscard]] static std::unique_ptr<Core::IPrimitive>
-  createCone(const std::string &axis, const Math::Point<3> &position,
-             double radius, double height) {
-    return std::make_unique<Primitives::Cone>(axis, position, radius, height);
+    for (auto *plugin : plugins) {
+      if (plugin->getName() == type) {
+        return plugin->create();
+      }
+    }
+    return nullptr;
   }
 };
 

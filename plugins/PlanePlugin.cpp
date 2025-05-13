@@ -1,21 +1,29 @@
-/**
- * @file Plane.cpp
- * @brief Implementation of the Plane class, providing functionality for plane
- * primitive operations in ray tracing
- */
+#include "PlanePlugin.hpp"
+#include "Parser/SceneParser.hpp"
 
-#include "Primitives/Plane.hpp"
-#include "Math/Point.hpp"
-#include <limits>
+namespace Raytracer::Plugins {
 
-namespace Raytracer::Primitives {
-
-Plane::Plane(const std::string &axis, Math::Point<3> position) noexcept {
-  setAxisAndPosition(axis, position);
+std::unique_ptr<Plugin::PrimitivePlugin> PlanePlugin::create() {
+  return std::make_unique<PlanePlugin>();
 }
 
-void Plane::setAxisAndPosition(const std::string &axis,
-                               Math::Point<3> position) noexcept {
+bool PlanePlugin::configure(const libconfig::Setting &config) {
+  try {
+    std::string axis = config.lookup("axis");
+    double position = config.lookup("position");
+
+    if (position) {
+      this->setAxisAndPosition(axis, Math::Point<3>(0.0, 0.0, position));
+
+      Parser::SceneParser::applyTransformations(config, this);
+    }
+  } catch (const libconfig::SettingNotFoundException &) {
+  }
+  return true;
+}
+
+void PlanePlugin::setAxisAndPosition(const std::string &axis,
+                                     Math::Point<3> position) noexcept {
   m_position = position;
 
   if (axis == "X") {
@@ -27,12 +35,16 @@ void Plane::setAxisAndPosition(const std::string &axis,
   }
 }
 
-const Math::Vector<3> &Plane::getNormal() const noexcept { return m_normal; }
+const Math::Vector<3> &PlanePlugin::getNormal() const noexcept {
+  return m_normal;
+}
 
-const Math::Point<3> &Plane::getPosition() const noexcept { return m_position; }
+const Math::Point<3> &PlanePlugin::getPosition() const noexcept {
+  return m_position;
+}
 
 [[nodiscard]] std::optional<Core::Intersection>
-Plane::intersect(const Core::Ray &ray) const noexcept {
+PlanePlugin::intersect(const Core::Ray &ray) const noexcept {
   Core::Ray localRay = getTransform().inverseTransformRay(ray);
   double denominateur = m_normal.dot(localRay.getDirection());
   if (std::abs(denominateur) < 1e-8) {
@@ -71,7 +83,7 @@ Plane::intersect(const Core::Ray &ray) const noexcept {
                             Math::Point<2>{u, v});
 }
 
-[[nodiscard]] Core::BoundingBox Plane::getBoundingBox() const noexcept {
+[[nodiscard]] Core::BoundingBox PlanePlugin::getBoundingBox() const noexcept {
   constexpr double inf = std::numeric_limits<double>::infinity();
   Math::Point<3> min, max;
 
@@ -89,4 +101,12 @@ Plane::intersect(const Core::Ray &ray) const noexcept {
   return Core::BoundingBox(min, max);
 }
 
-} // namespace Raytracer::Primitives
+} // namespace Raytracer::Plugins
+
+extern "C" {
+Raytracer::Plugin::IPlugin *createPlugin() {
+  return new Raytracer::Plugins::PlanePlugin();
+}
+
+void destroyPlugin(Raytracer::Plugin::IPlugin *plugin) { delete plugin; }
+}

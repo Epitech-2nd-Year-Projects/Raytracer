@@ -5,7 +5,7 @@
 
 #include "Core/Renderer.hpp"
 #include "Parser/SceneParser.hpp"
-#include <chrono>
+#include "Plugin/PluginManager.hpp"
 #include <iostream>
 #include <memory>
 #include <optional>
@@ -65,6 +65,8 @@ int main(int argc, char *argv[]) {
   }
 
   try {
+    Raytracer::Plugin::PluginManager::getInstance().loadPluginsFromDirectory(
+        "./plugins");
     std::optional<std::unique_ptr<Raytracer::Core::Scene>> scene =
         Raytracer::Parser::SceneParser().parseFile(sceneFile.data());
 

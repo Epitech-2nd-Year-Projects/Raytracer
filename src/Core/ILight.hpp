@@ -10,6 +10,8 @@
 
 namespace Raytracer::Core {
 
+class Scene;
+
 /**
  * @class ILight
  * @brief Base interface for light sources.
@@ -35,7 +37,8 @@ public:
    */
   [[nodiscard]] virtual double
   computeIllumination(const Math::Point<3> &intersectionPoint,
-                      const Math::Vector<3> &normal) const noexcept = 0;
+                      const Math::Vector<3> &normal,
+                      const Core::Scene &scene) const noexcept = 0;
 
   /**
    * @brief Check if the light casts shadows.

@@ -1,38 +1,45 @@
-/**
- * @file Cone.hpp
- * @brief Defines the Cone class, representing a 3D Cone primitive
- * object for ray tracing calculations
- */
-
 #pragma once
+#include "Plugin/PrimitivePlugin.hpp"
 
-#include "Core/APrimitive.hpp"
-#include "Math/Point.hpp"
-#include "Math/Vector.hpp"
-#include <optional>
-
-namespace Raytracer::Primitives {
+namespace Raytracer::Plugins {
 
 /**
- * @class Cone
- * @brief Represents a right circular Cone primitive in 3D space.
- *
- * The apex of the cone is at m_position. The cone's axis is aligned with
- * the X, Y, or Z axis as defined by the axis string. The base of the cone is
- * located at a distance m_height from the apex along the axis, with a radius
- * of m_radius.
+ * @class ConePlugin
+ * @brief Plugin for creating a cone primitive
  */
-class Cone : public Core::APrimitive {
+class ConePlugin : public Plugin::PrimitivePlugin {
 public:
   /**
-   * @brief Construct a Cone with specified axis and position
-   * @param axis The axis direction of the cone ("X", "Y", or "Z")
-   * @param position The apex position of the Cone
-   * @param radius The radius of the base of the Cone
-   * @param height The height from apex to base of the Cone
+   * @brief Default constructor
    */
-  Cone(const std::string &axis, Math::Point<3> position, double radius,
-       double height) noexcept;
+  ConePlugin() noexcept = default;
+
+  /**
+   * @brief Virtual destructor
+   */
+  ~ConePlugin() noexcept override = default;
+
+  /**
+   * @brief Get the name of this plugin
+   * @return The name of the plugin
+   */
+  [[nodiscard]]
+  std::string getName() const override {
+    return "Cone";
+  }
+
+  /**
+   * @brief Create a new instance of the sphere primitive plugin
+   * @return A unique pointer to the new sphere primitive
+   */
+  std::unique_ptr<PrimitivePlugin> create() override;
+
+  /**
+   * @brief Configure the sphere plugin with a libconfig setting
+   * @param config The libconfig setting to configure the sphere
+   * @return True if the configuration was successful, false otherwise
+   */
+  bool configure(const libconfig::Setting &config) override;
 
   /**
    * @brief Calculate the axis-aligned bounding box for this Cone
@@ -75,4 +82,4 @@ private:
   double m_height{1.0};
 };
 
-} // namespace Raytracer::Primitives
+} // namespace Raytracer::Plugins

@@ -44,91 +44,10 @@ public:
   SceneBuilder &buildChildScenes(const libconfig::Setting &childScenes);
 
   /**
-   * @brief Apply transformations from configuration to a primitive
-   * @param config The libconfig setting containing transformation parameters
-   * @param primitive Pointer to the primitive to which transformations will be
-   * applied
-   */
-  void applyTransformations(const libconfig::Setting &config,
-                            Core::IPrimitive *primitive);
-
-  /**
    * @brief Get the built scene
    */
   [[nodiscard]] std::unique_ptr<Core::Scene> getResult() {
     return std::move(m_scene);
-  }
-
-private:
-  /**
-   * @brief Build primitives from configuration
-   * @param spheres Configuration for spheres
-   */
-  void buildSpheres(const libconfig::Setting &spheres);
-
-  /**
-   * @brief Build planes from configuration
-   * @param planes Configuration for planes
-   */
-  void buildPlanes(const libconfig::Setting &planes);
-
-  /**
-   * @brief Build Cylinder from configuration
-   * @param cylinders Configuration for Cylinder
-   */
-  void buildCylinder(const libconfig::Setting &cylinders);
-
-  /**
-   * @brief Build Cone form configuration
-   * @param cones Configuration for Cone
-   */
-  void buildCone(const libconfig::Setting &cones);
-
-  /**
-   * @brief Build ambient light from configuration
-   * @param ambient Configuration for ambient light
-   */
-  void buildAmbientLight(const libconfig::Setting &ambient);
-
-  /**
-   * @brief Build diffuse light from configuration
-   * @param diffuse Configuration for diffuse light
-   */
-  void buildDiffuseLight(const libconfig::Setting &diffuse);
-
-  /**
-   * @brief Build point lights from configuration
-   * @param points Configuration for point lights
-   */
-  void buildPointLights(const libconfig::Setting &points);
-
-  std::optional<std::shared_ptr<Core::IMaterial>>
-  buildMaterial(const libconfig::Setting &material, const Core::Color &color);
-
-  /**
-   * @brief Parse a 3D point from a libconfig setting.
-   * @param setting The libconfig setting to parse.
-   */
-  [[nodiscard]] static std::optional<Math::Point<3>>
-  parsePoint3(const libconfig::Setting &setting) {
-    try {
-      std::optional<double> x =
-          Parser::SceneParser::getSetting<double>(setting, "x");
-      std::optional<double> y =
-          Parser::SceneParser::getSetting<double>(setting, "y");
-      std::optional<double> z =
-          Parser::SceneParser::getSetting<double>(setting, "z");
-
-      if (!x || !y || !z) {
-        return std::nullopt;
-      }
-
-      return Math::Point<3>(*x, *y, *z);
-    } catch (const libconfig::SettingNotFoundException &e) {
-      return std::nullopt;
-    } catch (const libconfig::SettingTypeException &e) {
-      return std::nullopt;
-    }
   }
 
 private:

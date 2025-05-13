@@ -1,42 +1,45 @@
-/**
- * @file Plane.hpp
- * @brief Defines the Plane class, representing a 3D plane primitive object
- * for ray tracing calculations
- */
-
 #pragma once
+#include "Plugin/PrimitivePlugin.hpp"
 
-#include "Core/APrimitive.hpp"
-#include "Core/BoundingBox.hpp"
-#include "Core/Intersection.hpp"
-#include "Core/Ray.hpp"
-#include "Math/Point.hpp"
-#include <string>
-
-namespace Raytracer::Primitives {
+namespace Raytracer::Plugins {
 
 /**
- * @class Plane
- * @brief Represents an infinite plane primitive in 3D space
+ * @class PlanePlugin
+ * @brief Plugin for creating a plane primitive
  */
-class Plane : public Core::APrimitive {
+class PlanePlugin : public Plugin::PrimitivePlugin {
 public:
   /**
    * @brief Default constructor
    */
-  Plane() noexcept = default;
-
-  /**
-   * @brief Construct a plane with specified axis and position
-   * @param axis The axis perpendicular to the plane ("X", "Y", or "Z")
-   * @param position The position along the axis where the plane intersects
-   */
-  Plane(const std::string &axis, Math::Point<3> position) noexcept;
+  PlanePlugin() noexcept = default;
 
   /**
    * @brief Virtual destructor
    */
-  ~Plane() noexcept override = default;
+  ~PlanePlugin() noexcept override = default;
+
+  /**
+   * @brief Get the name of this plugin
+   * @return The name of the plugin
+   */
+  [[nodiscard]]
+  std::string getName() const override {
+    return "Plane";
+  }
+
+  /**
+   * @brief Create a new instance of the sphere primitive plugin
+   * @return A unique pointer to the new sphere primitive
+   */
+  std::unique_ptr<PrimitivePlugin> create() override;
+
+  /**
+   * @brief Configure the sphere plugin with a libconfig setting
+   * @param config The libconfig setting to configure the sphere
+   * @return True if the configuration was successful, false otherwise
+   */
+  bool configure(const libconfig::Setting &config) override;
 
   /**
    * @brief Set the axis and position of the plane
@@ -77,4 +80,5 @@ private:
   Math::Vector<3> m_normal{0.0, 0.0, 0.0};
   Math::Point<3> m_position{0.0, 0.0, 0.0};
 };
-} // namespace Raytracer::Primitives
+
+} // namespace Raytracer::Plugins

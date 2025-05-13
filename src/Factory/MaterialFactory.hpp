@@ -1,9 +1,7 @@
 #pragma once
 
-#include "Core/IMaterial.hpp"
-#include "Materials/FlatMaterial.hpp"
-#include "Materials/MirrorMaterial.hpp"
-#include "Materials/SteelMaterial.hpp"
+#include "Plugin/MaterialPlugin.hpp"
+#include "Plugin/PluginManager.hpp"
 namespace Raytracer::Factory {
 
 /**
@@ -13,34 +11,21 @@ namespace Raytracer::Factory {
 class MaterialFactory {
 public:
   /**
-   * @brief Create a flat material with specified colors
+   * @brief Create a material based on the type
+   * @param type Type of the material to create
+   * @return A unique pointer to the created material
    */
-  [[nodiscard]] static std::shared_ptr<Core::IMaterial>
-  createFlatMaterial(const Core::Color &diffuse, const Core::Color &ambient,
-                     double ambientCoef = 1.0, double diffuseCoef = 1.0) {
-    return std::make_shared<Materials::FlatMaterial>(diffuse, ambient,
-                                                     ambientCoef, diffuseCoef);
-  }
+  [[nodiscard]] static std::shared_ptr<Plugin::MaterialPlugin>
+  createMaterial(const std::string &type) {
+    auto &manager = Plugin::PluginManager::getInstance();
+    auto plugins = manager.getPlugins<Plugin::MaterialPlugin>();
 
-  /**
-   * @brief Create a mirror material with specified colors
-   */
-  [[nodiscard]] static std::shared_ptr<Core::IMaterial>
-  createMirrorMaterial(const Core::Color &diffuse, const Core::Color &ambient,
-                       double ambientCoef = 1.0, double diffuseCoef = 1.0) {
-    return std::make_shared<Materials::MirrorMaterial>(
-        diffuse, ambient, ambientCoef, diffuseCoef);
-  }
-
-  /**
-   * @brief Create a steel material with specified colors and fuzz factor
-   */
-  [[nodiscard]] static std::shared_ptr<Core::IMaterial>
-  createSteelMaterial(const Core::Color &diffuse, const Core::Color &ambient,
-                      double ambientCoef = 1.0, double diffuseCoef = 1.0,
-                      double fuzz = 0.3) {
-    return std::make_shared<Materials::SteelMaterial>(
-        diffuse, ambient, ambientCoef, diffuseCoef, fuzz);
+    for (auto *plugin : plugins) {
+      if (plugin->getName() == type) {
+        return plugin->create();
+      }
+    }
+    return nullptr;
   }
 };
 } // namespace Raytracer::Factory

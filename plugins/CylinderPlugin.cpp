@@ -1,24 +1,33 @@
-/**
- * @file Cylinder.cpp
- * @brief Implementation of the Cylinder class, providing functionality for
- * Cylinder primitive operations in ray tracing
- */
+#include "CylinderPlugin.hpp"
+#include "Parser/SceneParser.hpp"
 
-#include "Primitives/Cylinder.hpp"
-#include "Math/Point.hpp"
-#include <limits>
+namespace Raytracer::Plugins {
 
-namespace Raytracer::Primitives {
-
-Cylinder::Cylinder(const std::string &axis, Math::Point<3> position,
-                   double radius, double height) noexcept {
-  setAxisPositionRadiusAndHeight(axis, position, radius, height);
+std::unique_ptr<Plugin::PrimitivePlugin> CylinderPlugin::create() {
+  return std::make_unique<CylinderPlugin>();
 }
 
-void Cylinder::setAxisPositionRadiusAndHeight(const std::string &axis,
-                                              Math::Point<3> position,
-                                              double radius,
-                                              double height) noexcept {
+bool CylinderPlugin::configure(const libconfig::Setting &config) {
+  try {
+    auto position = Parser::SceneParser::parsePoint3(config.lookup("position"));
+    double radius = config.lookup("radius");
+    double height = config.lookup("height");
+    std::string axis = config.lookup("axis");
+
+    if (position) {
+      this->setAxisPositionRadiusAndHeight(axis, *position, radius, height);
+
+      Parser::SceneParser::applyTransformations(config, this);
+    }
+  } catch (const libconfig::SettingNotFoundException &) {
+  }
+  return true;
+}
+
+void CylinderPlugin::setAxisPositionRadiusAndHeight(const std::string &axis,
+                                                    Math::Point<3> position,
+                                                    double radius,
+                                                    double height) noexcept {
   m_position = position;
   m_radius = radius;
   m_height = height;
@@ -32,14 +41,16 @@ void Cylinder::setAxisPositionRadiusAndHeight(const std::string &axis,
   }
 }
 
-const Math::Vector<3> &Cylinder::getNormal() const noexcept { return m_normal; }
+const Math::Vector<3> &CylinderPlugin::getNormal() const noexcept {
+  return m_normal;
+}
 
-const Math::Point<3> &Cylinder::getPosition() const noexcept {
+const Math::Point<3> &CylinderPlugin::getPosition() const noexcept {
   return m_position;
 }
 
 [[nodiscard]] std::optional<Core::Intersection>
-Cylinder::intersect(const Core::Ray &ray) const noexcept {
+CylinderPlugin::intersect(const Core::Ray &ray) const noexcept {
   Core::Ray localRay = getTransform().inverseTransformRay(ray);
   Math::Point<3> origin = localRay.getOrigin();
   Math::Vector<3> direction = localRay.getDirection();
@@ -193,7 +204,8 @@ Cylinder::intersect(const Core::Ray &ray) const noexcept {
   return std::nullopt;
 }
 
-[[nodiscard]] Core::BoundingBox Cylinder::getBoundingBox() const noexcept {
+[[nodiscard]] Core::BoundingBox
+CylinderPlugin::getBoundingBox() const noexcept {
   Math::Point<3> min, max;
 
   if (m_normal.m_components[0] == 1.0) {
@@ -222,4 +234,12 @@ Cylinder::intersect(const Core::Ray &ray) const noexcept {
   return Core::BoundingBox(min, max);
 }
 
-} // namespace Raytracer::Primitives
+} // namespace Raytracer::Plugins
+
+extern "C" {
+Raytracer::Plugin::IPlugin *createPlugin() {
+  return new Raytracer::Plugins::CylinderPlugin();
+}
+
+void destroyPlugin(Raytracer::Plugin::IPlugin *plugin) { delete plugin; }
+}

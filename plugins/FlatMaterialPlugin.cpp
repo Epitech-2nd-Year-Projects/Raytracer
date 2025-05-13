@@ -1,19 +1,34 @@
-/**
- * @file FlatMaterial.cpp
- * @brief Implementation of the FlatMaterial class, providing diffuse and
- * ambient lighting calculations.
- */
+#include "FlatMaterialPlugin.hpp"
+#include "Core/Color.hpp"
+#include "Parser/SceneParser.hpp"
+#include "Plugin/MaterialPlugin.hpp"
+namespace Raytracer::Plugins {
 
-#include "Materials/FlatMaterial.hpp"
+std::shared_ptr<Plugin::MaterialPlugin> FlatMaterialPlugin::create() {
+  return std::make_shared<FlatMaterialPlugin>();
+}
 
-namespace Raytracer::Materials {
+bool FlatMaterialPlugin::configure(const libconfig::Setting &config) {
+  try {
+    std::optional<Core::Color> color = Parser::SceneParser::parseColor(config);
 
-FlatMaterial::FlatMaterial(const Core::Color &diffuseColor,
-                           const Core::Color &ambientColor, double ambientCoef,
-                           double diffuseCoef) noexcept
-    : AMaterial(diffuseColor, ambientColor, ambientCoef, diffuseCoef) {}
+    if (!color) {
+      return false;
+    }
 
-Core::Color FlatMaterial::computeColor(
+    const double ambiantCoefficient = config.lookup("ambientCoefficient");
+    const double diffuseCoefficient = config.lookup("diffuseCoefficient");
+
+    this->setAmbientCoefficient(ambiantCoefficient);
+    this->setDiffuseCoefficient(diffuseCoefficient);
+    this->setAmbientColor(*color);
+    this->setDiffuseColor(*color);
+  } catch (const libconfig::SettingNotFoundException &) {
+  }
+  return true;
+}
+
+Core::Color FlatMaterialPlugin::computeColor(
     const Core::Intersection &intersection,
     [[maybe_unused]] const Core::Ray &ray,
     const std::vector<std::shared_ptr<Core::ILight>> &lights,
@@ -96,4 +111,13 @@ Core::Color FlatMaterial::computeColor(
   }
   return finalColor;
 }
-} // namespace Raytracer::Materials
+
+} // namespace Raytracer::Plugins
+
+extern "C" {
+Raytracer::Plugin::IPlugin *createPlugin() {
+  return new Raytracer::Plugins::FlatMaterialPlugin();
+}
+
+void destroyPlugin(Raytracer::Plugin::IPlugin *plugin) { delete plugin; }
+}
