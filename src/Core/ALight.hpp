@@ -85,7 +85,7 @@ private:
  * @class ADirectionalLight
  * @brief Directional light source with parallel rays.
  */
-class ADirectionalLight : public IDirectionalLight, public ALight {
+class ADirectionalLight : public IDirectionalLight, public virtual ALight {
 public:
   /**
    * @brief Default constructor.
@@ -133,9 +133,10 @@ public:
    * @param normal Surface normal at the point.
    * @return Illumination factor [0.0, intensity].
    */
-  [[nodiscard]] double
-  computeIllumination([[maybe_unused]] const Math::Point<3> &intersectionPoint,
-                      const Math::Vector<3> &normal) const noexcept override {
+  [[nodiscard]] double computeIllumination(
+      [[maybe_unused]] const Math::Point<3> &intersectionPoint,
+      const Math::Vector<3> &normal,
+      [[maybe_unused]] const Core::Scene &scene) const noexcept override {
     double dot = normal.dot(m_direction * -1.0);
     return dot > 0.0 ? dot * getIntensity() : 0.0;
   }
@@ -148,7 +149,7 @@ private:
  * @class APositionalLight
  * @brief Point light source with attenuation.
  */
-class APositionalLight : public IPositionalLight, public ALight {
+class APositionalLight : public IPositionalLight, public virtual ALight {
 public:
   /**
    * @brief Default constructor.
@@ -206,23 +207,6 @@ public:
   }
 
   /**
-   * @brief Compute illumination with attenuation.
-   * @param intersectionPoint Surface point.
-   * @param normal Surface normal at the point.
-   * @return Illumination factor [0.0, intensity].
-   */
-  [[nodiscard]] double
-  computeIllumination(const Math::Point<3> &intersectionPoint,
-                      const Math::Vector<3> &normal) const noexcept override {
-    Math::Vector<3> lightDir = getDirectionFrom(intersectionPoint);
-    double dot = normal.dot(lightDir);
-    double distance = getDistance(intersectionPoint);
-    double attenuation =
-        1.0 / (1.0 + 0.1 * distance + 0.01 * distance * distance);
-    return dot > 0.0 ? dot * getIntensity() * attenuation : 0.0;
-  }
-
-  /**
    * @brief Computes the illumination considering shadows
    * @param intersectionPoint The point of intersection
    * @param normal The surface normal at the intersection point
@@ -232,7 +216,7 @@ public:
   [[nodiscard]] virtual double
   computeIllumination(const Math::Point<3> &intersectionPoint,
                       const Math::Vector<3> &normal,
-                      const Core::Scene &scene) const noexcept = 0;
+                      const Core::Scene &scene) const noexcept override = 0;
 
 private:
   Math::Point<3> m_position{};
