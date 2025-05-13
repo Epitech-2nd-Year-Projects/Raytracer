@@ -5,7 +5,9 @@
 
 #pragma once
 
+#include "Core/Color.hpp"
 #include "Core/Scene.hpp"
+#include <iostream>
 #include <libconfig.h++>
 #include <optional>
 
@@ -58,23 +60,57 @@ public:
   [[nodiscard]] static std::optional<Math::Point<3>>
   parsePoint3(const libconfig::Setting &setting) {
     try {
-      std::optional<double> x =
-          Parser::SceneParser::getSetting<double>(setting, "x");
-      std::optional<double> y =
-          Parser::SceneParser::getSetting<double>(setting, "y");
-      std::optional<double> z =
-          Parser::SceneParser::getSetting<double>(setting, "z");
-
-      if (!x || !y || !z) {
-        return std::nullopt;
+      if (setting.getLength() == 3) {
+        double x = setting[0];
+        double y = setting[1];
+        double z = setting[2];
+        return Math::Point<3>(x, y, z);
       }
-
-      return Math::Point<3>(*x, *y, *z);
+      return std::nullopt;
     } catch (const libconfig::SettingNotFoundException &e) {
       return std::nullopt;
     } catch (const libconfig::SettingTypeException &e) {
       return std::nullopt;
     }
+  }
+
+  /**
+   * @brief Parse a color from a libconfig setting.
+   * @param setting The libconfig setting to parse.
+   */
+  static std::optional<Core::Color>
+  parseColor(const libconfig::Setting &setting) {
+    try {
+      if (setting.exists("color") && setting["color"].isArray()) {
+        const auto &colorArray = setting["color"];
+
+        if (colorArray.getLength() == 3) {
+          int r = colorArray[0];
+          int g = colorArray[1];
+          int b = colorArray[2];
+
+          return Core::Color(r, g, b);
+        }
+      }
+      return std::nullopt;
+    } catch (const libconfig::SettingTypeException &) {
+      return std::nullopt;
+    }
+  }
+
+  /**
+   * @brief Parse a string axis from a libconfig setting.
+   * @param setting The libconfig setting to parse.
+   */
+  static std::optional<std::string> getAxis(const libconfig::Setting &setting) {
+    try {
+      std::string axis;
+      if (setting.lookupValue("axis", axis)) {
+        return axis;
+      }
+    } catch (const libconfig::SettingNotFoundException &) {
+    }
+    return std::nullopt;
   }
 
   /**
