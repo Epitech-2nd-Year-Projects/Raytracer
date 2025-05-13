@@ -4,7 +4,6 @@
 #include "Factory/PrimitiveFactory.hpp"
 #include "Math/Point.hpp"
 #include "Parser/SceneParser.hpp"
-#include <iostream>
 
 namespace Raytracer::Builder {
 
@@ -15,7 +14,7 @@ SceneBuilder &SceneBuilder::buildCamera(const libconfig::Setting &config) {
     int height = resolution.lookup("height");
 
     const std::optional<Math::Point<3>> position =
-        parsePoint3(config.lookup("position"));
+        Parser::SceneParser::parsePoint3(config.lookup("position"));
 
     double fovDegrees = config.lookup("fov");
 
@@ -74,72 +73,21 @@ SceneBuilder::buildChildScenes(const libconfig::Setting &childScenes) {
   return *this;
 }
 
-void SceneBuilder::applyTransformations(const libconfig::Setting &config,
-                                        Core::IPrimitive *primitive) {
-  try {
-    auto position = parsePoint3(config.lookup("position"));
-    if (position) {
-      primitive->setPosition(*position);
-    }
-  } catch (const libconfig::SettingNotFoundException &) {
-  }
-
-  try {
-    auto translation = parsePoint3(config.lookup("translate"));
-    if (translation) {
-      Math::Point<3> currentPos = primitive->getPosition();
-      Math::Point<3> newPos =
-          currentPos + Math::Vector<3>(translation->m_components[0],
-                                       translation->m_components[1],
-                                       translation->m_components[2]);
-      primitive->setPosition(newPos);
-    }
-  } catch (const libconfig::SettingNotFoundException &) {
-  }
-
-  try {
-    auto rotation = parsePoint3(config.lookup("rotation"));
-    if (rotation) {
-      Math::Vector<3> rotationRad(rotation->m_components[0] * M_PI / 180.0,
-                                  rotation->m_components[1] * M_PI / 180.0,
-                                  rotation->m_components[2] * M_PI / 180.0);
-      primitive->setRotation(rotationRad);
-    }
-  } catch (const libconfig::SettingNotFoundException &) {
-  }
-}
-
 void SceneBuilder::buildSpheres(const libconfig::Setting &spheres) {
-  for (const auto &sphere : spheres) {
+  for (const auto &sphereConfig : spheres) {
     try {
-      std::string id = sphere.lookup("id");
-      auto position = parsePoint3(sphere.lookup("position"));
-      double radius = sphere.lookup("radius");
+      std::string id = sphereConfig.lookup("id");
+      auto spherePrimitive =
+          Factory::PrimitiveFactory::createPrimitive("Sphere");
 
-      if (position) {
-        auto spherePrimitive = Factory::PrimitiveFactory::createSphere(
-            Math::Point<3>(0.0, 0.0, 0.0), radius);
-        applyTransformations(sphere, spherePrimitive.get());
+      if (spherePrimitive->configure(sphereConfig)) {
+        const std::string &materialType = sphereConfig.lookup("material");
+        auto material = Factory::MaterialFactory::createMaterial(materialType);
 
-        const libconfig::Setting &color = sphere.lookup("color");
-        auto r = Parser::SceneParser::getSetting<int>(color, "r");
-        auto g = Parser::SceneParser::getSetting<int>(color, "g");
-        auto b = Parser::SceneParser::getSetting<int>(color, "b");
-
-        if (!r || !g || !b) {
-          std::cerr << "Invalid color values for sphere with id: " << id
-                    << "\n";
-          continue;
+        if (material->configure(sphereConfig)) {
+          spherePrimitive->setMaterial(material);
+          m_scene->addPrimitive(id, std::move(spherePrimitive));
         }
-
-        auto material = buildMaterial(sphere, Core::Color(*r, *g, *b));
-
-        if (!material) {
-          std::cerr << "Invalid material for sphere with id: " << id << "\n";
-          continue;
-        }
-        spherePrimitive->setMaterial(material.value());
-        m_scene->addPrimitive(id, std::move(spherePrimitive));
       }
     } catch (const libconfig::SettingNotFoundException &) {
     }
@@ -147,66 +95,40 @@ void SceneBuilder::buildSpheres(const libconfig::Setting &spheres) {
 }
 
 void SceneBuilder::buildPlanes(const libconfig::Setting &planes) {
-  for (const auto &plane : planes) {
+  for (const auto &planeConfig : planes) {
     try {
-      std::string id = plane.lookup("id");
-      std::string axis = plane.lookup("axis");
-      double position = plane.lookup("position");
+      std::string id = planeConfig.lookup("id");
+      auto planePrimitive = Factory::PrimitiveFactory::createPrimitive("Plane");
 
-      auto planePrimitive = Factory::PrimitiveFactory::createPlane(
-          axis, Math::Point<3>(0.0, 0.0, position));
-      applyTransformations(plane, planePrimitive.get());
+      if (planePrimitive->configure(planeConfig)) {
+        const std::string &materialType = planeConfig.lookup("material");
+        auto material = Factory::MaterialFactory::createMaterial(materialType);
 
-      const libconfig::Setting &color = plane.lookup("color");
-      auto r = Parser::SceneParser::getSetting<int>(color, "r");
-      auto g = Parser::SceneParser::getSetting<int>(color, "g");
-      auto b = Parser::SceneParser::getSetting<int>(color, "b");
-
-      if (!r || !g || !b) {
-        std::cerr << "Invalid color values for plane with id: " << id << "\n";
-        continue;
+        if (material->configure(planeConfig)) {
+          planePrimitive->setMaterial(material);
+          m_scene->addPrimitive(id, std::move(planePrimitive));
+        }
       }
-
-      auto material = buildMaterial(plane, Core::Color(*r, *g, *b));
-
-      if (!material) {
-        std::cerr << "Invalid material for plane with id: " << id << "\n";
-        continue;
-      }
-
-      planePrimitive->setMaterial(material.value());
-      m_scene->addPrimitive(id, std::move(planePrimitive));
     } catch (const libconfig::SettingNotFoundException &) {
     }
   }
 }
+
 void SceneBuilder::buildCylinder(const libconfig::Setting &cylinders) {
-  for (const auto &cylinder : cylinders) {
+  for (const auto &cylinderConfig : cylinders) {
     try {
-      std::string id = cylinder.lookup("id");
-      auto position = parsePoint3(cylinder.lookup("position"));
-      double radius = cylinder.lookup("radius");
-      double height = cylinder.lookup("height");
-      std::string axis = cylinder.lookup("axis");
+      std::string id = cylinderConfig.lookup("id");
+      auto cylinderPrimitive =
+          Factory::PrimitiveFactory::createPrimitive("Cylinder");
 
-      if (position) {
-        auto cylinderPrimitive = Factory::PrimitiveFactory::createCylinder(
-            axis, Math::Point<3>(0.0, 0.0, 0.0), radius, height);
-        applyTransformations(cylinder, cylinderPrimitive.get());
+      if (cylinderPrimitive->configure(cylinderConfig)) {
+        const std::string &materialType = cylinderConfig.lookup("material");
+        auto material = Factory::MaterialFactory::createMaterial(materialType);
 
-        const libconfig::Setting &color = cylinder.lookup("color");
-        auto r = Parser::SceneParser::getSetting<int>(color, "r");
-        auto g = Parser::SceneParser::getSetting<int>(color, "g");
-        auto b = Parser::SceneParser::getSetting<int>(color, "b");
-        if (!r || !g || !b) {
-          std::cerr << "Invalid color values for cylinder with id: " << id
-                    << "\n";
-          continue;
+        if (material->configure(cylinderConfig)) {
+          cylinderPrimitive->setMaterial(material);
+          m_scene->addPrimitive(id, std::move(cylinderPrimitive));
         }
-        auto material = Factory::MaterialFactory::createFlatMaterial(
-            Core::Color(*r, *g, *b), Core::Color(*r, *g, *b));
-        cylinderPrimitive->setMaterial(material);
-        m_scene->addPrimitive(id, std::move(cylinderPrimitive));
       }
     } catch (const libconfig::SettingNotFoundException &) {
     }
@@ -237,7 +159,8 @@ void SceneBuilder::buildPointLights(const libconfig::Setting &points) {
   for (const auto &point : points) {
     try {
       std::string id = point.lookup("id");
-      auto position = parsePoint3(point.lookup("position"));
+      auto position =
+          Parser::SceneParser::parsePoint3(point.lookup("position"));
 
       if (position) {
         auto light = Factory::LightFactory::createPointLight(*position);
@@ -246,27 +169,5 @@ void SceneBuilder::buildPointLights(const libconfig::Setting &points) {
     } catch (const libconfig::SettingNotFoundException &) {
     }
   }
-}
-
-std::optional<std::shared_ptr<Core::IMaterial>>
-SceneBuilder::buildMaterial(const libconfig::Setting &material,
-                            const Core::Color &color) {
-  try {
-
-    const std::string &mat = material.lookup("material");
-    const double ambiantCoefficient = material.lookup("ambientCoefficient");
-    const double diffuseCoefficient = material.lookup("diffuseCoefficient");
-
-    if (mat == "mirror") {
-      return Factory::MaterialFactory::createMirrorMaterial(
-          color, color, ambiantCoefficient, diffuseCoefficient);
-    }
-    if (mat == "flat") {
-      return Factory::MaterialFactory::createFlatMaterial(
-          color, color, ambiantCoefficient, diffuseCoefficient);
-    }
-  } catch (const libconfig::SettingNotFoundException &) {
-  }
-  return std::nullopt;
 }
 } // namespace Raytracer::Builder
