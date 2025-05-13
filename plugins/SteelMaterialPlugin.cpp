@@ -11,12 +11,9 @@ std::shared_ptr<Plugin::MaterialPlugin> SteelMaterialPlugin::create() {
 
 bool SteelMaterialPlugin::configure(const libconfig::Setting &config) {
   try {
-    const libconfig::Setting &color = config.lookup("color");
-    auto r = Parser::SceneParser::getSetting<int>(color, "r");
-    auto g = Parser::SceneParser::getSetting<int>(color, "g");
-    auto b = Parser::SceneParser::getSetting<int>(color, "b");
+    std::optional<Core::Color> color = Parser::SceneParser::parseColor(config);
 
-    if (!r || !g || !b) {
+    if (!color) {
       return false;
     }
 
@@ -26,8 +23,8 @@ bool SteelMaterialPlugin::configure(const libconfig::Setting &config) {
 
     this->setAmbientCoefficient(ambiantCoefficient);
     this->setDiffuseCoefficient(diffuseCoefficient);
-    this->setAmbientColor(Core::Color(*r, *g, *b));
-    this->setDiffuseColor(Core::Color(*r, *g, *b));
+    this->setAmbientColor(*color);
+    this->setDiffuseColor(*color);
     m_fuzz = fuzz;
   } catch (const libconfig::SettingNotFoundException &) {
   }

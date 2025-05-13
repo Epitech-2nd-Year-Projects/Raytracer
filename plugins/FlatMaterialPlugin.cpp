@@ -1,7 +1,7 @@
 #include "FlatMaterialPlugin.hpp"
+#include "Core/Color.hpp"
 #include "Parser/SceneParser.hpp"
 #include "Plugin/MaterialPlugin.hpp"
-
 namespace Raytracer::Plugins {
 
 std::shared_ptr<Plugin::MaterialPlugin> FlatMaterialPlugin::create() {
@@ -10,12 +10,9 @@ std::shared_ptr<Plugin::MaterialPlugin> FlatMaterialPlugin::create() {
 
 bool FlatMaterialPlugin::configure(const libconfig::Setting &config) {
   try {
-    const libconfig::Setting &color = config.lookup("color");
-    auto r = Parser::SceneParser::getSetting<int>(color, "r");
-    auto g = Parser::SceneParser::getSetting<int>(color, "g");
-    auto b = Parser::SceneParser::getSetting<int>(color, "b");
+    std::optional<Core::Color> color = Parser::SceneParser::parseColor(config);
 
-    if (!r || !g || !b) {
+    if (!color) {
       return false;
     }
 
@@ -24,8 +21,8 @@ bool FlatMaterialPlugin::configure(const libconfig::Setting &config) {
 
     this->setAmbientCoefficient(ambiantCoefficient);
     this->setDiffuseCoefficient(diffuseCoefficient);
-    this->setAmbientColor(Core::Color(*r, *g, *b));
-    this->setDiffuseColor(Core::Color(*r, *g, *b));
+    this->setAmbientColor(*color);
+    this->setDiffuseColor(*color);
   } catch (const libconfig::SettingNotFoundException &) {
   }
   return true;
