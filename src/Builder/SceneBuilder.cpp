@@ -36,6 +36,7 @@ SceneBuilder &SceneBuilder::buildPrimitives(const libconfig::Setting &config) {
     buildSpheres(config.lookup("spheres"));
     buildPlanes(config.lookup("planes"));
     buildCylinder(config.lookup("cylinder"));
+    buildCone(config.lookup("cone"));
   } catch (const libconfig::SettingNotFoundException &) {
   }
   return *this;

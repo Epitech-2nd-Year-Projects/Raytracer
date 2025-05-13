@@ -28,4 +28,5 @@ public:
     return nullptr;
   }
 };
+
 } // namespace Raytracer::Factory

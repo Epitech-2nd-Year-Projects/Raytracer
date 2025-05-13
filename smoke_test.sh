@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Smoke test script for raytracer
-# Renders all scene files and checks if the process completed successfully
-
 OUTPUT_DIR="./test_output"
 SCENE_DIR="./scenes"
 EXECUTABLE="./raytracer"
