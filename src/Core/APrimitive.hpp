@@ -137,25 +137,36 @@ public:
    */
   [[nodiscard]] BoundingBox getBoundingBox() const noexcept override = 0;
 
+  /**
+   * @brief Get the local center of this primitive.
+   * @return The local center point for transformations.
+   */
+  [[nodiscard]] Math::Point<3> getLocalCenter() const noexcept override = 0;
+
 protected:
   /**
    * @brief Update the transformation based on position, rotation, and scale.
    */
   void updateTransform() noexcept {
+    Math::Point<3> localCenter = getLocalCenter();
+
+    Math::Transform toOrigin = Math::Transform::translate(
+        -localCenter.m_components[0], -localCenter.m_components[1],
+        -localCenter.m_components[2]);
+
     Math::Transform rotation = Math::Transform::rotate(
         m_rotation.m_components[0], m_rotation.m_components[1],
         m_rotation.m_components[2]);
 
-    Math::Transform translation = Math::Transform::translate(
+    Math::Transform scaling =
+        Math::Transform::scale(m_scale.m_components[0], m_scale.m_components[1],
+                               m_scale.m_components[2]);
+
+    Math::Transform toPosition = Math::Transform::translate(
         m_position.m_components[0], m_position.m_components[1],
         m_position.m_components[2]);
 
-    Math::Transform scaling = Math::Transform::scale(
-      m_position.m_components[0], m_position.m_components[1],
-      m_position.m_components[2]
-      );
-
-    m_transform = translation * rotation * scaling;
+    m_transform = toPosition * rotation * scaling * toOrigin;
   }
 
 private:
