@@ -89,4 +89,8 @@ Plane::intersect(const Core::Ray &ray) const noexcept {
   return Core::BoundingBox(min, max);
 }
 
+[[nodiscard]] Math::Point<3> Plane::getLocalCenter() const noexcept {
+  return m_position;
+}
+
 } // namespace Raytracer::Primitives
