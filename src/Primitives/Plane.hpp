@@ -73,6 +73,8 @@ public:
    */
   [[nodiscard]] Core::BoundingBox getBoundingBox() const noexcept override;
 
+  [[nodiscard]] Math::Point<3> getLocalCenter() const noexcept override;
+
 private:
   Math::Vector<3> m_normal{0.0, 0.0, 0.0};
   Math::Point<3> m_position{0.0, 0.0, 0.0};
