@@ -4,18 +4,8 @@ camera:
         width = 1920;
         height = 1080;
     };
-    position =
-    {
-        x = 0.0;
-        y = -100.0;
-        z = 20.0;
-    };
-    rotation =
-    {
-        x = 0.0;
-        y = 0.0;
-        z = 0.0;
-    };
+    position = [0.0, -100.0, 20.0];
+    rotation = [0.0, 0.0, 0.0];
     fov = 72.0; # In degree
 };
 
@@ -92,29 +82,23 @@ primitives = (
     }
 )
 
-lights:
-{
-    ambient =
+lights = (
     {
-        intensity = 0.4; # Multiplier of ambient light
-    };
-    diffuse =
+        type = "AmbientLight";
+        id = "ambient1";
+        intensity  = 0.4;
+    },
     {
-        intensity = 0.6; # Multiplier of diffuse light
-    };
-    points = (
-        {
-            id = "light1";
-            position =
-            {
-                x = 400.0;
-                y = 100.0;
-                z = 500.0;
-            };
-        }
-    );
-    directional = ();
-};
+        type = "DiffuseLight";
+        id = "diffuse1";
+        intensity = 0.6;
+    },
+    {
+        type = "PointLight";
+        id = "light1";
+        position = [400.0, 100.0, 500.0];
+    }
+)
 
 childScenes:
 {
