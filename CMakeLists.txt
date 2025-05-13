@@ -66,7 +66,6 @@ set(TEST_SOURCES
   tests/test_Camera.cpp
   tests/test_Scene.cpp
   tests/test_Renderer.cpp
-  tests/test_AmbientLight.cpp
   tests/test_SceneParser.cpp
   tests/test_Matrix.cpp
   tests/test_Transform.cpp
@@ -108,3 +107,6 @@ add_raytracer_plugin(plane_plugin plugins/PlanePlugin.cpp)
 add_raytracer_plugin(cylinder_plugin plugins/CylinderPlugin.cpp)
 add_raytracer_plugin(flat_material_plugin plugins/FlatMaterialPlugin.cpp)
 add_raytracer_plugin(mirror_material_plugin plugins/MirrorMaterialPlugin.cpp)
+add_raytracer_plugin(point_light_plugin plugins/PointLightPlugin.cpp)
+add_raytracer_plugin(ambient_light_plugin plugins/AmbientLightPlugin.cpp)
+add_raytracer_plugin(diffuse_light_plugin plugins/DiffuseLightPlugin.cpp)
