@@ -173,4 +173,8 @@ Core::BoundingBox Cone::getBoundingBox() const noexcept {
   return Core::BoundingBox(min, max);
 }
 
+[[nodiscard]] Point<3> Cone::getLocalCenter() const noexcept {
+  return m_position + m_axis * (m_height / 4.0);
+}
+
 } // namespace Raytracer::Primitives
