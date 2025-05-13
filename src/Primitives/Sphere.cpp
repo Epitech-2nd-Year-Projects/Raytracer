@@ -86,4 +86,8 @@ Sphere::intersect(const Core::Ray &ray) const noexcept {
   return Core::BoundingBox(min, max);
 }
 
+[[nodiscard]] Math::Point<3> Sphere::getLocalCenter() const noexcept {
+  return m_center;
+}
+
 } // namespace Raytracer::Primitives
