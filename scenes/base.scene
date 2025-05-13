@@ -77,7 +77,7 @@ primitives:
             };
         }
     );
-    cylinder = (
+    cylinders = (
         {
             id = "cylinder";
             axis = "Z"

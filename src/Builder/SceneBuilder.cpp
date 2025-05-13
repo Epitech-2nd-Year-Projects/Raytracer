@@ -35,8 +35,8 @@ SceneBuilder &SceneBuilder::buildPrimitives(const libconfig::Setting &config) {
   try {
     buildSpheres(config.lookup("spheres"));
     buildPlanes(config.lookup("planes"));
-    buildCylinder(config.lookup("cylinder"));
-    buildCone(config.lookup("cone"));
+    buildCylinder(config.lookup("cylinders"));
+    buildCone(config.lookup("cones"));
   } catch (const libconfig::SettingNotFoundException &) {
   }
   return *this;
@@ -129,6 +129,26 @@ void SceneBuilder::buildCylinder(const libconfig::Setting &cylinders) {
         if (material->configure(cylinderConfig)) {
           cylinderPrimitive->setMaterial(material);
           m_scene->addPrimitive(id, std::move(cylinderPrimitive));
+        }
+      }
+    } catch (const libconfig::SettingNotFoundException &) {
+    }
+  }
+}
+
+void SceneBuilder::buildCone(const libconfig::Setting &cones) {
+  for (const auto &coneConfig : cones) {
+    try {
+      std::string id = coneConfig.lookup("id");
+      auto conePrimitive = Factory::PrimitiveFactory::createPrimitive("Cone");
+
+      if (conePrimitive->configure(coneConfig)) {
+        const std::string &materialType = coneConfig.lookup("material");
+        auto material = Factory::MaterialFactory::createMaterial(materialType);
+
+        if (material->configure(coneConfig)) {
+          conePrimitive->setMaterial(material);
+          m_scene->addPrimitive(id, std::move(conePrimitive));
         }
       }
     } catch (const libconfig::SettingNotFoundException &) {
