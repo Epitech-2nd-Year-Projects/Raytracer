@@ -94,6 +94,12 @@ public:
   [[nodiscard]] virtual const Math::Vector<3> &getScale() const noexcept = 0;
 
   /**
+   * @brief Get the local center of this primitive.
+   * @return The local center point for transformations.
+   */
+  [[nodiscard]] virtual Math::Point<3> getLocalCenter() const noexcept = 0;
+
+  /**
    * @brief Get the assigned material.
    * @return Constant reference to the material pointer.
    */
