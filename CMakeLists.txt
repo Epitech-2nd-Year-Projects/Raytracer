@@ -105,6 +105,7 @@ add_test(
 add_raytracer_plugin(sphere_plugin plugins/SpherePlugin.cpp)
 add_raytracer_plugin(plane_plugin plugins/PlanePlugin.cpp)
 add_raytracer_plugin(cylinder_plugin plugins/CylinderPlugin.cpp)
+add_raytracer_plugin(cone_plugin plugins/ConePlugin.cpp)
 add_raytracer_plugin(flat_material_plugin plugins/FlatMaterialPlugin.cpp)
 add_raytracer_plugin(mirror_material_plugin plugins/MirrorMaterialPlugin.cpp)
 add_raytracer_plugin(point_light_plugin plugins/PointLightPlugin.cpp)
