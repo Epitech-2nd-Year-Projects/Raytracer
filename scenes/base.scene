@@ -33,6 +33,9 @@ primitives = (
             type = "MirrorMaterial";
             ambientCoefficient = 0.5;
             diffuseCoefficient = 0.5;
+            reflectionCoefficient = 1.0;
+            refractionCoefficient = 1.0;
+            refractionIndex = 1.52;
             color = [64, 255, 64];
         }
     },
@@ -46,6 +49,9 @@ primitives = (
             type = "MirrorMaterial";
             ambientCoefficient = 0.5;
             diffuseCoefficient = 0.5;
+            reflectionCoefficient = 1.0;
+            refractionCoefficient = 1.0;
+            refractionIndex = 1.52;
             color = [64, 64, 255];
         }
     },
@@ -61,6 +67,9 @@ primitives = (
             type = "MirrorMaterial";
             ambientCoefficient = 0.5;
             diffuseCoefficient = 0.5;
+            reflectionCoefficient = 1.0;
+            refractionCoefficient = 1.0;
+            refractionIndex = 1.52;
             color = [0, 0, 255];
         }
     },
