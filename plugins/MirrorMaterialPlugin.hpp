@@ -53,6 +53,61 @@ public:
   computeColor(const Core::Intersection &intersection, const Core::Ray &ray,
                const std::vector<std::shared_ptr<Core::ILight>> &lights,
                const Core::Scene &scene) const override;
+  private:
+
+  /**
+   * @brief Compute the color resulting from reflection at an intersection.
+   * @param intersection Intersection information.
+   * @param ray Incoming ray.
+   * @param lights Lights affecting the intersection.
+   * @param scene Scene containing all objects.
+   * @return Computed color.
+   */
+  [[nodiscard]] Core::Color computeReflectedColor(
+      const Core::Intersection &intersection, const Core::Ray &ray,
+      const std::vector<std::shared_ptr<Core::ILight>> &lights,
+      const Core::Scene &scene) const;
+
+  /**
+   * @brief Compute the color resulting from refraction at an intersection.
+   * @param intersection Intersection information.
+   * @param ray Incoming ray.
+   * @param lights Lights affecting the intersection.
+   * @param scene Scene containing all objects.
+   * @return Computed color.
+   */
+  [[nodiscard]] Core::Color computeRefractedColor(
+      const Core::Intersection &intersection, const Core::Ray &ray,
+      const std::vector<std::shared_ptr<Core::ILight>> &lights,
+      const Core::Scene &scene) const;
+
+  /**
+   * @brief Set the reflection coefficient.
+   * @param coefficient New ambient coefficient.
+   */
+  void setReflectionCoefficient(double coefficient) noexcept {
+    m_reflectionCoefficient = coefficient;
+  }
+
+  /**
+   * @brief Set the refraction coefficient.
+   * @param coefficient New ambient coefficient.
+   */
+  void setRefractionCoefficient(double coefficient) noexcept {
+    m_refractionCoefficient = coefficient;
+  }
+
+  /**
+   * @brief Set the refractive index.
+   * @param index New refractive index.
+   */
+  void setRefractiveIndex(double index) noexcept {
+    m_refractiveIndex = index;
+  }
+
+  Utility::Clamped<double, 0.0, 1.0> m_reflectionCoefficient{0.0};
+  Utility::Clamped<double, 0.0, 1.0> m_refractionCoefficient{0.0};
+  double m_refractiveIndex{1.0};
 };
 
 } // namespace Raytracer::Plugins
