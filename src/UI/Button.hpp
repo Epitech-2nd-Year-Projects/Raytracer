@@ -68,6 +68,20 @@ public:
   }
 
   /**
+   * @brief Set the text of the button.
+   * @param text The new text to be displayed on the button.
+   */
+  void setText(const std::string &text) {
+    m_label.setString(text);
+
+    auto pos = m_background.getPosition();
+    auto size = m_background.getSize();
+    auto bounds = m_label.getLocalBounds();
+    m_label.setPosition(pos.x + (size.x - bounds.width) * 0.5f - bounds.left,
+                        pos.y + (size.y - bounds.height) * 0.5f - bounds.top);
+  }
+
+  /**
    * @brief Handle the mouse button release event.
    * @param event The event to handle.
    * @param window The render window.
