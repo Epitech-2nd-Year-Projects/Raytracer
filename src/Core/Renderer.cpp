@@ -100,6 +100,48 @@ void Renderer::render(const Scene &scene, const std::string &filename) const {
   return material->computeColor(*nearestHit, ray, lights, scene);
 }
 
+std::vector<uint8_t> Renderer::renderToBuffer(const Scene &scene) const {
+  std::vector<std::vector<Color>> pixelBuffer(m_height,
+                                              std::vector<Color>(m_width));
+  double aspectRatio = double(m_width) / double(m_height);
+  Camera &cam = const_cast<Camera &>(scene.getCamera());
+  cam.setPerspective(aspectRatio);
+
+  if (m_useMultithreading) {
+    unsigned int threadCount = std::thread::hardware_concurrency();
+    if (threadCount == 0)
+      threadCount = 1;
+    std::vector<std::thread> threads;
+    size_t linesPerThread = m_height / threadCount;
+
+    for (unsigned int i = 0; i < threadCount; ++i) {
+      size_t startY = i * linesPerThread;
+      size_t endY =
+          (i + 1 == threadCount) ? m_height : (i + 1) * linesPerThread;
+      threads.emplace_back(&Renderer::renderChunk, this, std::cref(scene),
+                           std::ref(pixelBuffer), startY, endY, m_width,
+                           m_height);
+    }
+    for (auto &t : threads)
+      t.join();
+  } else {
+    renderChunk(scene, pixelBuffer, 0, m_height, m_width, m_height);
+  }
+
+  std::vector<uint8_t> out;
+  out.reserve(m_width * m_height * 4);
+  for (size_t y = 0; y < m_height; ++y) {
+    for (size_t x = 0; x < m_width; ++x) {
+      const auto &c = pixelBuffer[y][x];
+      out.push_back(static_cast<uint8_t>(c.getR()));
+      out.push_back(static_cast<uint8_t>(c.getG()));
+      out.push_back(static_cast<uint8_t>(c.getB()));
+      out.push_back(255);
+    }
+  }
+  return out;
+}
+
 void Renderer::collectLights(
     const Scene &scene, std::vector<std::shared_ptr<ILight>> &lights) const {
   for (const auto &[id, light] : scene.getLights()) {

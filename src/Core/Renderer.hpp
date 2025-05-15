@@ -57,6 +57,11 @@ public:
   void render(const Scene &scene, const std::string &filename) const;
 
   /**
+   * @brief Render into an RGBA8 buffer for use in an SFML texture.
+   */
+  std::vector<uint8_t> renderToBuffer(const Scene &scene) const;
+
+  /**
    * @brief Enable or disable multithreaded rendering.
    * @param enable True to enable multithreading, false to disable.
    */
