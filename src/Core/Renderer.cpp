@@ -100,46 +100,55 @@ void Renderer::render(const Scene &scene, const std::string &filename) const {
   return material->computeColor(*nearestHit, ray, lights, scene);
 }
 
-std::vector<uint8_t> Renderer::renderToBuffer(const Scene &scene) const {
-  std::vector<std::vector<Color>> pixelBuffer(m_height,
-                                              std::vector<Color>(m_width));
-  double aspectRatio = double(m_width) / double(m_height);
-  Camera &cam = const_cast<Camera &>(scene.getCamera());
-  cam.setPerspective(aspectRatio);
+void Renderer::renderToBuffer(const Scene &scene, std::vector<uint8_t> &out,
+                              std::atomic<bool> *cancelFlag,
+                              std::atomic<size_t> *rowsDone) const {
+  if (out.size() < m_width * m_height * 4)
+    throw std::runtime_error("renderToBuffer: output buffer too small");
+
+  if (rowsDone)
+    rowsDone->store(0, std::memory_order_relaxed);
+
+  auto worker = [&](size_t y0, size_t y1) {
+    for (size_t y = y0; y < y1; ++y) {
+      if (cancelFlag && cancelFlag->load(std::memory_order_relaxed))
+        return;
+      for (size_t x = 0; x < m_width; ++x) {
+        if (cancelFlag && cancelFlag->load(std::memory_order_relaxed))
+          return;
+        auto u = Utility::Clamped<double, 0.0, 1.0>(double(x) / (m_width - 1));
+        auto v = Utility::Clamped<double, 0.0, 1.0>(1.0 -
+                                                    double(y) / (m_height - 1));
+        Color color = traceRay(scene, scene.getCamera().ray(u, v));
+
+        size_t i = (y * m_width + x) * 4;
+        out[i] = static_cast<uint8_t>(color.getR());
+        out[i + 1] = static_cast<uint8_t>(color.getG());
+        out[i + 2] = static_cast<uint8_t>(color.getB());
+        out[i + 3] = 255;
+      }
+      if (rowsDone)
+        rowsDone->fetch_add(1, std::memory_order_relaxed);
+    }
+  };
 
   if (m_useMultithreading) {
-    unsigned int threadCount = std::thread::hardware_concurrency();
-    if (threadCount == 0)
-      threadCount = 1;
-    std::vector<std::thread> threads;
-    size_t linesPerThread = m_height / threadCount;
+    unsigned threads = std::thread::hardware_concurrency();
+    threads = threads ? threads : 1;
+    size_t stripe = m_height / threads;
+    std::vector<std::thread> threadPool;
+    threadPool.reserve(threads);
 
-    for (unsigned int i = 0; i < threadCount; ++i) {
-      size_t startY = i * linesPerThread;
-      size_t endY =
-          (i + 1 == threadCount) ? m_height : (i + 1) * linesPerThread;
-      threads.emplace_back(&Renderer::renderChunk, this, std::cref(scene),
-                           std::ref(pixelBuffer), startY, endY, m_width,
-                           m_height);
+    for (unsigned i = 0; i < threads; ++i) {
+      size_t y0 = i * stripe;
+      size_t y1 = (i + 1 == threads) ? m_height : (i + 1) * stripe;
+      threadPool.emplace_back(worker, y0, y1);
     }
-    for (auto &t : threads)
-      t.join();
+    for (auto &thread : threadPool)
+      thread.join();
   } else {
-    renderChunk(scene, pixelBuffer, 0, m_height, m_width, m_height);
+    worker(0, m_height);
   }
-
-  std::vector<uint8_t> out;
-  out.reserve(m_width * m_height * 4);
-  for (size_t y = 0; y < m_height; ++y) {
-    for (size_t x = 0; x < m_width; ++x) {
-      const auto &c = pixelBuffer[y][x];
-      out.push_back(static_cast<uint8_t>(c.getR()));
-      out.push_back(static_cast<uint8_t>(c.getG()));
-      out.push_back(static_cast<uint8_t>(c.getB()));
-      out.push_back(255);
-    }
-  }
-  return out;
 }
 
 void Renderer::collectLights(
