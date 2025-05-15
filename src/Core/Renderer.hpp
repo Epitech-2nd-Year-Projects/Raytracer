@@ -8,7 +8,6 @@
 #include "Core/Color.hpp"
 #include "Core/Scene.hpp"
 #include <cstddef>
-#include <thread>
 #include <vector>
 
 namespace Raytracer::Core {
@@ -56,6 +55,17 @@ public:
    */
   void render(const Scene &scene, const std::string &filename) const;
 
+  /**
+   * @brief Render into an RGBA8 buffer in‐place, optionally Cancelling
+   *        and reporting progress via atomic flags.
+   * @param scene       The scene.
+   * @param out         Pre‐allocated RGBA8 buffer of size width*height*4.
+   * @param cancelFlag  If non‐null, checked each row; if true, abort early.
+   * @param rowsDone    If non‐null, incremented each time a row completes.
+   */
+  void renderToBuffer(const Scene &scene, std::vector<uint8_t> &out,
+                      std::atomic<bool> *cancelFlag = nullptr,
+                      std::atomic<size_t> *rowsDone = nullptr) const;
   /**
    * @brief Enable or disable multithreaded rendering.
    * @param enable True to enable multithreading, false to disable.
