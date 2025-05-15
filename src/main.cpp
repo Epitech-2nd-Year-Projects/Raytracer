@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
         "./plugins");
 
     if (guiMode) {
-      Raytracer::UI::GUI gui("Raytracer", {1920, 1080});
+      Raytracer::UI::GUI gui("Raytracer", {1920, 1080}, sceneFile.data());
     } else {
       std::optional<std::unique_ptr<Raytracer::Core::Scene>> scene =
           Raytracer::Parser::SceneParser().parseFile(sceneFile.data());
