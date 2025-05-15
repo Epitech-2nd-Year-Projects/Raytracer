@@ -1,6 +1,7 @@
 #include "UI/GUI.hpp"
 #include "Parser/SceneParser.hpp"
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 
 using namespace Raytracer::UI;
@@ -232,4 +233,27 @@ void GUI::onRenderButton() {
 void GUI::onSaveButton() {
   if (m_pixelBuffer.empty())
     return;
+
+  std::string outputFilePath =
+      std::filesystem::path(m_sceneFile).stem().string() + ".ppm";
+
+  std::ofstream outputFileStream(outputFilePath);
+  if (!outputFileStream) {
+    std::cerr << "Failed to open output file: " << outputFilePath << "\n";
+    return;
+  }
+
+  std::size_t width = m_renderer.getWidth();
+  std::size_t height = m_renderer.getHeight();
+
+  outputFileStream << "P3\n" << width << " " << height << "\n255\n";
+
+  for (std::size_t y = 0; y < height; ++y) {
+    for (std::size_t x = 0; x < width; ++x) {
+      std::size_t i = (y * width + x) * 4;
+      outputFileStream << int(m_pixelBuffer[i]) << " "
+                       << int(m_pixelBuffer[i + 1]) << " "
+                       << int(m_pixelBuffer[i + 2]) << "\n";
+    }
+  }
 }
