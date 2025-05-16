@@ -2,6 +2,7 @@
 #include "Parser/SceneParser.hpp"
 #include <algorithm>
 #include <cmath>
+#include <fstream>
 #include <iostream>
 #include <sstream>
 
