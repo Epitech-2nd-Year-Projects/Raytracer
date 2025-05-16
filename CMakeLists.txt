@@ -16,10 +16,17 @@ set(CORE_SOURCES
   src/Parser/SceneParser.cpp
   src/Core/Scene.cpp
   src/Plugin/PluginManager.cpp
+  src/UI/GUI.cpp
 )
 
 add_library(raytracer_core STATIC ${CORE_SOURCES})
 target_include_directories(raytracer_core PUBLIC ${CMAKE_SOURCE_DIR}/src)
+target_link_libraries(raytracer_core
+  PUBLIC
+    sfml-graphics
+    sfml-window
+    sfml-system
+)
 set_property(TARGET raytracer_core PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
@@ -44,9 +51,6 @@ target_include_directories(raytracer
 target_link_libraries(raytracer
   PRIVATE
     PkgConfig::LIBConfig++
-    sfml-graphics
-    sfml-window
-    sfml-system
     raytracer_core
 )
 

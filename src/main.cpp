@@ -6,6 +6,7 @@
 #include "Core/Renderer.hpp"
 #include "Parser/SceneParser.hpp"
 #include "Plugin/PluginManager.hpp"
+#include "UI/GUI.hpp"
 #include <iostream>
 #include <memory>
 #include <optional>
@@ -22,6 +23,7 @@ void printUsage(const std::string_view programName) {
             << "\t-d: enable debug mode\n"
             << "\t-m: disable multithreading (enabled by default)\n"
             << "\t-o <FILENAME>: specify output file (default: output.ppm)\n"
+            << "\t-g: enable interactive gui mode\n"
             << "\t-h, --help: show this help message\n";
 }
 
@@ -45,10 +47,11 @@ int main(int argc, char *argv[]) {
     return 0;
   }
 
-  const std::string_view sceneFile = argv[1];
+  [[maybe_unused]] const std::string_view sceneFile = argv[1];
   [[maybe_unused]] bool debug = false;
-  bool useMultithreading = true;
-  std::string outputFile = "output.ppm";
+  [[maybe_unused]] bool useMultithreading = true;
+  [[maybe_unused]] std::string outputFile = "output.ppm";
+  [[maybe_unused]] bool guiMode = false;
 
   for (int i = 2; i < argc; i++) {
     const std::string_view arg = argv[i];
@@ -58,6 +61,8 @@ int main(int argc, char *argv[]) {
       useMultithreading = false;
     } else if (arg == "-o" && i + 1 < argc) {
       outputFile = argv[++i];
+    } else if (arg == "-g") {
+      guiMode = true;
     } else {
       printUsage(programName);
       return 84;
@@ -67,16 +72,21 @@ int main(int argc, char *argv[]) {
   try {
     Raytracer::Plugin::PluginManager::getInstance().loadPluginsFromDirectory(
         "./plugins");
-    std::optional<std::unique_ptr<Raytracer::Core::Scene>> scene =
-        Raytracer::Parser::SceneParser().parseFile(sceneFile.data());
 
-    if (!scene) {
-      return 84;
+    if (guiMode) {
+      Raytracer::UI::GUI gui("Raytracer", {1920, 1080}, sceneFile.data());
+    } else {
+      std::optional<std::unique_ptr<Raytracer::Core::Scene>> scene =
+          Raytracer::Parser::SceneParser().parseFile(sceneFile.data());
+
+      if (!scene) {
+        return 84;
+      }
+
+      Raytracer::Core::Renderer renderer(1920, 1080);
+      renderer.setMultithreading(useMultithreading);
+      renderer.render(*scene.value(), outputFile);
     }
-
-    Raytracer::Core::Renderer renderer(1920, 1080);
-    renderer.setMultithreading(useMultithreading);
-    renderer.render(*scene.value(), outputFile);
   } catch (const std::exception &e) {
     std::cerr << "Error: " << e.what() << "\n";
     return 84;
