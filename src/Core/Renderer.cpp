@@ -46,7 +46,7 @@ void Renderer::render(const Scene &scene, const std::string &filename) const {
       size_t endY = i == threadCount - 1 ? m_height : (i + 1) * linesPerThread;
       threads.push_back(std::thread(&Renderer::renderChunk, this,
                                     std::ref(scene), std::ref(pixelBuffer),
-                                    startY, endY, m_width, m_height));
+                                    startY, endY));
     }
 
     for (auto &thread : threads) {
