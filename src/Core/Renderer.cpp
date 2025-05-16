@@ -9,15 +9,10 @@
 namespace Raytracer::Core {
 void Renderer::renderChunk(const Scene &scene,
                            std::vector<std::vector<Color>> &pixelBuffer,
-                           size_t startY, size_t endY, size_t width,
-                           size_t height) const {
+                           size_t startY, size_t endY) const {
   for (size_t y = startY; y < endY; ++y) {
-    for (size_t x = 0; x < width; ++x) {
-      Utility::Clamped<double, 0.0, 1.0> u(static_cast<double>(x) /
-                                           (width - 1));
-      Utility::Clamped<double, 0.0, 1.0> v(1.0 - static_cast<double>(y) /
-                                                     (height - 1));
-      pixelBuffer[y][x] = traceRay(scene, scene.getCamera().ray(u, v));
+    for (size_t x = 0; x < m_width; ++x) {
+      pixelBuffer[y][x] = computePixelColor(scene, x, y);
     }
   }
 }
@@ -51,14 +46,14 @@ void Renderer::render(const Scene &scene, const std::string &filename) const {
       size_t endY = i == threadCount - 1 ? m_height : (i + 1) * linesPerThread;
       threads.push_back(std::thread(&Renderer::renderChunk, this,
                                     std::ref(scene), std::ref(pixelBuffer),
-                                    startY, endY, m_width, m_height));
+                                    startY, endY));
     }
 
     for (auto &thread : threads) {
       thread.join();
     }
   } else {
-    renderChunk(scene, pixelBuffer, 0, m_height, m_width, m_height);
+    renderChunk(scene, pixelBuffer, 0, m_height);
   }
 
   for (size_t y = 0; y < m_height; ++y) {
@@ -75,10 +70,23 @@ void Renderer::render(const Scene &scene, const std::string &filename) const {
 [[nodiscard]] Color Renderer::computePixelColor(const Scene &scene,
                                                 std::size_t x,
                                                 std::size_t y) const {
-  Utility::Clamped<double, 0.0, 1.0> u(static_cast<double>(x) / (m_width - 1));
-  Utility::Clamped<double, 0.0, 1.0> v(1.0 -
-                                       static_cast<double>(y) / (m_height - 1));
+  const double invWidth = 1.0 / (m_width - 1);
+  const double invHeight = 1.0 / (m_height - 1);
 
+  using ClampedDouble = Utility::Clamped<double, 0.0, 1.0>;
+
+  ClampedDouble uMin(x * invWidth);
+  ClampedDouble uMax((x + 1) * invWidth);
+  ClampedDouble vMax(1.0 - y * invHeight);
+  ClampedDouble vMin(1.0 - (y + 1) * invHeight);
+
+  if (m_enableAdaptiveSS) {
+    return sampleRegion(scene, uMin.get(), vMin.get(), uMax.get(), vMax.get(),
+                        0);
+  }
+
+  ClampedDouble u(x * invWidth);
+  ClampedDouble v(1.0 - y * invHeight);
   return traceRay(scene, scene.getCamera().ray(u, v));
 }
 
@@ -116,15 +124,11 @@ void Renderer::renderToBuffer(const Scene &scene, std::vector<uint8_t> &out,
       for (size_t x = 0; x < m_width; ++x) {
         if (cancelFlag && cancelFlag->load(std::memory_order_relaxed))
           return;
-        auto u = Utility::Clamped<double, 0.0, 1.0>(double(x) / (m_width - 1));
-        auto v = Utility::Clamped<double, 0.0, 1.0>(1.0 -
-                                                    double(y) / (m_height - 1));
-        Color color = traceRay(scene, scene.getCamera().ray(u, v));
-
+        Color color = computePixelColor(scene, x, y);
         size_t i = (y * m_width + x) * 4;
-        out[i] = static_cast<uint8_t>(color.getR());
-        out[i + 1] = static_cast<uint8_t>(color.getG());
-        out[i + 2] = static_cast<uint8_t>(color.getB());
+        out[i] = uint8_t(color.getR());
+        out[i + 1] = uint8_t(color.getG());
+        out[i + 2] = uint8_t(color.getB());
         out[i + 3] = 255;
       }
       if (rowsDone)
@@ -159,6 +163,59 @@ void Renderer::collectLights(
 
   for (const auto &[id, childScene] : scene.getChildScenes()) {
     collectLights(*childScene, lights);
+  }
+}
+
+[[nodiscard]] Color Renderer::sampleRegion(const Scene &scene, double uMin,
+                                           double vMin, double uMax,
+                                           double vMax, int depth) const {
+  double uMid = 0.5 * (uMin + uMax);
+  double vMid = 0.5 * (vMin + vMax);
+
+  std::array<std::pair<double, double>, 5> points = {
+      std::make_pair(uMin, vMin), std::make_pair(uMin, vMax),
+      std::make_pair(uMax, vMin), std::make_pair(uMax, vMax),
+      std::make_pair(uMid, vMid)};
+
+  std::array<Color, 5> cols;
+  for (int i = 0; i < 5; ++i) {
+    auto [u, v] = points[i];
+    cols[i] = traceRay(
+        scene, scene.getCamera().ray(Utility::Clamped<double, 0.0, 1.0>(u),
+                                     Utility::Clamped<double, 0.0, 1.0>(v)));
+  }
+
+  double maxDiff = 0.0;
+  for (int i = 0; i < 5; ++i) {
+    for (int j = i + 1; j < 5; ++j) {
+      double dr = std::abs(cols[i].getR() - cols[j].getR());
+      double dg = std::abs(cols[i].getG() - cols[j].getG());
+      double db = std::abs(cols[i].getB() - cols[j].getB());
+      double d = std::max({dr, dg, db});
+      maxDiff = std::max(maxDiff, d);
+    }
+  }
+
+  if (depth < m_AAMaxDepth && maxDiff > m_AAThreshold) {
+    Color color1 = sampleRegion(scene, uMin, vMid, uMid, vMax, depth + 1);
+    Color color2 = sampleRegion(scene, uMid, vMid, uMax, vMax, depth + 1);
+    Color color3 = sampleRegion(scene, uMin, vMin, uMid, vMid, depth + 1);
+    Color color4 = sampleRegion(scene, uMid, vMin, uMax, vMid, depth + 1);
+    double r =
+        (color1.getR() + color2.getR() + color3.getR() + color4.getR()) * 0.25;
+    double g =
+        (color1.getG() + color2.getG() + color3.getG() + color4.getG()) * 0.25;
+    double b =
+        (color1.getB() + color2.getB() + color3.getB() + color4.getB()) * 0.25;
+    return Color(r, g, b);
+  } else {
+    double r = 0, g = 0, b = 0;
+    for (auto &col : cols) {
+      r += col.getR();
+      g += col.getG();
+      b += col.getB();
+    }
+    return Color(r / 5.0, g / 5.0, b / 5.0);
   }
 }
 

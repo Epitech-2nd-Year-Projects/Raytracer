@@ -52,6 +52,9 @@ GUI::GUI(const std::string &title, const sf::Vector2u &size,
   m_btnSave = std::make_unique<Button>(m_font, "Save", sf::Vector2f(10, 90),
                                        sf::Vector2f(140, 30),
                                        [this]() { onSaveButton(); });
+  m_btnToggleAASS = std::make_unique<Button>(
+      m_font, "Toggle AA-SS", sf::Vector2f(10, 130), sf::Vector2f(140, 30),
+      [this]() { onToggleASS(); });
 
   while (m_window.isOpen()) {
     try {
@@ -91,6 +94,12 @@ GUI::GUI(const std::string &title, const sf::Vector2u &size,
       m_btnPreview->setText("Preview");
     }
 
+    if (m_renderer.isAdaptiveSupersampling()) {
+      m_btnToggleAASS->setText("Disable AA-SS");
+    } else {
+      m_btnToggleAASS->setText("Enable AA-SS");
+    }
+
     sf::Event ev;
     while (m_window.pollEvent(ev)) {
       if (ev.type == sf::Event::Closed)
@@ -98,6 +107,7 @@ GUI::GUI(const std::string &title, const sf::Vector2u &size,
       m_btnPreview->handleEvent(ev, m_window);
       m_btnRender->handleEvent(ev, m_window);
       m_btnSave->handleEvent(ev, m_window);
+      m_btnToggleAASS->handleEvent(ev, m_window);
     }
 
     m_window.clear();
@@ -133,6 +143,7 @@ GUI::GUI(const std::string &title, const sf::Vector2u &size,
     m_btnPreview->draw(m_window);
     m_btnRender->draw(m_window);
     m_btnSave->draw(m_window);
+    m_btnToggleAASS->draw(m_window);
 
     if (m_showReloadNotification) {
       float notificationTime = m_reloadClock.getElapsedTime().asSeconds();
@@ -255,5 +266,15 @@ void GUI::onSaveButton() {
                        << int(m_pixelBuffer[i + 1]) << " "
                        << int(m_pixelBuffer[i + 2]) << "\n";
     }
+  }
+}
+
+void GUI::onToggleASS() {
+  bool isEnabled = m_renderer.isAdaptiveSupersampling();
+  m_renderer.setAdaptiveSupersampling(!isEnabled, 3, 15.0);
+  if (!isEnabled) {
+    m_btnToggleAASS->setText("Disable AA-SS");
+  } else {
+    m_btnToggleAASS->setText("Enable AA-SS");
   }
 }
