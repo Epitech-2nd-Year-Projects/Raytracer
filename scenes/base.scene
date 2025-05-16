@@ -11,10 +11,10 @@ camera:
 
 primitives = (
     {
-        type = "Sphere";
-        id = "sphere1";
-        position = [60.0, 5.0, 40.0];
-        radius = 25.0;
+        type = "Object";
+        file = "alfa147.obj"
+        id = "object1";
+        position = [120.0, 10.0, 80.0];
         material =
         {
             type = "FlatMaterial";
