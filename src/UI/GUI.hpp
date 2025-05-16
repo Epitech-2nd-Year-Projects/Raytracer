@@ -50,6 +50,12 @@ private:
    */
   void onSaveButton();
 
+  /**
+   * @brief Handle the toggle anti-aliasing through supersampling button click
+   * event.
+   */
+  void onToggleASS();
+
 private:
   sf::RenderWindow m_window;
   Core::Renderer m_renderer;
@@ -59,6 +65,7 @@ private:
   std::unique_ptr<Button> m_btnRender;
   std::unique_ptr<Button> m_btnSave;
   std::unique_ptr<Button> m_btnPreview;
+  std::unique_ptr<Button> m_btnToggleAASS;
 
   std::atomic<bool> m_cancelRequested{false};
   std::atomic<size_t> m_rowsDone{0};
