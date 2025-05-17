@@ -54,7 +54,7 @@ private:
   std::optional<Core::Color> m_color2{Core::Black};
   double m_squareSize{1.0};
 
-  static bool parseRgb(const libconfig::Setting &setting, Core::Color &out);
+
 };
 
 } // namespace Raytracer::Plugins
