@@ -56,6 +56,11 @@ private:
    */
   void onToggleASS();
 
+  /**
+   * @brief Handle the toggle multi-threading button click event.
+   */
+  void onToggleMultiThreading();
+
 private:
   sf::RenderWindow m_window;
   Core::Renderer m_renderer;
@@ -66,6 +71,7 @@ private:
   std::unique_ptr<Button> m_btnSave;
   std::unique_ptr<Button> m_btnPreview;
   std::unique_ptr<Button> m_btnToggleAASS;
+  std::unique_ptr<Button> m_btnToggleMultiThreading;
 
   std::atomic<bool> m_cancelRequested{false};
   std::atomic<size_t> m_rowsDone{0};

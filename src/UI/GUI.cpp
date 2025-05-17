@@ -44,17 +44,22 @@ GUI::GUI(const std::string &title, const sf::Vector2u &size,
   m_reloadNotification.setPosition(size.x / 2.f, size.y / 2.f);
 
   m_btnPreview = std::make_unique<Button>(
-      m_font, "Preview", sf::Vector2f(10, 10), sf::Vector2f(140, 30),
+      m_font, "Preview", sf::Vector2f(10, 10), sf::Vector2f(160, 30),
       [this]() { onPreviewButton(); });
   m_btnRender = std::make_unique<Button>(m_font, "Render", sf::Vector2f(10, 50),
-                                         sf::Vector2f(140, 30),
+                                         sf::Vector2f(160, 30),
                                          [this]() { onRenderButton(); });
   m_btnSave = std::make_unique<Button>(m_font, "Save", sf::Vector2f(10, 90),
-                                       sf::Vector2f(140, 30),
+                                       sf::Vector2f(160, 30),
                                        [this]() { onSaveButton(); });
   m_btnToggleAASS = std::make_unique<Button>(
-      m_font, "Toggle AA-SS", sf::Vector2f(10, 130), sf::Vector2f(140, 30),
+      m_font, "Anti-aliasing (Off)",
+      sf::Vector2f(m_window.getSize().x - 170, 10), sf::Vector2f(160, 30),
       [this]() { onToggleASS(); });
+  m_btnToggleMultiThreading = std::make_unique<Button>(
+      m_font, "Multi-threading (Off)",
+      sf::Vector2f(m_window.getSize().x - 170, 50), sf::Vector2f(160, 30),
+      [this]() { onToggleMultiThreading(); });
 
   while (m_window.isOpen()) {
     try {
@@ -95,9 +100,15 @@ GUI::GUI(const std::string &title, const sf::Vector2u &size,
     }
 
     if (m_renderer.isAdaptiveSupersampling()) {
-      m_btnToggleAASS->setText("Disable AA-SS");
+      m_btnToggleAASS->setText("Anti-aliasing (On)");
     } else {
-      m_btnToggleAASS->setText("Enable AA-SS");
+      m_btnToggleAASS->setText("Anti-aliasing (Off)");
+    }
+
+    if (m_renderer.isMultithreadingEnabled()) {
+      m_btnToggleMultiThreading->setText("Multi-threading (On)");
+    } else {
+      m_btnToggleMultiThreading->setText("Multi-threading (Off)");
     }
 
     sf::Event ev;
@@ -108,6 +119,7 @@ GUI::GUI(const std::string &title, const sf::Vector2u &size,
       m_btnRender->handleEvent(ev, m_window);
       m_btnSave->handleEvent(ev, m_window);
       m_btnToggleAASS->handleEvent(ev, m_window);
+      m_btnToggleMultiThreading->handleEvent(ev, m_window);
     }
 
     m_window.clear();
@@ -144,6 +156,7 @@ GUI::GUI(const std::string &title, const sf::Vector2u &size,
     m_btnRender->draw(m_window);
     m_btnSave->draw(m_window);
     m_btnToggleAASS->draw(m_window);
+    m_btnToggleMultiThreading->draw(m_window);
 
     if (m_showReloadNotification) {
       float notificationTime = m_reloadClock.getElapsedTime().asSeconds();
@@ -272,9 +285,9 @@ void GUI::onSaveButton() {
 void GUI::onToggleASS() {
   bool isEnabled = m_renderer.isAdaptiveSupersampling();
   m_renderer.setAdaptiveSupersampling(!isEnabled, 3, 15.0);
-  if (!isEnabled) {
-    m_btnToggleAASS->setText("Disable AA-SS");
-  } else {
-    m_btnToggleAASS->setText("Enable AA-SS");
-  }
+}
+
+void GUI::onToggleMultiThreading() {
+  bool isEnabled = m_renderer.isMultithreadingEnabled();
+  m_renderer.setMultithreading(!isEnabled);
 }
