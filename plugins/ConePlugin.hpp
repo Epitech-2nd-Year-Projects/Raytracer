@@ -29,14 +29,14 @@ public:
   }
 
   /**
-   * @brief Create a new instance of the sphere primitive plugin
-   * @return A unique pointer to the new sphere primitive
+   * @brief Create a new instance of the cone primitive plugin
+   * @return A unique pointer to the new cone primitive
    */
   std::unique_ptr<PrimitivePlugin> create() override;
 
   /**
-   * @brief Configure the sphere plugin with a libconfig setting
-   * @param config The libconfig setting to configure the sphere
+   * @brief Configure the cone plugin with a libconfig setting
+   * @param config The libconfig setting to configure the cone
    * @return True if the configuration was successful, false otherwise
    */
   bool configure(const libconfig::Setting &config) override;
