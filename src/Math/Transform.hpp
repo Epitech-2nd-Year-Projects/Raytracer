@@ -150,6 +150,36 @@ public:
   }
 
   /**
+   * @brief Create a scale transform.
+   * @param sx X scale factor.
+   * @param sy Y scale factor.
+   * @param sz Z scale factor.
+   * @return Scale transform.
+   */
+  static Transform scale(double sx, double sy, double sz) noexcept {
+    Matrix4 matrix = Matrix4::identity();
+    matrix(0, 0) = sx;
+    matrix(1, 1) = sy;
+    matrix(2, 2) = sz;
+
+    Matrix4 inverse = Matrix4::identity();
+    inverse(0, 0) = 1.0 / sx;
+    inverse(1, 1) = 1.0 / sy;
+    inverse(2, 2) = 1.0 / sz;
+    return Transform(matrix, inverse);
+  }
+
+  /**
+   * @brief Create a scale transform.
+   * @param scale Scale vector.
+   * @return Scale transform.
+   */
+  static Transform scale(const Vector<3> &scale) noexcept {
+    return Transform::scale(scale.m_components[0], scale.m_components[1],
+                            scale.m_components[2]);
+  }
+
+  /**
    * @brief Get the transformation matrix.
    * @return The transformation matrix.
    */
@@ -175,8 +205,8 @@ public:
    * @return Combined transform.
    */
   [[nodiscard]] Transform combine(const Transform &other) const noexcept {
-    return Transform(other.m_matrix.multiply(m_matrix),
-                     m_inverse.multiply(other.m_inverse));
+    return Transform(m_matrix.multiply(other.m_matrix),
+                     other.m_inverse.multiply(m_inverse));
   }
 
   /**
@@ -214,7 +244,7 @@ public:
    */
   [[nodiscard]] Vector<3>
   transformNormal(const Vector<3> &normal) const noexcept {
-    return Math::transformNormal(m_matrix, normal);
+    return Math::transformNormal(m_inverse, normal).normalize();
   }
 
   /**
