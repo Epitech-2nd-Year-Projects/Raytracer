@@ -7,7 +7,7 @@
 
 #include "Core/Color.hpp"
 #include "Core/Scene.hpp"
-#include <iostream>
+#include "Math/Transform.hpp"
 #include <libconfig.h++>
 #include <optional>
 
@@ -148,6 +148,41 @@ public:
                                     rotation->m_components[1] * M_PI / 180.0,
                                     rotation->m_components[2] * M_PI / 180.0);
         primitive->setRotation(rotationRad);
+      }
+    } catch (const libconfig::SettingNotFoundException &) {
+    }
+
+    try {
+      auto scale = parsePoint3(config.lookup("scale"));
+      if (scale) {
+        Math::Vector<3> scaleVect(scale->m_components[0],
+                                  scale->m_components[1],
+                                  scale->m_components[2]);
+        primitive->setScale(scaleVect);
+      }
+    } catch (const libconfig::SettingNotFoundException &) {
+    }
+
+    try {
+      if (config.exists("shear")) {
+        const libconfig::Setting &shearConfig = config.lookup("shear");
+        double xy = 0.0, xz = 0.0, yx = 0.0, yz = 0.0, zx = 0.0, zy = 0.0;
+
+        if (shearConfig.exists("xy"))
+          xy = static_cast<double>(shearConfig.lookup("xy"));
+        if (shearConfig.exists("xz"))
+          xz = static_cast<double>(shearConfig.lookup("xz"));
+        if (shearConfig.exists("yx"))
+          yx = static_cast<double>(shearConfig.lookup("yx"));
+        if (shearConfig.exists("yz"))
+          yz = static_cast<double>(shearConfig.lookup("yz"));
+        if (shearConfig.exists("zx"))
+          zx = static_cast<double>(shearConfig.lookup("zx"));
+        if (shearConfig.exists("zy"))
+          zy = static_cast<double>(shearConfig.lookup("zy"));
+
+        Math::Vector<6> shearVect(xy, xz, yx, yz, zx, zy);
+        primitive->setShear(shearVect);
       }
     } catch (const libconfig::SettingNotFoundException &) {
     }

@@ -12,8 +12,8 @@ using Raytracer::Math::Vector;
 
 static constexpr double EQ_APPROX = 1e-6;
 
-void assert_point_equal(const Point<3> &a, const Point<3> &b,
-                        double eps = EQ_APPROX) {
+static void assert_point_equal(const Point<3> &a, const Point<3> &b,
+                               double eps = EQ_APPROX) {
   for (int i = 0; i < 3; i++) {
     cr_assert_float_eq(a.m_components[i], b.m_components[i], eps,
                        "Component %d mismatch: expected %f, got %f", i,
@@ -21,8 +21,8 @@ void assert_point_equal(const Point<3> &a, const Point<3> &b,
   }
 }
 
-void assert_vector_equal(const Vector<3> &a, const Vector<3> &b,
-                         double eps = EQ_APPROX) {
+static void assert_vector_equal(const Vector<3> &a, const Vector<3> &b,
+                                double eps = EQ_APPROX) {
   for (int i = 0; i < 3; i++) {
     cr_assert_float_eq(a.m_components[i], b.m_components[i], eps,
                        "Component %d mismatch: expected %f, got %f", i,
@@ -80,7 +80,7 @@ Test(RotationSuite, RotateArbitraryPoint) {
   Point<3> p2 = ty.transformPoint(p1);
   Point<3> p3 = tx.transformPoint(p2);
 
-  Transform combined = Transform::rotate(M_PI / 2, M_PI / 2, M_PI / 2);
+  Transform combined = tx * ty * tz;
   Point<3> combinedResult = combined.transformPoint(p);
 
   assert_point_equal(p3, combinedResult);

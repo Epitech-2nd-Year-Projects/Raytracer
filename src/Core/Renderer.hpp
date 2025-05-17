@@ -80,6 +80,26 @@ public:
     return m_useMultithreading;
   }
 
+  /**
+   * @brief Enable/disable adaptive supersampling for anti-aliasing.
+   * @param enable Turn on/off
+   * @param maxDepth Maximum recursion depth
+   * @param threshold Color‐difference threshold (0–255)
+   */
+  void setAdaptiveSupersampling(bool enable, int maxDepth, double threshold) {
+    m_enableAdaptiveSS = enable;
+    m_AAMaxDepth = maxDepth;
+    m_AAThreshold = threshold;
+  }
+
+  /**
+   * @brief Check if adaptive supersampling is enabled.
+   * @return True if enabled, false otherwise.
+   */
+  [[nodiscard]] bool isAdaptiveSupersampling() const noexcept {
+    return m_enableAdaptiveSS;
+  }
+
 private:
   /**
    * @brief Render a chunk of the scene.
@@ -87,12 +107,10 @@ private:
    * @param pixelBuffer Buffer to store pixel colors.
    * @param startY Starting Y coordinate of the chunk.
    * @param endY Ending Y coordinate of the chunk.
-   * @param width Width of the image.
-   * @param height Height of the image.
    */
   void renderChunk(const Scene &scene,
                    std::vector<std::vector<Color>> &pixelBuffer, size_t startY,
-                   size_t endY, size_t width, size_t height) const;
+                   size_t endY) const;
 
   /**
    * @brief Compute the color for a specific pixel.
@@ -121,10 +139,27 @@ private:
   void collectLights(const Scene &scene,
                      std::vector<std::shared_ptr<ILight>> &lights) const;
 
+  /** @brief Recursive adaptive‐supersample
+   * @param scene Scene to render.
+   * @param uMin Minimum U coordinate.
+   * @param vMin Minimum V coordinate.
+   * @param uMax Maximum U coordinate.
+   * @param vMax Maximum V coordinate.
+   * @param depth Current recursion depth.
+   * @return Computed color.
+   */
+  [[nodiscard]] Color sampleRegion(const Scene &scene, double uMin, double vMin,
+                                   double uMax, double vMax, int depth) const;
+
 private:
   std::size_t m_width;
   std::size_t m_height;
+
   bool m_useMultithreading = true;
+
+  bool m_enableAdaptiveSS = false;
+  int m_AAMaxDepth = 2;
+  double m_AAThreshold = 20.0;
 };
 
 } // namespace Raytracer::Core

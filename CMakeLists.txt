@@ -74,6 +74,8 @@ set(TEST_SOURCES
   tests/test_Matrix.cpp
   tests/test_Transform.cpp
   tests/test_Rotation.cpp
+  tests/test_Scale.cpp
+  tests/test_Shear.cpp
 )
 
 set(IMPLEMENTATION_SOURCES ${SOURCES})
@@ -116,3 +118,4 @@ add_raytracer_plugin(steel_material_plugin plugins/SteelMaterialPlugin.cpp)
 add_raytracer_plugin(point_light_plugin plugins/PointLightPlugin.cpp)
 add_raytracer_plugin(ambient_light_plugin plugins/AmbientLightPlugin.cpp)
 add_raytracer_plugin(diffuse_light_plugin plugins/DiffuseLightPlugin.cpp)
+add_raytracer_plugin(object_plugin plugins/ObjectPlugin.cpp)

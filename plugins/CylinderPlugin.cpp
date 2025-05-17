@@ -54,6 +54,7 @@ CylinderPlugin::intersect(const Core::Ray &ray) const noexcept {
   Core::Ray localRay = getTransform().inverseTransformRay(ray);
   Math::Point<3> origin = localRay.getOrigin();
   Math::Vector<3> direction = localRay.getDirection();
+  Math::Vector<3> oc = origin - m_position;
 
   double bestT = std::numeric_limits<double>::infinity();
   Math::Point<3> localIntersectionPoint;
@@ -73,24 +74,24 @@ CylinderPlugin::intersect(const Core::Ray &ray) const noexcept {
   if (axisIndex == 0) {
     a = direction.m_components[1] * direction.m_components[1] +
         direction.m_components[2] * direction.m_components[2];
-    b = 2.0 * (origin.m_components[1] * direction.m_components[1] +
-               origin.m_components[2] * direction.m_components[2]);
-    c = origin.m_components[1] * origin.m_components[1] +
-        origin.m_components[2] * origin.m_components[2] - m_radius * m_radius;
+    b = 2.0 * (oc.m_components[1] * direction.m_components[1] +
+               oc.m_components[2] * direction.m_components[2]);
+    c = oc.m_components[1] * oc.m_components[1] +
+        oc.m_components[2] * oc.m_components[2] - m_radius * m_radius;
   } else if (axisIndex == 1) {
     a = direction.m_components[0] * direction.m_components[0] +
         direction.m_components[2] * direction.m_components[2];
-    b = 2.0 * (origin.m_components[0] * direction.m_components[0] +
-               origin.m_components[2] * direction.m_components[2]);
-    c = origin.m_components[0] * origin.m_components[0] +
-        origin.m_components[2] * origin.m_components[2] - m_radius * m_radius;
+    b = 2.0 * (oc.m_components[0] * direction.m_components[0] +
+               oc.m_components[2] * direction.m_components[2]);
+    c = oc.m_components[0] * oc.m_components[0] +
+        oc.m_components[2] * oc.m_components[2] - m_radius * m_radius;
   } else {
     a = direction.m_components[0] * direction.m_components[0] +
         direction.m_components[1] * direction.m_components[1];
-    b = 2.0 * (origin.m_components[0] * direction.m_components[0] +
-               origin.m_components[1] * direction.m_components[1]);
-    c = origin.m_components[0] * origin.m_components[0] +
-        origin.m_components[1] * origin.m_components[1] - m_radius * m_radius;
+    b = 2.0 * (oc.m_components[0] * direction.m_components[0] +
+               oc.m_components[1] * direction.m_components[1]);
+    c = oc.m_components[0] * oc.m_components[0] +
+        oc.m_components[1] * oc.m_components[1] - m_radius * m_radius;
   }
 
   double delta = b * b - 4 * a * c;
