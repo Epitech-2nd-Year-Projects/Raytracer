@@ -151,6 +151,17 @@ public:
       }
     } catch (const libconfig::SettingNotFoundException &) {
     }
+
+    try {
+      auto scale = parsePoint3(config.lookup("scale"));
+      if (scale) {
+        Math::Vector<3> scaleVect(scale->m_components[0],
+                                  scale->m_components[1],
+                                  scale->m_components[2]);
+        primitive->setScale(scaleVect);
+      }
+    } catch (const libconfig::SettingNotFoundException &) {
+    }
   }
 
 private:
