@@ -75,6 +75,7 @@ set(TEST_SOURCES
   tests/test_Transform.cpp
   tests/test_Rotation.cpp
   tests/test_Scale.cpp
+  tests/test_Shear.cpp
 )
 
 set(IMPLEMENTATION_SOURCES ${SOURCES})
