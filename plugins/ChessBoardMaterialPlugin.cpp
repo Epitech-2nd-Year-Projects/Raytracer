@@ -3,6 +3,7 @@
 #include "Plugin/MaterialPlugin.hpp"
 #include <cmath>
 #include <iostream>
+#include "Parser/SceneParser.hpp"
 
 using Raytracer::Math::Point;
 using Raytracer::Math::Vector;
@@ -10,7 +11,7 @@ using Raytracer::Math::Vector;
 namespace Raytracer::Plugins {
 
 
-bool ChessBoardMaterialPlugin::parseRgb(const libconfig::Setting &setting,
+/* bool ChessBoardMaterialPlugin::parseRgb(const libconfig::Setting &setting,
                                         Core::Color &out)
 {
   if (setting.isArray() && setting.getLength() == 3) {
@@ -25,23 +26,25 @@ bool ChessBoardMaterialPlugin::parseRgb(const libconfig::Setting &setting,
     return true;
   }
   return false; 
-}
+} */
 
 
 std::shared_ptr<Plugin::MaterialPlugin> ChessBoardMaterialPlugin::create()
 { return std::make_shared<ChessBoardMaterialPlugin>(); }
 
-bool ChessBoardMaterialPlugin::configure(const libconfig::Setting &cfg)
+bool ChessBoardMaterialPlugin::configure(const libconfig::Setting &config)
 {
   try {
-    if (cfg.exists("color1")) parseRgb(cfg.lookup("color1"), m_color1);
-    if (cfg.exists("color2")) parseRgb(cfg.lookup("color2"), m_color2);
+    if (config.exists("color1"))
+      m_color1 = Parser::SceneParser::parseColor(config, "color1");
+    if (config.exists("color2"))
+      m_color2 = Parser::SceneParser::parseColor(config, "color2");
 
-    setAmbientCoefficient(cfg.lookup("ambientCoefficient"));
-    setDiffuseCoefficient (cfg.lookup("diffuseCoefficient"));
+    setAmbientCoefficient(config.lookup("ambientCoefficient"));
+    setDiffuseCoefficient (config.lookup("diffuseCoefficient"));
 
-    if (cfg.exists("squareSize"))
-      m_squareSize = cfg.lookup("squareSize");
+    if (config.exists("squareSize"))
+      m_squareSize = config.lookup("squareSize");
   }
   catch (const libconfig::SettingException &e) {
     std::cerr << "[ChessBoardMaterial] " << e.what() << '\n';
@@ -55,9 +58,21 @@ static bool planeAxes(const Vector<3>& N, int &ia, int &ib)
 {
   const double eps = 1e-6;
   const auto &n = N.m_components;
-  if (std::fabs(n[1]) > 1.0 - eps) { ia = 0; ib = 2; return true; } 
-  if (std::fabs(n[0]) > 1.0 - eps) { ia = 1; ib = 2; return true; } 
-  if (std::fabs(n[2]) > 1.0 - eps) { ia = 0; ib = 1; return true; } 
+  if (std::fabs(n[1]) > 1.0 - eps) {
+    ia = 0;
+    ib = 2;
+    return true;
+  } 
+  if (std::fabs(n[0]) > 1.0 - eps) {
+    ia = 1;
+    ib = 2;
+    return true;
+  } 
+  if (std::fabs(n[2]) > 1.0 - eps) {
+    ia = 0;
+    ib = 1;
+    return true;
+  } 
   return false;
 }
 
@@ -83,7 +98,7 @@ Core::Color ChessBoardMaterialPlugin::computeColor(
                 std::floor(P.m_components[2] / m_squareSize));
     lightSquare = (s & 1) == 0;
   }
-  const Core::Color base = lightSquare ? m_color1 : m_color2;
+  const std::optional<Core::Color> base = lightSquare ? m_color1 : m_color2;
 
   
   const Vector<3>& N = isec.getNormal();
@@ -95,9 +110,9 @@ Core::Color ChessBoardMaterialPlugin::computeColor(
       double I = amb->getIntensity();
       const auto &Lc = amb->getColor();
       C = C.add(Core::Color(
-          base.getR()*getAmbientCoefficient()*I*Lc.getR()/255.0,
-          base.getG()*getAmbientCoefficient()*I*Lc.getG()/255.0,
-          base.getB()*getAmbientCoefficient()*I*Lc.getB()/255.0));
+          base->getR()*getAmbientCoefficient()*I*Lc.getR()/255.0,
+          base->getG()*getAmbientCoefficient()*I*Lc.getG()/255.0,
+          base->getB()*getAmbientCoefficient()*I*Lc.getB()/255.0));
     }
 
     else if (auto dir = std::dynamic_pointer_cast<Core::IDirectionalLight>(L)) {
@@ -107,9 +122,9 @@ Core::Color ChessBoardMaterialPlugin::computeColor(
         double k = getDiffuseCoefficient()*d*dir->getIntensity();
         const auto &Lc = dir->getColor();
         C = C.add(Core::Color(
-            base.getR()*k*Lc.getR()/255.0,
-            base.getG()*k*Lc.getG()/255.0,
-            base.getB()*k*Lc.getB()/255.0));
+            base->getR()*k*Lc.getR()/255.0,
+            base->getG()*k*Lc.getG()/255.0,
+            base->getB()*k*Lc.getB()/255.0));
       }
     }
 
@@ -124,9 +139,9 @@ Core::Color ChessBoardMaterialPlugin::computeColor(
           double k = getDiffuseCoefficient()*d*pt->getIntensity();
           const auto &Lc = pt->getColor();
           C = C.add(Core::Color(
-              base.getR()*k*Lc.getR()/255.0,
-              base.getG()*k*Lc.getG()/255.0,
-              base.getB()*k*Lc.getB()/255.0));
+              base->getR()*k*Lc.getR()/255.0,
+              base->getG()*k*Lc.getG()/255.0,
+              base->getB()*k*Lc.getB()/255.0));
         }
       }
     }
