@@ -61,7 +61,14 @@ private:
    */
   void onToggleMultiThreading();
 
+  /**
+   * @brief Restart the preview rendering.
+   */
+  void restartPreview();
+
 private:
+  static constexpr float CAMERA_MOVE_STEP = 2.0f;
+
   sf::RenderWindow m_window;
   Core::Renderer m_renderer;
   Core::Renderer m_previewRenderer;

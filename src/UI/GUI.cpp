@@ -1,4 +1,5 @@
 #include "UI/GUI.hpp"
+#include "Core/Camera.hpp"
 #include "Parser/SceneParser.hpp"
 #include <filesystem>
 #include <fstream>
@@ -115,6 +116,48 @@ GUI::GUI(const std::string &title, const sf::Vector2u &size,
     while (m_window.pollEvent(ev)) {
       if (ev.type == sf::Event::Closed)
         m_window.close();
+      if (ev.type == sf::Event::KeyPressed) {
+        bool moved = false;
+        Core::Camera &camera = m_scene->getCamera();
+        Math::Point<3> origin = camera.getOrigin();
+        float step = CAMERA_MOVE_STEP;
+
+        switch (ev.key.code) {
+        case sf::Keyboard::W:
+          origin.m_components[1] += step;
+          moved = true;
+          break;
+        case sf::Keyboard::S:
+          origin.m_components[1] -= step;
+          moved = true;
+          break;
+        case sf::Keyboard::A:
+          origin.m_components[0] -= step;
+          moved = true;
+          break;
+        case sf::Keyboard::D:
+          origin.m_components[0] += step;
+          moved = true;
+          break;
+        case sf::Keyboard::Q:
+          origin.m_components[2] += step;
+          moved = true;
+          break;
+        case sf::Keyboard::E:
+          origin.m_components[2] -= step;
+          moved = true;
+          break;
+        default:
+          break;
+        }
+        if (moved) {
+          camera.setOrigin(origin);
+          double aspect =
+              double(m_renderer.getWidth()) / double(m_renderer.getHeight());
+          camera.setPerspective(aspect);
+          restartPreview();
+        }
+      }
       m_btnPreview->handleEvent(ev, m_window);
       m_btnRender->handleEvent(ev, m_window);
       m_btnSave->handleEvent(ev, m_window);
@@ -290,4 +333,29 @@ void GUI::onToggleASS() {
 void GUI::onToggleMultiThreading() {
   bool isEnabled = m_renderer.isMultithreadingEnabled();
   m_renderer.setMultithreading(!isEnabled);
+}
+
+void GUI::restartPreview() {
+  if (m_previewRendering) {
+    m_previewCancelRequested.store(true, std::memory_order_relaxed);
+    if (m_previewThread.joinable())
+      m_previewThread.join();
+    m_previewRendering = false;
+  }
+
+  m_previewCancelRequested.store(false, std::memory_order_relaxed);
+  m_previewRowsDone.store(0, std::memory_order_relaxed);
+  m_previewRendering = true;
+  m_btnPreview->setText("Stop (0%)");
+
+  size_t width = m_previewRenderer.getWidth();
+  size_t height = m_previewRenderer.getHeight();
+  m_previewBuffer.assign(width * height * 4, 0);
+
+  m_previewThread = std::thread([this]() {
+    m_previewRenderer.renderToBuffer(*m_scene, m_previewBuffer,
+                                     &m_previewCancelRequested,
+                                     &m_previewRowsDone);
+    m_previewRendering = false;
+  });
 }
