@@ -79,10 +79,10 @@ public:
    * @param setting The libconfig setting to parse.
    */
   static std::optional<Core::Color>
-  parseColor(const libconfig::Setting &setting) {
+  parseColor(const libconfig::Setting &setting, const std::string &colorName) {
     try {
-      if (setting.exists("color") && setting["color"].isArray()) {
-        const auto &colorArray = setting["color"];
+      if (setting.exists(colorName) && setting[colorName.c_str()].isArray()) {
+        const auto &colorArray = setting[colorName.c_str()];
 
         if (colorArray.getLength() == 3) {
           int r = colorArray[0];

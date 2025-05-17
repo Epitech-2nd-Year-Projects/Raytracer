@@ -10,7 +10,7 @@ std::shared_ptr<Plugin::MaterialPlugin> MirrorMaterialPlugin::create() {
 
 bool MirrorMaterialPlugin::configure(const libconfig::Setting &config) {
   try {
-    std::optional<Core::Color> color = Parser::SceneParser::parseColor(config);
+    std::optional<Core::Color> color = Parser::SceneParser::parseColor(config, "color");
 
     if (!color) {
       return false;
