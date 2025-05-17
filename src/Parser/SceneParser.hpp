@@ -168,12 +168,18 @@ public:
         const libconfig::Setting &shearConfig = config.lookup("shear");
         double xy = 0.0, xz = 0.0, yx = 0.0, yz = 0.0, zx = 0.0, zy = 0.0;
 
-        if (shearConfig.exists("xy")) xy = static_cast<double>(shearConfig.lookup("xy"));
-        if (shearConfig.exists("xz")) xz = static_cast<double>(shearConfig.lookup("xz"));
-        if (shearConfig.exists("yx")) yx = static_cast<double>(shearConfig.lookup("yx"));
-        if (shearConfig.exists("yz")) yz = static_cast<double>(shearConfig.lookup("yz"));
-        if (shearConfig.exists("zx")) zx = static_cast<double>(shearConfig.lookup("zx"));
-        if (shearConfig.exists("zy")) zy = static_cast<double>(shearConfig.lookup("zy"));
+        if (shearConfig.exists("xy"))
+          xy = static_cast<double>(shearConfig.lookup("xy"));
+        if (shearConfig.exists("xz"))
+          xz = static_cast<double>(shearConfig.lookup("xz"));
+        if (shearConfig.exists("yx"))
+          yx = static_cast<double>(shearConfig.lookup("yx"));
+        if (shearConfig.exists("yz"))
+          yz = static_cast<double>(shearConfig.lookup("yz"));
+        if (shearConfig.exists("zx"))
+          zx = static_cast<double>(shearConfig.lookup("zx"));
+        if (shearConfig.exists("zy"))
+          zy = static_cast<double>(shearConfig.lookup("zy"));
 
         Math::Vector<6> shearVect(xy, xz, yx, yz, zx, zy);
         primitive->setShear(shearVect);
