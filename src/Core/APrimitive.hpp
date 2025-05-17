@@ -60,7 +60,8 @@ public:
 
   /**
    * @brief Set the primitive's shear parameters.
-   * @param shear Vector containing six shear parameters (xy, xz, yx, yz, zx, zy).
+   * @param shear Vector containing six shear parameters (xy, xz, yx, yz, zx,
+   * zy).
    */
   void setShear(const Math::Vector<6> &shear) noexcept override {
     m_shear = shear;
