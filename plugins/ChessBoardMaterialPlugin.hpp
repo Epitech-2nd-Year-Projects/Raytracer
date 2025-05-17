@@ -50,8 +50,8 @@ public:
                            const Core::Scene &scene) const override;
 
 private:
-  Core::Color m_color1{Core::White};
-  Core::Color m_color2{Core::Black};
+  std::optional<Core::Color> m_color1{Core::White};
+  std::optional<Core::Color> m_color2{Core::Black};
   double m_squareSize{1.0};
 
   static bool parseRgb(const libconfig::Setting &setting, Core::Color &out);
