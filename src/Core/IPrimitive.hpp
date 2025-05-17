@@ -69,11 +69,12 @@ public:
    */
   virtual void setScale(const Math::Vector<3> &scale) noexcept = 0;
 
-    /**
-     * @brief Set the primitive's shear parameters.
-     * @param shear Vector containing six shear parameters (xy, xz, yx, yz, zx, zy).
-     */
-    virtual void setShear(const Math::Vector<6> &shear) noexcept = 0;
+  /**
+   * @brief Set the primitive's shear parameters.
+   * @param shear Vector containing six shear parameters (xy, xz, yx, yz, zx,
+   * zy).
+   */
+  virtual void setShear(const Math::Vector<6> &shear) noexcept = 0;
 
   /**
    * @brief Assign a material to the primitive.
@@ -99,11 +100,11 @@ public:
    */
   [[nodiscard]] virtual const Math::Vector<3> &getScale() const noexcept = 0;
 
-    /**
-     * @brief Get the primitive's shear parameters.
-     * @return Vector containing six shear parameters.
-     */
-    [[nodiscard]] virtual const Math::Vector<6> &getShear() const noexcept = 0;
+  /**
+   * @brief Get the primitive's shear parameters.
+   * @return Vector containing six shear parameters.
+   */
+  [[nodiscard]] virtual const Math::Vector<6> &getShear() const noexcept = 0;
 
   /**
    * @brief Get the assigned material.
