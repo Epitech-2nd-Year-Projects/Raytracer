@@ -59,6 +59,16 @@ public:
   }
 
   /**
+   * @brief Set the primitive's shear parameters.
+   * @param shear Vector containing six shear parameters (xy, xz, yx, yz, zx,
+   * zy).
+   */
+  void setShear(const Math::Vector<6> &shear) noexcept override {
+    m_shear = shear;
+    updateTransform();
+  }
+
+  /**
    * @brief Set primitive material.
    * @param m Material to apply.
    */
@@ -73,6 +83,14 @@ public:
   [[nodiscard]] constexpr const Math::Point<3> &
   getPosition() const noexcept override {
     return m_position;
+  }
+
+  /**
+   * @brief Get the primitive's shear parameters.
+   * @return Vector containing six shear parameters.
+   */
+  [[nodiscard]] const Math::Vector<6> &getShear() const noexcept override {
+    return m_shear;
   }
 
   /**
@@ -148,17 +166,23 @@ protected:
 
     Math::Transform scale = Math::Transform::scale(m_scale);
 
+    Math::Transform shear = Math::Transform::shear(
+        m_shear.m_components[0], m_shear.m_components[1],
+        m_shear.m_components[2], m_shear.m_components[3],
+        m_shear.m_components[4], m_shear.m_components[5]);
+
     Math::Transform translation = Math::Transform::translate(
         m_position.m_components[0], m_position.m_components[1],
         m_position.m_components[2]);
 
-    m_transform = translation * rotation * scale;
+    m_transform = translation * shear * rotation * scale;
   }
 
 private:
   Math::Point<3> m_position{};
   Math::Vector<3> m_rotation{};
   Math::Vector<3> m_scale{1.0, 1.0, 1.0};
+  Math::Vector<6> m_shear{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
   std::shared_ptr<IMaterial> m_material{nullptr};
   Math::Transform m_transform{};
 };
