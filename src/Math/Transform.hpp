@@ -159,7 +159,8 @@ public:
    * @param zy Amount to shear Z in proportion to Y.
    * @return Shear transform.
    */
-  static Transform shear(double xy, double xz, double yx, double yz, double zx, double zy) noexcept {
+  static Transform shear(double xy, double xz, double yx, double yz, double zx,
+                         double zy) noexcept {
     Matrix4 matrix = Matrix4::identity();
     matrix(0, 1) = xy;
     matrix(0, 2) = xz;
