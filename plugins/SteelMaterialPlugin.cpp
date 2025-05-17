@@ -11,7 +11,7 @@ std::shared_ptr<Plugin::MaterialPlugin> SteelMaterialPlugin::create() {
 
 bool SteelMaterialPlugin::configure(const libconfig::Setting &config) {
   try {
-    std::optional<Core::Color> color = Parser::SceneParser::parseColor(config);
+    std::optional<Core::Color> color = Parser::SceneParser::parseColor(config, "color");
 
     if (!color) {
       return false;
