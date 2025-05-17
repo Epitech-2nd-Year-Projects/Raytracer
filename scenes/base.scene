@@ -46,7 +46,7 @@ primitives = (
         position = -20.0;
         material =
         {
-            type = "MirrorMaterial";
+            type = "FlatMaterial";
             ambientCoefficient = 0.5;
             diffuseCoefficient = 0.5;
             reflectionCoefficient = 1.0;
@@ -59,7 +59,7 @@ primitives = (
         type = "Cylinder";
         id = "cylinder1";
         axis = "Z"
-        position = [90.0, 5.0, 0.0];
+        position = [50.0, 5.0, 0.0];
         height = 10.0;
         radius = 25.0;
         material =

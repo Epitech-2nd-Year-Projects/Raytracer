@@ -150,6 +150,91 @@ public:
   }
 
   /**
+   * @brief Create a shear transform along different axes.
+   * @param xy Amount to shear X in proportion to Y.
+   * @param xz Amount to shear X in proportion to Z.
+   * @param yx Amount to shear Y in proportion to X.
+   * @param yz Amount to shear Y in proportion to Z.
+   * @param zx Amount to shear Z in proportion to X.
+   * @param zy Amount to shear Z in proportion to Y.
+   * @return Shear transform.
+   */
+  static Transform shear(double xy, double xz, double yx, double yz, double zx,
+                         double zy) noexcept {
+    Matrix4 matrix = Matrix4::identity();
+    matrix(0, 1) = xy;
+    matrix(0, 2) = xz;
+    matrix(1, 0) = yx;
+    matrix(1, 2) = yz;
+    matrix(2, 0) = zx;
+    matrix(2, 1) = zy;
+
+    return Transform(matrix);
+  }
+
+  /**
+   * @brief Create a shear transform along two specified axes.
+   * @param indexFrom The axis being sheared (0=X, 1=Y, 2=Z).
+   * @param indexTo The axis that controls the shear amount (0=X, 1=Y, 2=Z).
+   * @param amount The amount of shear.
+   * @return Shear transform.
+   */
+  static Transform shearAxis(int indexFrom, int indexTo,
+                             double amount) noexcept {
+    if (indexFrom < 0 || indexFrom > 2 || indexTo < 0 || indexTo > 2 ||
+        indexFrom == indexTo) {
+      return Transform();
+    }
+
+    double xy = 0.0, xz = 0.0, yx = 0.0, yz = 0.0, zx = 0.0, zy = 0.0;
+
+    if (indexFrom == 0 && indexTo == 1)
+      xy = amount;
+    else if (indexFrom == 0 && indexTo == 2)
+      xz = amount;
+    else if (indexFrom == 1 && indexTo == 0)
+      yx = amount;
+    else if (indexFrom == 1 && indexTo == 2)
+      yz = amount;
+    else if (indexFrom == 2 && indexTo == 0)
+      zx = amount;
+    else if (indexFrom == 2 && indexTo == 1)
+      zy = amount;
+
+    return shear(xy, xz, yx, yz, zx, zy);
+  }
+
+  /**
+   * @brief Create a scale transform.
+   * @param sx X scale factor.
+   * @param sy Y scale factor.
+   * @param sz Z scale factor.
+   * @return Scale transform.
+   */
+  static Transform scale(double sx, double sy, double sz) noexcept {
+    Matrix4 matrix = Matrix4::identity();
+    matrix(0, 0) = sx;
+    matrix(1, 1) = sy;
+    matrix(2, 2) = sz;
+
+    Matrix4 inverse = Matrix4::identity();
+    inverse(0, 0) = 1.0 / sx;
+    inverse(1, 1) = 1.0 / sy;
+    inverse(2, 2) = 1.0 / sz;
+    return Transform(matrix, inverse);
+  }
+
+  /**
+   * @brief Create a scale transform.
+   * @param scale Scale vector.
+   * @return Scale transform.
+   */
+  static Transform scale(const Vector<3> &scale) noexcept {
+    return Transform::scale(scale.m_components[0], scale.m_components[1],
+                            scale.m_components[2]);
+  }
+
+  /**
    * @brief Get the transformation matrix.
    * @return The transformation matrix.
    */
@@ -175,8 +260,8 @@ public:
    * @return Combined transform.
    */
   [[nodiscard]] Transform combine(const Transform &other) const noexcept {
-    return Transform(other.m_matrix.multiply(m_matrix),
-                     m_inverse.multiply(other.m_inverse));
+    return Transform(m_matrix.multiply(other.m_matrix),
+                     other.m_inverse.multiply(m_inverse));
   }
 
   /**
@@ -214,7 +299,7 @@ public:
    */
   [[nodiscard]] Vector<3>
   transformNormal(const Vector<3> &normal) const noexcept {
-    return Math::transformNormal(m_matrix, normal);
+    return Math::transformNormal(m_inverse, normal).normalize();
   }
 
   /**
