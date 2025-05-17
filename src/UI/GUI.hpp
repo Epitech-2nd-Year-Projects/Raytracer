@@ -56,7 +56,19 @@ private:
    */
   void onToggleASS();
 
+  /**
+   * @brief Handle the toggle multi-threading button click event.
+   */
+  void onToggleMultiThreading();
+
+  /**
+   * @brief Restart the preview rendering.
+   */
+  void restartPreview();
+
 private:
+  static constexpr float CAMERA_MOVE_STEP = 2.0f;
+
   sf::RenderWindow m_window;
   Core::Renderer m_renderer;
   Core::Renderer m_previewRenderer;
@@ -66,6 +78,7 @@ private:
   std::unique_ptr<Button> m_btnSave;
   std::unique_ptr<Button> m_btnPreview;
   std::unique_ptr<Button> m_btnToggleAASS;
+  std::unique_ptr<Button> m_btnToggleMultiThreading;
 
   std::atomic<bool> m_cancelRequested{false};
   std::atomic<size_t> m_rowsDone{0};
