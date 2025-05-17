@@ -130,10 +130,10 @@ Test(ShearSuite, ComposeTransformations) {
   Transform combined2 = shear * translate;
 
   Point<3> p(0.0, 1.0, 0.0);
-  
+
   Point<3> expected1(2.0, 3.0, 3.0);
   assert_point_equal(combined1.transformPoint(p), expected1);
-  
+
   Point<3> expected2(4.0, 3.0, 3.0);
   assert_point_equal(combined2.transformPoint(p), expected2);
 
