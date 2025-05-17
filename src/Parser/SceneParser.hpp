@@ -81,8 +81,8 @@ public:
   static std::optional<Core::Color>
   parseColor(const libconfig::Setting &setting, const std::string &colorName) {
     try {
-      if (setting.exists(colorName) && setting[colorName].isArray()) {
-        const auto &colorArray = setting[colorName];
+      if (setting.exists(colorName) && setting[colorName.c_str()].isArray()) {
+        const auto &colorArray = setting[colorName.c_str()];
 
         if (colorArray.getLength() == 3) {
           int r = colorArray[0];
