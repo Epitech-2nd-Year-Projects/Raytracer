@@ -10,25 +10,6 @@ using Raytracer::Math::Vector;
 
 namespace Raytracer::Plugins {
 
-
-/* bool ChessBoardMaterialPlugin::parseRgb(const libconfig::Setting &setting,
-                                        Core::Color &out)
-{
-  if (setting.isArray() && setting.getLength() == 3) {
-    int r = setting[0], g = setting[1], b = setting[2];
-    out   = Core::Color(r, g, b);
-    return true;
-  }
-  if (setting.isGroup() &&
-      setting.exists("r") && setting.exists("g") && setting.exists("b")) {
-    int r = setting["r"], g = setting["g"], b = setting["b"];
-    out   = Core::Color(r, g, b);
-    return true;
-  }
-  return false; 
-} */
-
-
 std::shared_ptr<Plugin::MaterialPlugin> ChessBoardMaterialPlugin::create()
 { return std::make_shared<ChessBoardMaterialPlugin>(); }
 
